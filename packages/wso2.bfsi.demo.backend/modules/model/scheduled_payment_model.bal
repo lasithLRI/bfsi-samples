@@ -38,26 +38,3 @@ public type ScheduledPayment record {
     # Provides the details to identify the beneficiary account.
     CreditorAccount CreditorAccount?;
 };
-
-# Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.
-# This is the servicer of the beneficiary account.
-public type CreditorAgent record {
-    # Name of the identification scheme, in a coded form as published in an external list.
-    string SchemeName;
-    # Unique and unambiguous identification of the servicing institution.
-    string Identification;
-};
-
-# Provides the details to identify the beneficiary account.
-public type CreditorAccount record {
-    # Name of the identification scheme, in a coded form as published in an external list.
-    string SchemeName;
-    # Beneficiary account identification.
-    string Identification = util:getRandomId();
-    # The account name is the name or names of the account owner(s) represented at an account level, as displayed by the bank's online channels.
-    # Note, the account name is not the product name or the nickname of the account.
-    string Name?;
-    # This is secondary identification of the account, as assigned by the account servicing institution. 
-    # This can be used by building societies to additionally identify accounts with a roll number (in addition to a sort code and account number combination).
-    string SecondaryIdentification?;
-};

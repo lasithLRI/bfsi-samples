@@ -34,7 +34,7 @@ public type FilePaymentInitiation record {
     # Usage: This element is used to specify a local instrument, local clearing option and/or further qualify the service or service level.
     string LocalInstrument?;
     # Unambiguous identification of the account of the debtor to which a debit entry will be made as a result of the transaction.
-    CreditorAccount DebtorAccount?;
+    DebtorAccount DebtorAccount?;
     # Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system.
     RemittanceInformation RemittanceInformation?;
     # Additional information that can not be captured in the structured fields and/or any other specific block.

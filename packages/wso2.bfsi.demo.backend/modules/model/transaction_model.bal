@@ -128,30 +128,6 @@ public type TransactionCreditorAgent record {
     PostalAddress PostalAddress?;
 };
 
-# Information that locates and identifies a specific address, as defined by postal services.
-public type PostalAddress record {
-    # Identifies the nature of the postal address.
-    string AddressType?;
-    # Identification of a division of a large organisation or building.
-    string Department?;
-    # Identification of a sub-division of a large organisation or building.
-    string SubDepartment?;
-    # Name of a street or thoroughfare.
-    string StreetName?;
-    # Number that identifies the position of a building on a street.
-    string BuildingNumber?;
-    # Identifier consisting of a group of letters and/or numbers that is added to a postal address to assist the sorting of mail.
-    string PostCode?;
-    # Name of a built-up area, with defined boundaries, and a local government.
-    string TownName?;
-    # Identifies a subdivision of a country such as state, region, county.
-    string CountrySubDivision?;
-    # Nation with its own government.
-    string Country?;
-    #Describes address line list
-    string[] AddressLine?;
-};
-
 # Set of elements to describe the card instrument used in the transaction.
 public type CardInstrument record {
     # Name of the card scheme.

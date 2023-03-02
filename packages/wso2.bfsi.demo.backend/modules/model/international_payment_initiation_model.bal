@@ -11,8 +11,8 @@
 
 import ballerina/constraint;
 
-# The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for a single scheduled international payment.
-public type InternationalScheduledPaymentInitiation record {
+# The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for a single international payment.
+public type InternationalPaymentInitiation record {
     # Unique identification as assigned by an instructing party for an instructed party to unambiguously identify the instruction.
     # Usage: the  instruction identification is a point to point reference that can be used between the instructing party and the instructed party to refer to the individual instruction. It can be included in several messages related to the instruction.
     @constraint:String {maxLength: 35, minLength: 1}
@@ -21,7 +21,7 @@ public type InternationalScheduledPaymentInitiation record {
     # Usage: The end-to-end identification can be used for reconciliation or to link tasks relating to the transaction. It can be included in several messages related to the transaction.
     # OB: The Faster Payments Scheme can only access 31 characters for the EndToEndIdentification field.
     @constraint:String {maxLength: 35, minLength: 1}
-    string EndToEndIdentification?;
+    string EndToEndIdentification;
     # User community specific instrument.
     # Usage: This element is used to specify a local instrument, local clearing option and/or further qualify the service or service level.
     string LocalInstrument?;
@@ -37,11 +37,6 @@ public type InternationalScheduledPaymentInitiation record {
     string ExtendedPurpose?;
     # Specifies which party/parties will bear the charges associated with the processing of the payment transaction.
     string ChargeBearer?;
-    # Date at which the initiating party requests the clearing agent to process the payment. 
-    # Usage: This is the date on which the debtor's account is to be debited.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
-    # All date-time fields in responses must include the timezone. An example is below:
-    # 2017-04-05T10:43:07+00:00
-    string RequestedExecutionDateTime;
     # Specifies the currency of the to be transferred amount, which is different from the currency of the debtor's account.
     string CurrencyOfTransfer;
     # Country in which Credit Account is domiciled. Code to identify a country, a dependency, or another area of particular geopolitical interest, on the basis of country names obtained from the United Nations (ISO 3166, Alpha-2 code).
@@ -52,7 +47,7 @@ public type InternationalScheduledPaymentInitiation record {
     # Provides details on the currency exchange rate and contract.
     ExchangeRateInformation ExchangeRateInformation?;
     # Unambiguous identification of the account of the debtor to which a debit entry will be made as a result of the transaction.
-    CreditorAccount DebtorAccount?;
+    DebtorAccount DebtorAccount?;
     # Party to which an amount of money is due.
     Creditor Creditor?;
     # Financial institution servicing an account for the creditor.
@@ -63,4 +58,30 @@ public type InternationalScheduledPaymentInitiation record {
     RemittanceInformation RemittanceInformation?;
     # Additional information that can not be captured in the structured fields and/or any other specific block.
     Object SupplementaryData?;
+};
+
+# Further detailed information on the exchange rate that has been used in the payment transaction.
+public type ExchangeRateInformation record {
+    # Currency in which the rate of exchange is expressed in a currency exchange. In the example 1GBP = xxxCUR, the unit currency is GBP.
+    string UnitCurrency;
+    # The factor used for conversion of an amount from one currency to another. This reflects the price at which one currency was bought with another currency.
+    decimal ExchangeRate?;
+    # Specifies the type used to complete the currency exchange.
+    string RateType;
+    # Unique and unambiguous reference to the foreign exchange contract agreed between the initiating party/creditor and the debtor agent.
+    @constraint:String {maxLength: 256, minLength: 1}
+    string ContractIdentification?;
+    # Specified date and time the exchange rate agreement will expire.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+    # All date-time fields in responses must include the timezone. An example is below:
+    # 2017-04-05T10:43:07+00:00
+    string ExpirationDateTime?;
+};
+
+# Party to which an amount of money is due.
+public type Creditor record {
+    # Name by which a party is known and which is usually used to identify that party.
+    @constraint:String {maxLength: 350, minLength: 1}
+    string Name?;
+    # Information that locates and identifies a specific address, as defined by postal services.
+    PostalAddress PostalAddress?;
 };

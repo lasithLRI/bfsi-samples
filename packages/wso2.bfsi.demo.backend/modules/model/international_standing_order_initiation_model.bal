@@ -74,7 +74,7 @@ public type InternationalStandingOrderInitiation record {
     # Usage: This amount has to be transported unchanged through the transaction chain.
     Amount InstructedAmount;
     # Unambiguous identification of the account of the debtor to which a debit entry will be made as a result of the transaction.
-    CreditorAccount DebtorAccount?;
+    DebtorAccount DebtorAccount?;
     # Party to which an amount of money is due.
     Creditor Creditor?;
     # Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.

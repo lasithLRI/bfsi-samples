@@ -69,7 +69,7 @@ public type DomesticStandingOrderInitiation record {
     # The amount of the final Standing Order
     Amount FinalPaymentAmount?;
     # Unambiguous identification of the account of the debtor to which a debit entry will be made as a result of the transaction.
-    CreditorAccount DebtorAccount?;
+    DebtorAccount DebtorAccount?;
     # Identification assigned by an institution to identify an account. This identification is known by the account owner.
     CreditorAccount CreditorAccount;
     # Additional information that can not be captured in the structured fields and/or any other specific block.

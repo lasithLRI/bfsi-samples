@@ -9,21 +9,21 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-public final string INVALID_ACCOUNT_ID = "Account ID is invalid";
-public final string EMPTY_ACCOUNT_ID = "Account ID cannot be empty";
-public final string INVALID_STATEMENT_ID = "Statement ID is invalid";
-public final string EMPTY_STATEMENT_ID = "Statement ID cannot be empty";
-public final string EMPTY_REQUEST_BODY = "Request Body cannot be empty";
-public final string INVALID_PAYMENT_ID = "Payment ID is invalid";
-public final string EMPTY_PAYMENT_ID = "Payment ID cannot be empty";
+public const INVALID_ACCOUNT_ID = "Account ID is invalid";
+public const EMPTY_ACCOUNT_ID = "Account ID cannot be empty";
+public const INVALID_STATEMENT_ID = "Statement ID is invalid";
+public const EMPTY_STATEMENT_ID = "Statement ID cannot be empty";
+public const EMPTY_REQUEST_BODY = "Request Body cannot be empty";
+public const INVALID_PAYMENT_ID = "Payment ID is invalid";
+public const EMPTY_PAYMENT_ID = "Payment ID cannot be empty";
 
-public final string CODE_INVALID_ACCOUNT_ID = "E001";
-public final string CODE_EMPTY_ACCOUNT_ID = "E002";
-public final string CODE_INVALID_STATEMENT_ID = "E003";
-public final string CODE_EMPTY_STATEMENT_ID = "E004";
-public final string CODE_FILE_GENERATION_FAILED = "E005";
-public final string CODE_STATEMENT_FILE_MISSING = "E006";
-public final string CODE_INVALID_REQUEST_HEADER = "E007";
-public final string CODE_INVALID_REQUEST_BODY = "E008";
-public final string CODE_EMPTY_PAYMENT_ID = "E009";
-public final string CODE_INTERNAL_SERVER_ERROR = "E010";
+public const CODE_INVALID_ACCOUNT_ID = "E001";
+public const CODE_EMPTY_ACCOUNT_ID = "E002";
+public const CODE_INVALID_STATEMENT_ID = "E003";
+public const CODE_EMPTY_STATEMENT_ID = "E004";
+public const CODE_FILE_GENERATION_FAILED = "E005";
+public const CODE_STATEMENT_FILE_MISSING = "E006";
+public const CODE_INVALID_REQUEST_HEADER = "E007";
+public const CODE_INVALID_REQUEST_BODY = "E008";
+public const CODE_EMPTY_PAYMENT_ID = "E009";
+public const CODE_INTERNAL_SERVER_ERROR = "E010";
