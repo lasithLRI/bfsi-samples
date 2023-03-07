@@ -10,6 +10,7 @@
 // associated services.
 
 import ballerina/regex;
+import wso2bfsi/wso2.bfsi.demo.backend.model;
 
 # Validates IP addresses
 public class IpAddressValidator {
@@ -25,7 +26,7 @@ public class IpAddressValidator {
     # Validates the IP address
     # 
     # + return - Returns an error if the IP address is invalid
-    isolated function validate() returns ()|error {
+    isolated function validate() returns ()|model:InvalidPayloadError {
         if (self.header == "") {
             // This header is optional. hence, return true
             return ();
@@ -37,7 +38,7 @@ public class IpAddressValidator {
         if isIpv4 || isIpv6 {
             return ();
         } else {
-            return error("Found invalid ip address in headers");
+            return error("Found invalid ip address in headers", ErrorCode = "InavlidIpAddress");
         }
     }
 }

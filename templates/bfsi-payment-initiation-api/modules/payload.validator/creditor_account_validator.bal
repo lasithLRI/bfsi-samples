@@ -20,54 +20,52 @@ public class CreditorAccountValidator {
     # 
     # + payload - Payload
     # + path - Path
-    public isolated function init(json? payload, string path) {
-        self.payload = payload ?: "";
+    public isolated function init(anydata payload, string path) {
+        self.payload = payload;
         self.path = path;
     }
 
     # Validates the Creditor Account
     # 
     # + return - Returns an error if validation fails
-    isolated function validate() returns ()|error {
+    isolated function validate() returns ()|model:InvalidPayloadError {
         log:printInfo("Executing CreditorAccountValidator");
 
         if (self.payload == "") {
-            return error("Payload is missing");
+            return error("Payload is missing", ErrorCode = "UK.OBIE.Field.Missing");
         }
         if (self.path == "") {
-            return error("Path is missing");
+            return error("Path is missing", ErrorCode = "UK.OBIE.Field.Missing");
         }
         if (self.path == "file-payments") {
             return ();
         }
-
         do {
 	        model:CreditorAccount|error creditorAccount = check extractCreditorAccount(self.payload, self.path);
 
             if (creditorAccount is error) {
-                return error("Creditor Account is missing");
+                return error("Creditor Account is missing", ErrorCode = "UK.OBIE.Field.Missing");
             }
 
             if (creditorAccount.SchemeName == "") {
-                return error("Creditor Account SchemeName is missing");
+                return error("Creditor Account SchemeName is missing", ErrorCode = "UK.OBIE.Field.Missing");
             } else {
                 if (creditorAccount.SchemeName != "UK.OBIE.IBAN" && 
                                     creditorAccount.SchemeName != "UK.OBIE.SortCodeAccountNumber") {
-                    return error("Creditor Account SchemeName is invalid");
+                    return error("Creditor Account SchemeName is invalid", ErrorCode = "UK.OBIE.Field.Invalid");
                 }
             }
 
             if (creditorAccount.Identification == "") {
-                return error("Creditor Account Identification is missing");
+                return error("Creditor Account Identification is missing", ErrorCode = "UK.OBIE.Field.Missing");
             } else {
                 if (creditorAccount.Identification.length() > 256) {
-                    return error("Creditor Account Identification is invalid");
+                    return error("Creditor Account Identification is invalid", ErrorCode = "UK.OBIE.Field.Invalid");
                 }
             }
         } on fail var e {
-        	return error(e.message());
+        	return error(e.message(), ErrorCode = "UK.OBIE.Field.Invalid");
         }
-
-         return ();
+        return ();
     }
 }

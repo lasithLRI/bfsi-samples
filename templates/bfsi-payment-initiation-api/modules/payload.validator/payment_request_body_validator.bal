@@ -10,6 +10,7 @@
 // associated services.
 
 import ballerina/log;
+import wso2bfsi/wso2.bfsi.demo.backend.model;
 
 # Validates Payment Type
 public class PaymentRequestBodyValidator {
@@ -19,32 +20,36 @@ public class PaymentRequestBodyValidator {
     # 
     # + payload - Payload to be validated
     # + path - Path to be validated
-    public isolated function init(json? payload, string path) {
-        self.payload = payload ?: "";
+    public isolated function init(anydata payload, string path) {
+        self.payload = payload;
         self.path = path;
     }
 
     # Validates the payload
     # 
     # + return - Returns error if validation fails
-    isolated function validate() returns ()|error {
+    isolated function validate() returns ()|model:InvalidPayloadError {
         log:printInfo("Executing PaymentRequestBodyValidator");
 
         if (self.payload == "") {
-            return error("Payload is empty");
+            return error("Payload is empty", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
         }
-        if (self.payload.Data == "" || self.payload.Data == null) {
-            return error("Request Payload is not in correct JSON format");
-        } 
-        
-        if (self.payload.Data is json) {
-            if (self.payload.Data.Initiation is json) {
-                return ();
+        if self.payload is json {
+            json payload = <json>self.payload;
+             if (payload.Data == "" || payload.Data == null) {
+                return error("Request Payload is not in correct JSON format", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+            } 
+            
+            if (payload.Data is json) {
+                if (payload.Data.Initiation is json) {
+                    return ();
+                } else {
+                    return error("Request Payload is not in correct JSON format", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+                }
             } else {
-                return error("Request Payload is not in correct JSON format");
+                return  error("Request Payload is not in correct JSON format", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
             }
-        } else {
-            return  error("Request Payload is not in correct JSON format");
         }
+    
     }
 }

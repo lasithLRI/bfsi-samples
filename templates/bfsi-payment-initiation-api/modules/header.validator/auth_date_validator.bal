@@ -10,6 +10,7 @@
 // associated services.
  
 import ballerina/time;
+import wso2bfsi/wso2.bfsi.demo.backend.model;
 
 # Validates IP addresses
 public class AuthDateVallidator {
@@ -25,7 +26,7 @@ public class AuthDateVallidator {
     # Validates the auth date header value
     #  
     # + return - Returns an error if the header value is invalid
-    isolated function validate() returns ()|error {
+    isolated function validate() returns ()|model:InvalidPayloadError {
         if (self.header == "") {
             // This header is optional. hence, return true
             return ();
@@ -36,14 +37,14 @@ public class AuthDateVallidator {
         do {
 	        utc2 = check time:utcFromString(self.header);
         } on fail var e {
-        	return error(e.message());
+        	return error(e.message(), ErrorCode = "INVALID_DATE");
         }
         time:Seconds seconds = time:utcDiffSeconds(utc1, utc2);
         
         if seconds > <time:Seconds>0 {
             return ();
         } else {
-            return error("Invalid Date found in the header");
+            return error("Invalid Date found in the header", ErrorCode = "INVALID_DATE");
         }
     }
 }

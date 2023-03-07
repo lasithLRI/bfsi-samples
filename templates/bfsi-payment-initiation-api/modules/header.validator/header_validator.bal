@@ -9,6 +9,8 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
+import wso2bfsi/wso2.bfsi.demo.backend.model;
+
 # This class is used in the `RequestInterceptor' to implement the `Chain of responsibility` pattern
 public class HeaderValidator {
     private IHeaderValidator[] validators;
@@ -30,11 +32,11 @@ public class HeaderValidator {
     # This method is used to validate the headers
     # 
     # + return - Returns an error if the validation fails
-    public isolated function validate() returns ()|error {
+    public isolated function validate() returns ()|model:InvalidPayloadError {
         foreach IHeaderValidator validator in self.validators {
-             ()|error result = validator.validate();
-            if result is error {
-                return error(result.message());
+             ()|model:InvalidPayloadError result = validator.validate();
+            if result is model:InvalidPayloadError {
+                return result;
             }
         }
         return ();

@@ -9,10 +9,12 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
+import wso2bfsi/wso2.bfsi.demo.backend.model;
+
 # IPayloadValidator acts as an interface. This is implemented by `PayloadValidator` class.
 public type IPayloadValidator object {
-    json payload;
+    anydata payload;
     string path;
     
-    isolated function validate() returns ()|error;
+    isolated function validate() returns ()|model:InvalidPayloadError;
 };

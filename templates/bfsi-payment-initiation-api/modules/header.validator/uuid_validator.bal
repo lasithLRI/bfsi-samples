@@ -10,6 +10,7 @@
 // associated services.
 
 import ballerina/regex;
+import wso2bfsi/wso2.bfsi.demo.backend.model;
 
 # Validates UUIDs
 public class UUIDValidator {
@@ -26,13 +27,13 @@ public class UUIDValidator {
     # Validates the UUID
     # 
     # + return - Returns an error if the UUID is invalid
-    isolated function validate() returns ()|error {
+    isolated function validate() returns ()|model:InvalidPayloadError {
         if (self.header == "") {
             // This header is optional. hence, return true
             return ();
         }
 
         boolean isUuid = regex:matches(self.header, self.uuid);
-        return isUuid ? () : error("Found invalid UUID in headers");
+        return isUuid ? () : error("Found invalid UUID in headers", ErrorCode = "Invalid Header");
     }
 }

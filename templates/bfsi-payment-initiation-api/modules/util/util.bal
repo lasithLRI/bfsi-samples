@@ -9,11 +9,21 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import wso2bfsi/wso2.bfsi.demo.backend.model;
+import ballerina/http;
 
-# IHeaderValidator acts as an interface. This is implemented by `HeaderValidator` class.
-public type IHeaderValidator object {
-    string header;
+# Represents a subtype of BAD_REQUEST error
+public type BadRequest record {|
+    *http:BadRequest;
 
-    isolated function validate() returns ()|model:InvalidPayloadError;
-};
+    # Open Banking error format
+    record {
+        # Low level texual error code
+        string ErrorCode;
+        # Description of the error occured
+        string Message;
+        # Recommended but optional reference to the JSON Path of the field with error
+        string Path?;
+        # URL to help remediate the problem, or provide more information, or to API Reference, or help etc
+        string Url?;
+    } body;
+|};

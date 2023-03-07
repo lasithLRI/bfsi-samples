@@ -12,6 +12,8 @@
 import ballerina/http;
 import bfsi_payment_initiation_api.header.validator;
 
+import wso2bfsi/wso2.bfsi.demo.backend.model;
+
 public service class RequestInterceptor {
     *http:RequestInterceptor;
 
@@ -19,16 +21,16 @@ public service class RequestInterceptor {
     // Then, the execution will jump to the nearest `RequestErrorInterceptor`.
     isolated resource function 'default [string... path](http:RequestContext ctx, @http:Header string? 'x\-fapi\-auth\-date, 
             @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id) 
-            returns anydata|http:NextService|error? {
+            returns anydata|http:NextService|error {
         
         validator:HeaderValidator headerValidator = new();
-        ()|error headerValidatorResult = headerValidator
+        ()|model:InvalidPayloadError headerValidatorResult = headerValidator
             .add(new validator:UUIDValidator('x\-fapi\-interaction\-id))
             .add(new validator:IpAddressValidator('x\-fapi\-customer\-ip\-address))
             .add(new validator:AuthDateVallidator('x\-fapi\-auth\-date))
             .validate();
 
-        if (headerValidatorResult is error) {
+        if (headerValidatorResult is model:InvalidPayloadError) {
             return error(headerValidatorResult.message());
         }
         
