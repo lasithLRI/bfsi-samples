@@ -12,9 +12,3 @@
   icon = "icon.png"
   version = "1.0.0"
   distribution = "2201.3.1"
-
-[[dependency]]
-org = "wso2bfsi"
-name = "wso2.bfsi.demo.backend"
-version = "1.0.0"
-repository = "local"  
