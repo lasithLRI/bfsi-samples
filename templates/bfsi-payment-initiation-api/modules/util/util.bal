@@ -27,3 +27,8 @@ public type BadRequest record {|
         string Url?;
     } body;
 |};
+
+public const string CODE_RESOURCE_INVALID_FORMAT = "UK.OBIE.Resource.InvalidFormat";
+public const string CODE_HEADER_INVALID = "UK.OBIE.Header.Invalid";
+public const string CODE_FIELD_INVALID = "UK.OBIE.Field.Invalid";
+public const string CODE_FIELD_MISSING = "UK.OBIE.Field.Missing";

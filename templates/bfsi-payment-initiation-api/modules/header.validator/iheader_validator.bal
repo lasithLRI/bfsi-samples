@@ -7,9 +7,6 @@
 // For specific language governing the permissions and limitations under
 // this license, please see the license as well as any agreement you’ve
 // entered into with WSO2 governing the purchase of this software and any
-// associated services.
-
-import wso2bfsi/wso2.bfsi.demo.backend.model;
 
 # IHeaderValidator acts as an interface. This is implemented by `HeaderValidator` class.
 public type IHeaderValidator object {

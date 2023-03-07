@@ -9,8 +9,6 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import wso2bfsi/wso2.bfsi.demo.backend.model;
-
 # This class is used in the `RequestInterceptor' to implement the`Chain of responsibility` pattern
 public class HeaderValidator {
     private IHeaderValidator[] validators;

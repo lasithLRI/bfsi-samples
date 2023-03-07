@@ -10,7 +10,6 @@
 // associated services.
 
 import ballerina/regex;
-import wso2bfsi/wso2.bfsi.demo.backend.model;
 
 # Validates UUIDs
 public class UUIDValidator {

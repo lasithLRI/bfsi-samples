@@ -11,6 +11,7 @@
 
 import ballerina/log;
 import wso2bfsi/wso2.bfsi.demo.backend.model;
+import bfsi_payment_initiation_api.util;
 
 # Validates Debtor Account
 public class DebtorAccountValidator {
@@ -32,11 +33,11 @@ public class DebtorAccountValidator {
         log:printInfo("Executing DebtorAccountValidator");
 
         if (self.payload == "") {
-            return error("Payload is missing", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+            return error("Payload is missing", ErrorCode = util:CODE_FIELD_MISSING);
         }
         if (self.path == "") {
             log:printError("Payload is missing");
-            return error("Path is missing", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+            return error("Path is missing", ErrorCode = util:CODE_FIELD_MISSING);
         }
         do {
             model:DebtorAccount|error|() debtorAccount = check extractDebtorAccount(self.payload, self.path);
@@ -45,27 +46,27 @@ public class DebtorAccountValidator {
                 return ();
             }
             if (debtorAccount is error) {
-                return error("Debtor Account is missing", ErrorCode = "UK.OBIE.Field.Missing");
+                return error("Debtor Account is missing", ErrorCode = util:CODE_FIELD_MISSING);
             }
 
             if (debtorAccount.SchemeName == "") {
-                return error("Debtor Account SchemeName is missing", ErrorCode = "UK.OBIE.Field.Missing");
+                return error("Debtor Account SchemeName is missing", ErrorCode = util:CODE_FIELD_MISSING);
             } else {
                 if (debtorAccount.SchemeName != "UK.OBIE.IBAN" &&
                 debtorAccount.SchemeName != "UK.OBIE.SortCodeAccountNumber") {
-                    return error("Debtor Account SchemeName is invalid", ErrorCode = "UK.OBIE.Field.Invalid");
+                    return error("Debtor Account SchemeName is invalid", ErrorCode = util:CODE_FIELD_INVALID);
                 }
             }
 
             if (debtorAccount.Identification == "") {
-                return error("Debtor Account Identification is missing", ErrorCode = "UK.OBIE.Field.Missing");
+                return error("Debtor Account Identification is missing", ErrorCode = util:CODE_FIELD_MISSING);
             } else {
                 if (debtorAccount.Identification.length() > 256) {
-                    return error("Debtor Account Identification is invalid", ErrorCode = "UK.OBIE.Field.Invalid");
+                    return error("Debtor Account Identification is invalid", ErrorCode = util:CODE_FIELD_INVALID);
                 }
             }
         } on fail var e {
-            return error(e.message(), ErrorCode = "UK.OBIE.Field.Invalid");
+            return error(e.message(), ErrorCode = util:CODE_FIELD_INVALID);
         }
         return ();
     }

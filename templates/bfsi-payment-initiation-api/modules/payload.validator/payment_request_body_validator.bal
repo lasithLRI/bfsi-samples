@@ -11,6 +11,7 @@
 
 import ballerina/log;
 import wso2bfsi/wso2.bfsi.demo.backend.model;
+import bfsi_payment_initiation_api.util;
 
 # Validates Payment Type
 public class PaymentRequestBodyValidator {
@@ -32,22 +33,22 @@ public class PaymentRequestBodyValidator {
         log:printInfo("Executing PaymentRequestBodyValidator");
 
         if (self.payload == "") {
-            return error("Payload is empty", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+            return error("Payload is empty", ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
         }
         if self.payload is json {
             json payload = <json>self.payload;
             if (payload.Data == "" || payload.Data == null) {
-                return error("Request Payload is not in correct JSON format", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+                return error("Request Payload is not in correct JSON format", ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
             }
 
             if (payload.Data is json) {
                 if (payload.Data.Initiation is json) {
                     return ();
                 } else {
-                    return error("Request Payload is not in correct JSON format", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+                    return error("Request Payload is not in correct JSON format", ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
                 }
             } else {
-                return error("Request Payload is not in correct JSON format", ErrorCode = "UK.OBIE.Resource.InvalidFormat");
+                return error("Request Payload is not in correct JSON format", ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
             }
         }
 

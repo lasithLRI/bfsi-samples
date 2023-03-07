@@ -10,7 +10,6 @@
 // associated services.
 
 import ballerina/time;
-import wso2bfsi/wso2.bfsi.demo.backend.model;
 
 # Validates IP addresses
 public class AuthDateVallidator {

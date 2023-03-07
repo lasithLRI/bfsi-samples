@@ -10,10 +10,10 @@
 // associated services.
 
 import ballerina/http;
+import bfsi_payment_initiation_api.util;
 import bfsi_payment_initiation_api.header.validator;
 
-import wso2bfsi/wso2.bfsi.demo.backend.model;
-
+# Request interceptor to pre-process every API interaction.
 public service class RequestInterceptor {
     *http:RequestInterceptor;
 
@@ -31,7 +31,7 @@ public service class RequestInterceptor {
             .validate();
 
         if (headerValidatorResult is error) {
-            return error(headerValidatorResult.message(), ErrorCode = "UK.OBIE.HEADER.INVALID");
+            return error(headerValidatorResult.message(), ErrorCode = util:CODE_HEADER_INVALID);
         }
 
         return ctx.next();
