@@ -40,7 +40,7 @@ public class AuthDateVallidator {
         }
         time:Seconds seconds = time:utcDiffSeconds(utc1, utc2);
 
-        if seconds > <time:Seconds>0 {
+        if seconds > 0d {
             return ();
         } else {
             return error("Invalid Date found in the header");
