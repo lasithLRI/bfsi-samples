@@ -26,7 +26,7 @@ public class AuthDateVallidator {
     #
     # + return - Returns an error if the header value is invalid
     isolated function validate() returns error? {
-        if (self.header == "") {
+        if self.header == "" {
             // This header is optional. hence, return true
             return ();
         }
