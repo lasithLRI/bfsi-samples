@@ -55,10 +55,6 @@ public isolated function getRandomId() returns string {
     return uuid:createType4AsString();
 }
 
-public type ErrorModel record {
-    string ErrorCode;
-};
-
 # Get Domestic Payment Initiation payload.
 # 
 # + return - a domestic payment initiation payload.
@@ -230,6 +226,11 @@ public isolated function getInternatioanlStandingOrderPaymentInitiation() return
     "CurrencyOfTransfer":"EUR"
 };
 
+# Exract creditor account from the payload.
+# 
+# + payload - the payload
+# + path - the path
+# + return - the creditor account
 public isolated function extractCreditorAccount(anydata payload, string path) returns model:CreditorAccount|error {
 
     if (path.includes("domestic-payment")) {
@@ -267,6 +268,11 @@ public isolated function extractCreditorAccount(anydata payload, string path) re
     }
 }
 
+# Exract debtor account from the payload.
+# 
+# + payload - the payload
+# + path - the path
+# + return - the creditor account
 public isolated function extractDebtorAccount(anydata payload, string path) returns model:DebtorAccount|error|() {
 
     if (path.includes("domestic-payment")) {
@@ -330,6 +336,10 @@ public isolated function extractDebtorAccount(anydata payload, string path) retu
     }
 }
 
+# Exract Domestic Payment Initiation from the payload.
+# 
+# + payload - the payload
+# + return - the Domestic Payment Initiation
 public isolated function extractDomesticPaymentInitiation(anydata payload) returns model:DomesticPaymentInitiation|error {
     model:DomesticPaymentRequest request = check payload.cloneWithType();
     model:DomesticPaymentRequestData data = check request.Data.cloneWithType();
@@ -338,6 +348,10 @@ public isolated function extractDomesticPaymentInitiation(anydata payload) retur
     return initiation;
 }
 
+# Exract Domestic Scheduled Payment Initiation from the payload.
+# 
+# + payload - the payload
+# + return - the Domestic Scheduled Payment Initiation
 public isolated function extractDomesticScheduledPaymentInitiation(anydata payload) returns model:DomesticScheduledPaymentInitiation|error {
     model:DomesticScheduledPaymentRequest request = check payload.cloneWithType();
     model:DomesticScheduledPaymentData data = check request.Data.cloneWithType();
@@ -346,6 +360,10 @@ public isolated function extractDomesticScheduledPaymentInitiation(anydata paylo
     return initiation;
 }
 
+# Exract Domestic Standing Order Payment Initiation from the payload.
+# 
+# + payload - the payload
+# + return - the Domestic Standing Order Payment Initiation
 public isolated function extractDomesticStandingOrderInitiation(anydata payload) returns model:DomesticStandingOrderInitiation|error {
     model:DomesticStandingOrderRequest request = check payload.cloneWithType();
     model:DomesticStandingOrderData data = check request.Data.cloneWithType();
@@ -354,6 +372,10 @@ public isolated function extractDomesticStandingOrderInitiation(anydata payload)
     return initiation;
 }
 
+# Exract International Payment Initiation from the payload.
+# 
+# + payload - the payload
+# + return - the International Payment Initiation
 public isolated function extractInternationalPaymentInitiation(anydata payload) returns model:InternationalPaymentInitiation|error {
     model:InternationalPaymentRequest request = check payload.cloneWithType();
     model:InternationalPaymentData data = check request.Data.cloneWithType();
@@ -362,6 +384,10 @@ public isolated function extractInternationalPaymentInitiation(anydata payload) 
     return initiation;
 }
 
+# Exract International Scheduled Payment Initiation from the payload.
+# 
+# + payload - the payload
+# + return - the International Scheduled Payment Initiation
 public isolated function extractInternationalScheduledPaymentInitiation(anydata payload) returns model:InternationalScheduledPaymentInitiation|error {
     model:InternationalScheduledPaymentRequest request = check payload.cloneWithType();
     model:InternationalScheduledPaymentData data = check request.Data.cloneWithType();
@@ -370,6 +396,10 @@ public isolated function extractInternationalScheduledPaymentInitiation(anydata 
     return initiation;
 }
 
+# Exract International Standing Order Payment Initiation from the payload.
+# 
+# + payload - the payload
+# + return - the International Standing Order Payment Initiation
 public isolated function extractInternationalStandingOrderInitiation(anydata payload) returns model:InternationalStandingOrderInitiation|error {
     model:InternationalStandingOrderRequest request = check payload.cloneWithType();
     model:InternationalStandingOrderData data = check request.Data.cloneWithType();
@@ -377,6 +407,10 @@ public isolated function extractInternationalStandingOrderInitiation(anydata pay
     return initiation;
 }
 
+# Exract File Payment Initiation from the payload.
+# 
+# + payload - the payload
+# + return - the File Payment Initiation
 public isolated function extractFilePaymentInitiation(anydata payload) returns model:FilePaymentInitiation|error {
     model:FilePaymentRequest request = check payload.cloneWithType();
     model:FilePaymentData data = check request.Data.cloneWithType();
