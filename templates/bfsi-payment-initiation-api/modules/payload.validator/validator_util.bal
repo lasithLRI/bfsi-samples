@@ -9,7 +9,7 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import wso2bfsi/wso2.bfsi.demo.backend.model;
+import bfsi_payment_initiation_api.model;
 
 isolated function extractCreditorAccount(anydata payload, string path) returns model:CreditorAccount|error {
 

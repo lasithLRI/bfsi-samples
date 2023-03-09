@@ -25,7 +25,7 @@ public class IpAddressValidator {
     # Validates the IP address
     #
     # + return - Returns an error if the IP address is invalid
-    isolated function validate() returns ()|error? {
+    isolated function validate() returns error? {
         if (self.header == "") {
             // This header is optional. hence, return true
             return ();

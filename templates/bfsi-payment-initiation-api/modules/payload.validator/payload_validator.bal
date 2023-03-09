@@ -9,7 +9,7 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import wso2bfsi/wso2.bfsi.demo.backend.model;
+import bfsi_payment_initiation_api.model;
 
 # This class is used in the `RequestInterceptor' to implement the`Chain of responsibility` pattern
 public class PayloadValidator {
@@ -32,9 +32,9 @@ public class PayloadValidator {
     # Validates the payload
     #
     # + return - An `error` if the validation fails
-    public isolated function validate() returns ()|model:InvalidPayloadError {
+    public isolated function validate() returns model:InvalidPayloadError? {
         foreach IPayloadValidator validator in self.validators {
-            ()|model:InvalidPayloadError result = validator.validate();
+            model:InvalidPayloadError? result = validator.validate();
             if result is error {
                 return result;
             }

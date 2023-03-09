@@ -12,5 +12,5 @@
 public type IHeaderValidator object {
     string header;
 
-    isolated function validate() returns ()|error?;
+    isolated function validate() returns error?;
 };

@@ -9,12 +9,19 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import bfsi_payment_initiation_api.model;
+import ballerina/constraint;
 
-# IPayloadValidator acts as an interface. This is implemented by `PayloadValidator` class.
-public type IPayloadValidator object {
-    anydata payload;
-    string path;
+#Represents a file payment request payload.
+public type FilePaymentRequest record {
+    #Represents data of the file payment request.
+    FilePaymentData Data;
+};
 
-    isolated function validate() returns model:InvalidPayloadError?;
+#Represents data of the file payment request.
+public type FilePaymentData record {
+    # OB: Unique identification as assigned by the bank to uniquely identify the consent resource.
+    @constraint:String {maxLength: 128, minLength: 1}
+    string ConsentId;
+    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds using a payment file.
+    FilePaymentInitiation Initiation;
 };

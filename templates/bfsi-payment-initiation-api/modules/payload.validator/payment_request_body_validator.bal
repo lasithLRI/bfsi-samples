@@ -10,7 +10,7 @@
 // associated services.
 
 import ballerina/log;
-import wso2bfsi/wso2.bfsi.demo.backend.model;
+import bfsi_payment_initiation_api.model;
 import bfsi_payment_initiation_api.util;
 
 # Validates Payment Type
@@ -29,7 +29,7 @@ public class PaymentRequestBodyValidator {
     # Validates the payload
     #
     # + return - Returns error if validation fails
-    isolated function validate() returns ()|model:InvalidPayloadError {
+    isolated function validate() returns model:InvalidPayloadError? {
         log:printInfo("Executing PaymentRequestBodyValidator");
 
         if (self.payload == "") {

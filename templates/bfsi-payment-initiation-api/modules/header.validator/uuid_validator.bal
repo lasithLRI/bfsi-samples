@@ -26,7 +26,7 @@ public class UUIDValidator {
     # Validates the UUID
     #
     # + return - Returns an error if the UUID is invalid
-    isolated function validate() returns ()|error? {
+    isolated function validate() returns error? {
         if (self.header == "") {
             // This header is optional. hence, return true
             return ();

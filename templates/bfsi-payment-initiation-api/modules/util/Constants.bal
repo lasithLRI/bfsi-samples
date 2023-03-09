@@ -9,12 +9,11 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import bfsi_payment_initiation_api.model;
-
-# IPayloadValidator acts as an interface. This is implemented by `PayloadValidator` class.
-public type IPayloadValidator object {
-    anydata payload;
-    string path;
-
-    isolated function validate() returns model:InvalidPayloadError?;
-};
+public const EMPTY_REQUEST_BODY = "Request Body cannot be empty";
+public const INVALID_PAYMENT_ID = "Payment ID is invalid";
+public const EMPTY_PAYMENT_ID = "Payment ID cannot be empty";
+public const CODE_RESOURCE_INVALID_FORMAT = "UK.OBIE.Resource.InvalidFormat";
+public const CODE_HEADER_INVALID = "UK.OBIE.Header.Invalid";
+public const CODE_FIELD_INVALID = "UK.OBIE.Field.Invalid";
+public const CODE_FIELD_MISSING = "UK.OBIE.Field.Missing";
+public const CODE_INTERNAL_SERVER_ERROR = "UK.OBIE.InternalServerError";

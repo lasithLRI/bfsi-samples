@@ -37,6 +37,9 @@ version = "1.0.2"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
+modules = [
+	{org = "ballerina", packageName = "constraint", moduleName = "constraint"}
+]
 
 [[package]]
 org = "ballerina"
@@ -253,6 +256,9 @@ dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "time"}
 ]
+modules = [
+	{org = "ballerina", packageName = "random", moduleName = "random"}
+]
 
 [[package]]
 org = "ballerina"
@@ -305,6 +311,9 @@ dependencies = [
 	{org = "ballerina", name = "regex"},
 	{org = "ballerina", name = "time"}
 ]
+modules = [
+	{org = "ballerina", packageName = "uuid", moduleName = "uuid"}
+]
 
 [[package]]
 org = "ballerinai"
@@ -323,17 +332,22 @@ org = "wso2bfsi"
 name = "bfsi_payment_initiation_api"
 version = "1.0.0"
 dependencies = [
+	{org = "ballerina", name = "constraint"},
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "log"},
+	{org = "ballerina", name = "random"},
 	{org = "ballerina", name = "regex"},
 	{org = "ballerina", name = "time"},
+	{org = "ballerina", name = "uuid"},
 	{org = "ballerinai", name = "observe"},
 	{org = "wso2bfsi", name = "wso2.bfsi.demo.backend"}
 ]
 modules = [
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api"},
+	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.client"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.header.validator"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.interceptor"},
+	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.model"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.payload.validator"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.util"}
 ]

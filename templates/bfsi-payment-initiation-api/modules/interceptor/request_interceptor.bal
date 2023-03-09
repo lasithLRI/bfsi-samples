@@ -14,7 +14,7 @@ import bfsi_payment_initiation_api.util;
 import bfsi_payment_initiation_api.header.validator;
 
 # Request interceptor to pre-process every API interaction.
-public service class RequestInterceptor {
+public isolated service class RequestInterceptor {
     *http:RequestInterceptor;
 
     // This will return a validation error if you do not send valid header values. 

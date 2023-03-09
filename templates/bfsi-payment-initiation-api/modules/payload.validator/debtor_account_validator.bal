@@ -10,7 +10,7 @@
 // associated services.
 
 import ballerina/log;
-import wso2bfsi/wso2.bfsi.demo.backend.model;
+import bfsi_payment_initiation_api.model;
 import bfsi_payment_initiation_api.util;
 
 # Validates Debtor Account
@@ -29,7 +29,7 @@ public class DebtorAccountValidator {
     # Validates the Debtor Account
     #
     # + return - Returns error if validation fails
-    isolated function validate() returns ()|model:InvalidPayloadError {
+    isolated function validate() returns model:InvalidPayloadError? {
         log:printInfo("Executing DebtorAccountValidator");
 
         if (self.payload == "") {

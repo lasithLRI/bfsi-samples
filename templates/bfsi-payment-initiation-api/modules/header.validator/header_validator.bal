@@ -30,7 +30,7 @@ public class HeaderValidator {
     # This method is used to validate the headers
     #
     # + return - Returns an error if the validation fails
-    public isolated function validate() returns ()|error? {
+    public isolated function validate() returns error? {
         foreach IHeaderValidator validator in self.validators {
             ()|error? result = validator.validate();
             if result is error {
