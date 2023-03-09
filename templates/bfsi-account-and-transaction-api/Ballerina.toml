@@ -3,7 +3,6 @@
 
 [package]
   template = true
-  visibility="private"
   org = "wso2bfsi"
   authors = ["WSO2 BFSI"]
   keywords = ["Kind/Sample", "Type/RestApi", "Category/Service", "Internal/http", "Cost/Free", "Vertical/bfsi"]

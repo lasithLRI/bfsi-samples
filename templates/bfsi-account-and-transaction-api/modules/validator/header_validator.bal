@@ -9,10 +9,44 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import bfsi_account_and_transaction_api.model;
+import ballerina/regex;
 
-# IHeaderValidator acts as an interface. This is implemented by `HeaderValidator` class.
-public type IHeaderValidator object {
-    string header;
-    public isolated function validate() returns model:InvalidHeaderError?;
-};
+import bfsi_account_and_transaction_api.model;
+import bfsi_account_and_transaction_api.util;
+
+const string PATTERN_IP_V4 = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}" +
+    "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
+const string PATTERN_IP_V6 = "((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}";
+const string PATTERN_UUID = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
+
+# This class is used in the `RequestInterceptor` to validate request headers.
+public isolated class HeaderValidator {
+
+    # Validates the ip address request headers.
+    #
+    # + header - The header ip address to be validated.
+    # + return - The result of the validation.
+    public isolated function validateIpAddressHeader(string header) returns model:InvalidHeaderError? {
+        if !util:isEmpty(header) {
+            boolean isIpv4 = regex:matches(header, PATTERN_IP_V4);
+            boolean isIpv6 = regex:matches(header, PATTERN_IP_V6);
+
+            if !isIpv4 && !isIpv6 {
+                return error("Found invalid ip address in headers", ErrorCode = util:CODE_INVALID_REQUEST_HEADER);
+            }
+        }
+    };
+
+    # Validates the UUID request headers.
+    #
+    # + header - The header UUID to be validated.
+    # + return - The result of the validation.
+    public isolated function validateUUIDHeader(string header) returns model:InvalidHeaderError? {
+        if !util:isEmpty(header) {
+            boolean isUuid = regex:matches(header, PATTERN_UUID);
+            if !isUuid {
+                return error("Found invalid UUID in headers", ErrorCode = util:CODE_INVALID_REQUEST_HEADER);
+            }
+        }
+    }
+}
