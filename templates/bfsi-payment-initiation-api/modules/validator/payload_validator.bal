@@ -23,17 +23,17 @@ public isolated class PayloadValidator {
     public isolated function validatePayload(anydata payload) returns model:InvalidPayloadError? {
         log:printInfo("Executing PaymentRequestBodyValidator");
 
-        if (payload == "") {
+        if payload == "" {
             return error("Payload is empty", ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
         }
         if payload is json {
-            if (payload.Data == "" || payload.Data == null) {
+            if payload.Data == "" || payload.Data == null {
                 return error("Request Payload is not in correct JSON format", ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
             }
 
-            if (payload.Data is json) {
-                if (payload.Data.Initiation is json) {
-                    return ();
+            if payload.Data is json {
+                if payload.Data.Initiation is json {
+                    return;
                 } else {
                     return error("Request Payload is not in correct JSON format", ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
                 }
@@ -52,21 +52,17 @@ public isolated class PayloadValidator {
                             returns model:InvalidPayloadError? {
         log:printInfo("Executing CreditorAccountValidator");
 
-        if (creditorAccount.SchemeName == "") {
+        if creditorAccount.SchemeName == "" {
             return error("Creditor Account SchemeName is missing", ErrorCode = util:CODE_FIELD_MISSING);
-        } else {
-            if (creditorAccount.SchemeName != "UK.OBIE.IBAN" &&
-                                creditorAccount.SchemeName != "UK.OBIE.SortCodeAccountNumber") {
-                return error("Creditor Account SchemeName is invalid", ErrorCode = util:CODE_FIELD_INVALID);
-            }
+        } else if creditorAccount.SchemeName != "UK.OBIE.IBAN" &&
+                                creditorAccount.SchemeName != "UK.OBIE.SortCodeAccountNumber" {
+            return error("Creditor Account SchemeName is invalid", ErrorCode = util:CODE_FIELD_INVALID);
         }
 
-        if (creditorAccount.Identification == "") {
+        if creditorAccount.Identification == "" {
             return error("Creditor Account Identification is missing", ErrorCode = util:CODE_FIELD_MISSING);
-        } else {
-            if (creditorAccount.Identification.length() > 256) {
-                return error("Creditor Account Identification is invalid", ErrorCode = util:CODE_FIELD_INVALID);
-            }
+        } else if creditorAccount.Identification.length() > 256 {
+            return error("Creditor Account Identification is invalid", ErrorCode = util:CODE_FIELD_INVALID);
         }
     }
 
@@ -78,21 +74,16 @@ public isolated class PayloadValidator {
                             returns model:InvalidPayloadError? {
         log:printInfo("Executing DebtorAccountValidator");
         
-        if (debtorAccount.SchemeName == "") {
+        if debtorAccount.SchemeName == "" {
             return error("Debtor Account SchemeName is missing", ErrorCode = util:CODE_FIELD_MISSING);
-        } else {
-            if (debtorAccount.SchemeName != "UK.OBIE.IBAN" &&
-            debtorAccount.SchemeName != "UK.OBIE.SortCodeAccountNumber") {
-                return error("Debtor Account SchemeName is invalid", ErrorCode = util:CODE_FIELD_INVALID);
-            }
+        } else if debtorAccount.SchemeName != "UK.OBIE.IBAN" && debtorAccount.SchemeName != "UK.OBIE.SortCodeAccountNumber" {
+            return error("Debtor Account SchemeName is invalid", ErrorCode = util:CODE_FIELD_INVALID);
         }
 
-        if (debtorAccount.Identification == "") {
+        if debtorAccount.Identification == "" {
             return error("Debtor Account Identification is missing", ErrorCode = util:CODE_FIELD_MISSING);
-        } else {
-            if (debtorAccount.Identification.length() > 256) {
-                return error("Debtor Account Identification is invalid", ErrorCode = util:CODE_FIELD_INVALID);
-            }
+        } else if debtorAccount.Identification.length() > 256 {
+            return error("Debtor Account Identification is invalid", ErrorCode = util:CODE_FIELD_INVALID);
         }
     }
 }

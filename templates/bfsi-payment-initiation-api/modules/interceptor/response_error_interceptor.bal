@@ -35,7 +35,8 @@ public isolated service class ResponseErrorInterceptor {
                 mediaType: "application/org+json",
                 body: {
                     ErrorCode: err.detail().get("ErrorCode"),
-                    Message: err.message()
+                    Message: err.message(),
+                    Path: "Path.PaymentId"
                 }
             };
         } else if err is model:PayloadParseError {
@@ -43,14 +44,16 @@ public isolated service class ResponseErrorInterceptor {
                 mediaType: "application/org+json",
                 body: {
                     ErrorCode: err.detail().get("ErrorCode"),
-                    Message: err.message()
+                    Message: err.message(),
+                    Path: "Request.Payload"
                 }
             };
         } else if err is model:InvalidPayloadError {
             return {
                 body: {
                     ErrorCode: err.detail().get("ErrorCode"),
-                        Message: err.message()
+                    Message: err.message(),
+                    Path: "Request.Payload"
                 }
             };
         }
