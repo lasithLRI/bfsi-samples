@@ -339,8 +339,7 @@ dependencies = [
 	{org = "ballerina", name = "regex"},
 	{org = "ballerina", name = "time"},
 	{org = "ballerina", name = "uuid"},
-	{org = "ballerinai", name = "observe"},
-	{org = "wso2bfsi", name = "wso2.bfsi.demo.backend"}
+	{org = "ballerinai", name = "observe"}
 ]
 modules = [
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api"},
@@ -349,26 +348,6 @@ modules = [
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.model"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.util"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.validator"}
-]
-
-[[package]]
-org = "wso2bfsi"
-name = "wso2.bfsi.demo.backend"
-version = "1.0.0"
-dependencies = [
-	{org = "ballerina", name = "constraint"},
-	{org = "ballerina", name = "http"},
-	{org = "ballerina", name = "log"},
-	{org = "ballerina", name = "mime"},
-	{org = "ballerina", name = "random"},
-	{org = "ballerina", name = "time"},
-	{org = "ballerina", name = "uuid"}
-]
-modules = [
-	{org = "wso2bfsi", packageName = "wso2.bfsi.demo.backend", moduleName = "wso2.bfsi.demo.backend"},
-	{org = "wso2bfsi", packageName = "wso2.bfsi.demo.backend", moduleName = "wso2.bfsi.demo.backend.model"},
-	{org = "wso2bfsi", packageName = "wso2.bfsi.demo.backend", moduleName = "wso2.bfsi.demo.backend.repository"},
-	{org = "wso2bfsi", packageName = "wso2.bfsi.demo.backend", moduleName = "wso2.bfsi.demo.backend.util"}
 ]
 
 

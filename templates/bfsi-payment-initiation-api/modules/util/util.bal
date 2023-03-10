@@ -10,50 +10,7 @@
 // associated services.
 
 import ballerina/http;
-import ballerina/log;
-import ballerina/random;
-import ballerina/time;
-import ballerina/uuid;
 import bfsi_payment_initiation_api.model;
-
-# + return - current date and time.
-public isolated function getDateTime() returns string {
-    return time:utcToString(time:utcNow());
-}
-
-# + return - future date and time.
-public isolated function getFutureDateTime() returns string {
-    return time:utcToString(time:utcAddSeconds(time:utcNow(), generateRandomSeconds()));
-}
-
-# + return - past date and time.
-public isolated function getPastDateTime() returns string {
-    return time:utcToString(time:utcAddSeconds(time:utcNow(), generateRandomSeconds(true)));
-}
-
-# + isNegative - if true, return a negative random time in seconds.
-# + return - a random time in seconds.
-isolated function generateRandomSeconds(boolean isNegative = false) returns time:Seconds {
-    int randomSeconds;
-    do {
-        randomSeconds = check random:createIntInRange(86400, 864000);
-    } on fail var e {
-        log:printDebug("failed to generate a random integer. Caused by, ", e);
-        randomSeconds = 86400;
-    }
-
-    return isNegative ? <time:Seconds>(randomSeconds * -1) : <time:Seconds>randomSeconds;
-}
-
-# + return - a random amount.
-public isolated function getRandomAmount() returns string {
-    return (random:createDecimal() * 1000).toFixedString(2);
-}
-
-# + return - a random UUID.
-public isolated function getRandomId() returns string {
-    return uuid:createType4AsString();
-}
 
 # Get Domestic Payment Initiation payload.
 #

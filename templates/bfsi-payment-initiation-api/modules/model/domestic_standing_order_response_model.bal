@@ -10,7 +10,6 @@
 // associated services.
 
 import ballerina/constraint;
-import wso2.bfsi.demo.backend.util;
 
 # Set of elements used to define the domestic standing order response.
 public type DomesticStandingOrderResponse record {
@@ -33,13 +32,13 @@ public type DomesticStandingOrderResponseData record {
     # Date and time at which the resource was created.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
     # All date-time fields in responses must include the timezone. An example is below:
     # 2017-04-05T10:43:07+00:00
-    string CreationDateTime = util:getPastDateTime();
+    string CreationDateTime = getPastDateTime();
     # Specifies the status of the payment order resource.
     string Status;
     # Date and time at which the resource status was updated.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
     # All date-time fields in responses must include the timezone. An example is below:
     # 2017-04-05T10:43:07+00:00
-    string StatusUpdateDateTime = util:getPastDateTime();
+    string StatusUpdateDateTime = getPastDateTime();
     # Unambiguous identification of the refund account to which a refund will be made as a result of the transaction.
     DataRefund Refund?;
     # Set of elements used to provide details of a charge for the payment initiation.

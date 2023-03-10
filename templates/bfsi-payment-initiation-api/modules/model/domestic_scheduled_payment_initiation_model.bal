@@ -10,7 +10,6 @@
 // associated services.
 
 import ballerina/constraint;
-import wso2.bfsi.demo.backend.util;
 
 # The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for a single scheduled domestic payment.
 public type DomesticScheduledPaymentInitiation record {
@@ -30,7 +29,7 @@ public type DomesticScheduledPaymentInitiation record {
     # Usage: This is the date on which the debtor's account is to be debited.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
     # All date-time fields in responses must include the timezone. An example is below:
     # 2017-04-05T10:43:07+00:00
-    string RequestedExecutionDateTime = util:getFutureDateTime();
+    string RequestedExecutionDateTime = getFutureDateTime();
     # Amount of money to be moved between the debtor and creditor, before deduction of charges, expressed in the currency as ordered by the initiating party.
     # Usage: This amount has to be transported unchanged through the transaction chain.
     Amount InstructedAmount;

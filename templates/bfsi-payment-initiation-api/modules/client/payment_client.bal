@@ -57,7 +57,7 @@ public isolated client class PaymentClient {
         return {
             Data: {
                 DomesticPaymentId: domesticPaymentId,
-                ConsentId: util:getRandomId(),
+                ConsentId: model:getRandomId(),
                 Status: "AcceptedSettlementInProcess",
                 Initiation: check initiation.fromJsonWithType()
             },
@@ -108,7 +108,7 @@ public isolated client class PaymentClient {
         return {
             Data: {
                 DomesticScheduledPaymentId: domesticScheduledPaymentId,
-                ConsentId: util:getRandomId(),
+                ConsentId: model:getRandomId(),
                 Status: "AcceptedSettlementInProcess",
                 Initiation: check initiation.fromJsonWithType()
             },
@@ -158,7 +158,7 @@ public isolated client class PaymentClient {
         return {
             Data: {
                 DomesticStandingOrderId: domesticStandingOrderId,
-                ConsentId: util:getRandomId(),
+                ConsentId: model:getRandomId(),
                 Status: "AcceptedSettlementInProcess",
                 Initiation: check initiation.fromJsonWithType()
             },
@@ -209,7 +209,7 @@ public isolated client class PaymentClient {
         return {
             Data: {
                 FilePaymentId: filePaymentId,
-                ConsentId: util:getRandomId(),
+                ConsentId: model:getRandomId(),
                 Status: "AcceptedSettlementInProcess",
                 Initiation: check initiation.fromJsonWithType()
             },
@@ -259,7 +259,7 @@ public isolated client class PaymentClient {
         return {
             Data: {
                 InternationalPaymentId: internationalPaymentId,
-                ConsentId: util:getRandomId(),
+                ConsentId: model:getRandomId(),
                 Status: "AcceptedSettlementInProcess",
                 Initiation: check initiation.fromJsonWithType()
             },
@@ -309,7 +309,7 @@ public isolated client class PaymentClient {
         return {
             Data: {
                 InternationalScheduledPaymentId: internationalScheduledPaymentId,
-                ConsentId: util:getRandomId(),
+                ConsentId: model:getRandomId(),
                 Status: "AcceptedSettlementInProcess",
                 Initiation: check initiation.fromJsonWithType()
             },
@@ -359,7 +359,7 @@ public isolated client class PaymentClient {
         return {
             Data: {
                 InternationalStandingOrderId: internationalStandingOrderId,
-                ConsentId: util:getRandomId(),
+                ConsentId: model:getRandomId(),
                 Status: "AcceptedSettlementInProcess",
                 Initiation: check initiation.fromJsonWithType()
             },
@@ -416,14 +416,14 @@ public isolated client class PaymentClient {
             PaymentTransactionId: id,
             Status: "Accepted",
             StatusDetail: statusDetail,
-            StatusUpdateDateTime: util:getDateTime()
+            StatusUpdateDateTime: model:getDateTime()
         };
 
         model:PaymentDetailsResponseDataPaymentStatus paymentStatusAccCP = {
             PaymentTransactionId: id,
             Status: "AcceptedCustomerProfile",
             StatusDetail: statusDetail,
-            StatusUpdateDateTime: util:getDateTime()
+            StatusUpdateDateTime: model:getDateTime()
         };
         return {
             PaymentStatus: [paymentStatusAcc, paymentStatusAccCP]

@@ -10,7 +10,6 @@
 // associated services.
 
 import ballerina/constraint;
-import wso2.bfsi.demo.backend.util;
 
 # The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for a domestic standing order.
 public type DomesticStandingOrderInitiation record {
@@ -52,7 +51,7 @@ public type DomesticStandingOrderInitiation record {
     # The date on which the first payment for a Standing Order schedule will be made.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
     # All date-time fields in responses must include the timezone. An example is below:
     # 2017-04-05T10:43:07+00:00
-    string FirstPaymentDateTime = util:getFutureDateTime();
+    string FirstPaymentDateTime = getFutureDateTime();
     # The date on which the first recurring payment for a Standing Order schedule will be made. 
     # Usage: This must be populated only if the first recurring date is different to the first payment date.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
     # All date-time fields in responses must include the timezone. An example is below:

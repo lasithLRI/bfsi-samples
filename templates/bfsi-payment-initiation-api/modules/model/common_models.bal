@@ -9,7 +9,10 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import wso2.bfsi.demo.backend.util;
+import ballerina/log;
+import ballerina/random;
+import ballerina/time;
+import ballerina/uuid;
 
 # Links relevant to the payload.
 public type Links record {
@@ -42,7 +45,7 @@ public type Meta record {
 # Amount of money of the cash balance.
 public type Amount record {|
     # A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.
-    string Amount = util:getRandomAmount();
+    string Amount = getRandomAmount();
     # A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 (Codes for the representation of currencies and funds).
     string Currency = "USD";
 |};
@@ -52,7 +55,7 @@ public type CreditorAccount record {
     # Name of the identification scheme, in a coded form as published in an external list.
     string SchemeName;
     # Beneficiary account identification.
-    string Identification = util:getRandomId();
+    string Identification = getRandomId();
     # The account name is the name or names of the account owner(s) represented at an account level, as displayed by the bank's online channels.
     # Note, the account name is not the product name or the nickname of the account.
     string Name?;
@@ -66,7 +69,7 @@ public type DebtorAccount record {
     # Name of the identification scheme, in a coded form as published in an external list.
     string SchemeName;
     # Beneficiary account identification.
-    string Identification = util:getRandomId();
+    string Identification = getRandomId();
     # The account name is the name or names of the account owner(s) represented at an account level, as displayed by the bank's online channels.
     # Note, the account name is not the product name or the nickname of the account.
     string Name?;
@@ -107,3 +110,42 @@ public type PostalAddress record {
     # Describes address line list
     string[] AddressLine?;
 };
+
+# + return - current date and time.
+public isolated function getDateTime() returns string {
+    return time:utcToString(time:utcNow());
+}
+
+# + return - future date and time.
+public isolated function getFutureDateTime() returns string {
+    return time:utcToString(time:utcAddSeconds(time:utcNow(), generateRandomSeconds()));
+}
+
+# + return - past date and time.
+public isolated function getPastDateTime() returns string {
+    return time:utcToString(time:utcAddSeconds(time:utcNow(), generateRandomSeconds(true)));
+}
+
+# + isNegative - if true, return a negative random time in seconds.
+# + return - a random time in seconds.
+isolated function generateRandomSeconds(boolean isNegative = false) returns time:Seconds {
+    int randomSeconds;
+    do {
+        randomSeconds = check random:createIntInRange(86400, 864000);
+    } on fail var e {
+        log:printDebug("failed to generate a random integer. Caused by, ", e);
+        randomSeconds = 86400;
+    }
+
+    return isNegative ? <time:Seconds>(randomSeconds * -1) : <time:Seconds>randomSeconds;
+}
+
+# + return - a random amount.
+public isolated function getRandomAmount() returns string {
+    return (random:createDecimal() * 1000).toFixedString(2);
+}
+
+# + return - a random UUID.
+public isolated function getRandomId() returns string {
+    return uuid:createType4AsString();
+}
