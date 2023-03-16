@@ -17,9 +17,9 @@ import bfsi_payment_initiation_api.model;
 import bfsi_payment_initiation_api.util;
 
 // Request interceptors handle HTTP requests globally 
-interceptor:RequestInterceptor requestInterceptor = new;
-interceptor:RequestErrorInterceptor requestErrorInterceptor = new;
-interceptor:ResponseErrorInterceptor responseErrorInterceptor = new;
+final interceptor:RequestInterceptor requestInterceptor = new;
+final interceptor:RequestErrorInterceptor requestErrorInterceptor = new;
+final interceptor:ResponseErrorInterceptor responseErrorInterceptor = new;
 
 http:ListenerConfiguration config = {
     interceptors: [requestInterceptor, requestErrorInterceptor, responseErrorInterceptor]
