@@ -18,11 +18,10 @@ import bfsi_account_and_transaction_api.interceptor;
 import bfsi_account_and_transaction_api.model;
 
 // Request interceptors handle HTTP requests globally 
-interceptor:RequestInterceptor requestInterceptor = new;
-interceptor:RequestErrorInterceptor requestErrorInterceptor = new;
-interceptor:ResponseErrorInterceptor ResponseErrorInterceptor = new;
-http:ListenerConfiguration config = {
-    host: "localhost",
+final interceptor:RequestInterceptor requestInterceptor = new;
+final interceptor:RequestErrorInterceptor requestErrorInterceptor = new;
+final interceptor:ResponseErrorInterceptor ResponseErrorInterceptor = new;
+final http:ListenerConfiguration config = {
     interceptors: [requestInterceptor, requestErrorInterceptor, ResponseErrorInterceptor]
 };
 listener http:Listener interceptorListener = new (9090, config);
@@ -37,9 +36,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - account list or error
-    isolated resource function get accounts(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:AccountsResponse {
+    isolated resource function get accounts(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:AccountsResponse {
         log:printInfo("Retrieving all accounts");
         return self.accountClient->/accounts;
     }
@@ -52,9 +51,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account list or error
-    isolated resource function get accounts/[string accountId](@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get accounts/[string accountId](@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:AccountsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving an account for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId];
@@ -68,9 +67,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP 
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account balances list or error
-    isolated resource function get accounts/[string accountId]/balances(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:BalanceResponse|model:InvalidResourceIdError {
+    isolated resource function get accounts/[string accountId]/balances(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:BalanceResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving balances for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/balances;
     }
@@ -83,9 +82,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account beneficiaries list or error
-    isolated resource function get accounts/[string accountId]/beneficiaries(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get accounts/[string accountId]/beneficiaries(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:BeneficiariesResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving beneficiaries for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/beneficiaries;
@@ -100,8 +99,8 @@ isolated service / on interceptorListener {
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account direct debits list or error
     isolated resource function get accounts/[string accountId]/'direct\-debits(
-            @http:Header string? 'x\-fapi\-auth\-date, @http:Header string? 'x\-fapi\-customer\-ip\-address,
-            @http:Header string? 'x\-fapi\-interaction\-id, @http:Header string? 'x\-customer\-user\-agent)
+            @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
+            @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
             returns model:DirectDebitsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving direct debits for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/direct\-debits;
@@ -115,9 +114,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account offers list or error
-    isolated resource function get accounts/[string accountId]/offers(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:OffersResponse|model:InvalidResourceIdError {
+    isolated resource function get accounts/[string accountId]/offers(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:OffersResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving offers for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/offers;
     }
@@ -130,9 +129,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account parties list or error
-    isolated resource function get accounts/[string accountId]/parties(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:PartiesResponse|model:InvalidResourceIdError {
+    isolated resource function get accounts/[string accountId]/parties(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:PartiesResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving parties for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/parties;
     }
@@ -145,9 +144,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account parties list or error
-    isolated resource function get accounts/[string accountId]/party(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:PartiesResponse|model:InvalidResourceIdError {
+    isolated resource function get accounts/[string accountId]/party(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:PartiesResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving a party for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/party;
     }
@@ -160,9 +159,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account products list or error
-    isolated resource function get accounts/[string accountId]/product(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get accounts/[string accountId]/product(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:ProductsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving products for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/products;
@@ -177,8 +176,8 @@ isolated service / on interceptorListener {
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account scheduled payments list or error
     isolated resource function get accounts/[string accountId]/'scheduled\-payments(
-            @http:Header string? 'x\-fapi\-auth\-date, @http:Header string? 'x\-fapi\-customer\-ip\-address,
-            @http:Header string? 'x\-fapi\-interaction\-id, @http:Header string? 'x\-customer\-user\-agent)
+            @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
+            @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
             returns model:ScheduledPaymentsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving scheduled payments for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/scheduled\-payments;
@@ -193,8 +192,8 @@ isolated service / on interceptorListener {
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account standing orders list or error
     isolated resource function get accounts/[string accountId]/'standing\-orders(
-            @http:Header string? 'x\-fapi\-auth\-date, @http:Header string? 'x\-fapi\-customer\-ip\-address,
-            @http:Header string? 'x\-fapi\-interaction\-id, @http:Header string? 'x\-customer\-user\-agent)
+            @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
+            @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
             returns model:StandingOrdersResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving standing orders for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/standing\-orders;
@@ -208,9 +207,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account statements list or error
-    isolated resource function get accounts/[string accountId]/statements(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent, string? fromStatementDateTime, string? toStatementDateTime)
+    isolated resource function get accounts/[string accountId]/statements(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent, string? fromStatementDateTime, string? toStatementDateTime)
             returns model:StatementsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving statements for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/statements;
@@ -226,8 +225,8 @@ isolated service / on interceptorListener {
     # + statementId - the statement ID path parameter, Try S001 as the default value
     # + return - account statements list or error
     isolated resource function get accounts/[string accountId]/statements/[string statementId](
-            @http:Header string? 'x\-fapi\-auth\-date, @http:Header string? 'x\-fapi\-customer\-ip\-address,
-            @http:Header string? 'x\-fapi\-interaction\-id, @http:Header string? 'x\-customer\-user\-agent)
+            @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
+            @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
             returns model:StatementsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving statements for account Id and statement Id", accoundId = accountId,
             statementId = statementId);
@@ -244,8 +243,8 @@ isolated service / on interceptorListener {
     # + statementId - the statement ID path parameter, Try S001 as the default value
     # + return - account statements list or error
     isolated resource function get accounts/[string accountId]/statements/[string statementId]/file(
-            @http:Header string? 'x\-fapi\-auth\-date, @http:Header string? 'x\-fapi\-customer\-ip\-address,
-            @http:Header string? 'x\-fapi\-interaction\-id, @http:Header string? 'x\-customer\-user\-agent)
+            @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
+            @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
             returns http:Response|model:InvalidResourceIdError {
         log:printInfo("Retrieving statement file for account Id and statement Id", accoundId = accountId,
             statementId = statementId);
@@ -262,8 +261,8 @@ isolated service / on interceptorListener {
     # + statementId - the statement ID path parameter, Try S001 as the default value
     # + return - account transactions list or error
     isolated resource function get accounts/[string accountId]/statements/[string statementId]/transactions(
-            @http:Header string? 'x\-fapi\-auth\-date, @http:Header string? 'x\-fapi\-customer\-ip\-address,
-            @http:Header string? 'x\-fapi\-interaction\-id, @http:Header string? 'x\-customer\-user\-agent)
+            @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
+            @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
             returns model:TransactionsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving transactions for account Id and statement Id", accoundId = accountId,
             statementId = statementId);
@@ -278,9 +277,9 @@ isolated service / on interceptorListener {
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + accountId - the account ID path parameter, Try A001 as the default value
     # + return - account transactions list or error
-    isolated resource function get accounts/[string accountId]/transactions(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent, string? fromBookingDateTime, string? toBookingDateTime)
+    isolated resource function get accounts/[string accountId]/transactions(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent, string? fromBookingDateTime, string? toBookingDateTime)
             returns model:TransactionsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving transactions for account Id", accoundId = accountId);
         return self.accountClient->/accounts/[accountId]/transactions;
@@ -293,9 +292,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all balances or error
-    isolated resource function get balances(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:BalanceResponse|model:InvalidResourceIdError {
+    isolated resource function get balances(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:BalanceResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all balances");
         return self.accountClient->/balances;
     }
@@ -307,9 +306,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all beneficiaries or error
-    isolated resource function get beneficiaries(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get beneficiaries(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:BeneficiariesResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all beneficiaries");
         return self.accountClient->/beneficiaries;
@@ -322,9 +321,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all direct debits or error
-    isolated resource function get 'direct\-debits(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get 'direct\-debits(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:DirectDebitsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all direct debits");
         return self.accountClient->/direct\-debits;
@@ -337,9 +336,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all offers or error
-    isolated resource function get offers(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:OffersResponse|model:InvalidResourceIdError {
+    isolated resource function get offers(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:OffersResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all offers");
         return self.accountClient->/offers;
     }
@@ -351,9 +350,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all parties or error
-    isolated resource function get party(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent) returns model:PartiesResponse|model:InvalidResourceIdError {
+    isolated resource function get party(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent) returns model:PartiesResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all parties");
         return self.accountClient->/parties;
     }
@@ -365,9 +364,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all products or error
-    isolated resource function get products(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get products(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:ProductsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all products");
         return self.accountClient->/products;
@@ -380,9 +379,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all scheduled payments or error
-    isolated resource function get 'scheduled\-payments(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get 'scheduled\-payments(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:ScheduledPaymentsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all scheduled payments");
         return self.accountClient->/scheduled\-payments;
@@ -395,9 +394,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all standing orders or error
-    isolated resource function get 'standing\-orders(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get 'standing\-orders(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent)
             returns model:StandingOrdersResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all standing orders");
         return self.accountClient->/standing\-orders;
@@ -410,9 +409,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all statements or error
-    isolated resource function get statements(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            string? fromStatementDateTime, string? toStatementDateTime, @http:Header string? 'x\-customer\-user\-agent)
+    isolated resource function get statements(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            string? fromStatementDateTime, string? toStatementDateTime, @http:Header string? x\-customer\-user\-agent)
             returns model:StatementsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all statements");
         return self.accountClient->/statements;
@@ -425,9 +424,9 @@ isolated service / on interceptorListener {
     # + x\-fapi\-interaction\-id - an unique identifier for the interaction between TPP and bank
     # + x\-customer\-user\-agent - the user agent of the TPP
     # + return - all transactions or error
-    isolated resource function get transactions(@http:Header string? 'x\-fapi\-auth\-date,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id,
-            @http:Header string? 'x\-customer\-user\-agent, string? fromBookingDateTime, string? toBookingDateTime)
+    isolated resource function get transactions(@http:Header string? x\-fapi\-auth\-date,
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
+            @http:Header string? x\-customer\-user\-agent, string? fromBookingDateTime, string? toBookingDateTime)
             returns model:TransactionsResponse|model:InvalidResourceIdError {
         log:printInfo("Retrieving all transactions");
         return self.accountClient->/transactions;

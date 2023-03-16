@@ -16,16 +16,15 @@ import bfsi_account_and_transaction_api.validator;
 # Request interceptor to pre-process every API interaction.
 public isolated service class RequestInterceptor {
     *http:RequestInterceptor;
-    private final validator:HeaderValidator validator = new ();
 
     // This will return a validation error if you do not send valid header values. 
     // Then, the execution will jump to the nearest `RequestErrorInterceptor`.
     resource isolated function 'default [string... path](http:RequestContext ctx,
-            @http:Header string? 'x\-fapi\-customer\-ip\-address, @http:Header string? 'x\-fapi\-interaction\-id)
+            @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id)
             returns anydata|http:Response|http:StatusCodeResponse|http:NextService|error? {
-        check self.validator.validateUUIDHeader('x\-fapi\-interaction\-id ?: "");
-        check self.validator.validateIpAddressHeader('x\-fapi\-customer\-ip\-address ?: "");
-        
+        check validator:validateUUIDHeader(x\-fapi\-interaction\-id);
+        check validator:validateIpAddressHeader(x\-fapi\-customer\-ip\-address);
+
         return ctx.next();
     }
 }

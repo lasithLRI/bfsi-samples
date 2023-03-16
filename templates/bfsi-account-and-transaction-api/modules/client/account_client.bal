@@ -25,13 +25,11 @@ public isolated client class AccountClient {
     # Get all accounts.
     #
     # + return - account list
-    resource isolated function get accounts() returns model:AccountsResponse {
-        return {
-            Data: self.repository.getAllAccounts().toArray(),
-            Links: self.getLinks("/accounts"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get accounts() returns model:AccountsResponse => {
+        Data: self.repository.getAllAccounts().toArray(),
+        Links: self.getLinks("/accounts"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get an account by account ID.
     #
@@ -59,13 +57,11 @@ public isolated client class AccountClient {
     # Get all balances.
     #
     # + return - all balances or error
-    resource isolated function get balances() returns model:BalanceResponse {
-        return {
-            Data: self.repository.getAllBalances().toArray(),
-            Links: self.getLinks("/balances"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get balances() returns model:BalanceResponse => {
+        Data: self.repository.getAllBalances().toArray(),
+        Links: self.getLinks("/balances"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get balances by account ID.
     #
@@ -91,13 +87,11 @@ public isolated client class AccountClient {
     # Get all beneficiaries.
     #
     # + return - account beneficiaries list or error
-    resource isolated function get beneficiaries() returns model:BeneficiariesResponse {
-        return {
-            Data: self.repository.getAllBeneficiaries().toArray(),
-            Links: self.getLinks("/beneficiaries"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get beneficiaries() returns model:BeneficiariesResponse => {
+        Data: self.repository.getAllBeneficiaries().toArray(),
+        Links: self.getLinks("/beneficiaries"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get beneficiaries by account ID.
     #
@@ -123,13 +117,11 @@ public isolated client class AccountClient {
     # Get all direct debits.
     #
     # + return - account direct debits list or error
-    resource isolated function get direct\-debits() returns model:DirectDebitsResponse {
-        return {
-            Data: self.repository.getAllDirectDebits().toArray(),
-            Links: self.getLinks("/direct-debits"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get direct\-debits() returns model:DirectDebitsResponse => {
+        Data: self.repository.getAllDirectDebits().toArray(),
+        Links: self.getLinks("/direct-debits"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get direct debits by account ID.
     #
@@ -155,13 +147,11 @@ public isolated client class AccountClient {
     # Get all offers.
     #
     # + return - account offers list or error
-    resource isolated function get offers() returns model:OffersResponse {
-        return {
-            Data: self.repository.getAllOffers().toArray(),
-            Links: self.getLinks("/offers"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get offers() returns model:OffersResponse => {
+        Data: self.repository.getAllOffers().toArray(),
+        Links: self.getLinks("/offers"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get offers by account ID.
     #
@@ -186,13 +176,11 @@ public isolated client class AccountClient {
     # Get all parties.
     #
     # + return - account parties list or error
-    resource isolated function get parties() returns model:PartiesResponse {
-        return {
-            Data: self.repository.getAllParties().toArray(),
-            Links: self.getLinks("/parties"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get parties() returns model:PartiesResponse => {
+        Data: self.repository.getAllParties().toArray(),
+        Links: self.getLinks("/parties"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get parties by account ID.
     #
@@ -204,14 +192,10 @@ public isolated client class AccountClient {
             log:printDebug(util:EMPTY_ACCOUNT_ID);
             return error(util:EMPTY_ACCOUNT_ID, ErrorCode = util:CODE_EMPTY_ACCOUNT_ID);
         }
-        model:Party[] parties = [];
-        foreach model:Party party in self.repository.getAllParties().toArray() {
-            model:PartyRelationship pr = <model:PartyRelationship>party.Relationships;
-            model:PartyRelationshipAccount pra = <model:PartyRelationshipAccount>pr.Account;
-            if (pra.Id == accountId) {
-                parties.push(party);
-            }
-        }
+        model:Party[] parties = from model:Party party in self.repository.getAllParties()
+            where party.Relationships?.Account?.Id == accountId
+            select party;
+
         return {
             Data: parties,
             Links: self.getLinks(string `/accounts/${accountId}/parties`),
@@ -229,16 +213,18 @@ public isolated client class AccountClient {
             log:printDebug(util:EMPTY_ACCOUNT_ID);
             return error(util:EMPTY_ACCOUNT_ID, ErrorCode = util:CODE_EMPTY_ACCOUNT_ID);
         }
-        foreach model:Party party in self.repository.getAllParties().toArray() {
-            model:PartyRelationship pr = <model:PartyRelationship>party.Relationships;
-            model:PartyRelationshipAccount pra = <model:PartyRelationshipAccount>pr.Account;
-            if pra.Id == accountId {
-                return {
-                    Data: party,
-                    Links: self.getLinks(string `/accounts/${accountId}/party`),
-                    Meta: {TotalPages: 1}
-                };
-            }
+
+        model:Party[] parties = from model:Party party in self.repository.getAllParties()
+            where party.Relationships?.Account?.Id == accountId
+            limit 1
+            select party;
+
+        if parties.length() > 0 {
+            return {
+                Data: parties[0],
+                Links: self.getLinks(string `/accounts/${accountId}/party`),
+                Meta: {TotalPages: 1}
+            };
         }
         return error(util:INVALID_ACCOUNT_ID, ErrorCode = util:CODE_INVALID_ACCOUNT_ID);
     }
@@ -246,13 +232,11 @@ public isolated client class AccountClient {
     # Get all products.
     #
     # + return - account products list or error
-    resource isolated function get products() returns model:ProductsResponse {
-        return {
-            Data: self.repository.getAllProducts().toArray(),
-            Links: self.getLinks("/products"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get products() returns model:ProductsResponse => {
+        Data: self.repository.getAllProducts().toArray(),
+        Links: self.getLinks("/products"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get products by account ID.
     #
@@ -277,13 +261,11 @@ public isolated client class AccountClient {
     # Get all scheduled payments.
     #
     # + return - account scheduled payments list or error
-    resource isolated function get scheduled\-payments() returns model:ScheduledPaymentsResponse {
-        return {
-            Data: self.repository.getAllScheduledPayments().toArray(),
-            Links: self.getLinks("/scheduled-payments"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get scheduled\-payments() returns model:ScheduledPaymentsResponse => {
+        Data: self.repository.getAllScheduledPayments().toArray(),
+        Links: self.getLinks("/scheduled-payments"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get scheduled payments by account ID.
     #
@@ -309,13 +291,11 @@ public isolated client class AccountClient {
     # Get all standing orders.
     #
     # + return - account standing orders list or error
-    resource isolated function get standing\-orders() returns model:StandingOrdersResponse {
-        return {
-            Data: self.repository.getAllStandingOrders().toArray(),
-            Links: self.getLinks("/standing-orders"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get standing\-orders() returns model:StandingOrdersResponse => {
+        Data: self.repository.getAllStandingOrders().toArray(),
+        Links: self.getLinks("/standing-orders"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get standing orders by account ID.
     #
@@ -340,13 +320,11 @@ public isolated client class AccountClient {
     # Get all statements.
     #
     # + return - account statements list or error
-    resource isolated function get statements() returns model:StatementsResponse {
-        return {
-            Data: self.repository.getAllStatements().toArray(),
-            Links: self.getLinks("/statements"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get statements() returns model:StatementsResponse => {
+        Data: self.repository.getAllStatements().toArray(),
+        Links: self.getLinks("/statements"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get statements by account ID.
     #
@@ -379,7 +357,8 @@ public isolated client class AccountClient {
         if util:isEmpty(accountId) {
             log:printDebug(util:EMPTY_ACCOUNT_ID);
             return error(util:EMPTY_ACCOUNT_ID, ErrorCode = util:CODE_EMPTY_ACCOUNT_ID);
-        } else if util:isEmpty(statementId) {
+        }
+        if util:isEmpty(statementId) {
             log:printDebug(util:EMPTY_STATEMENT_ID);
             return error(util:EMPTY_STATEMENT_ID, ErrorCode = util:CODE_EMPTY_STATEMENT_ID);
         }
@@ -405,7 +384,8 @@ public isolated client class AccountClient {
         if util:isEmpty(accountId) {
             log:printDebug(util:EMPTY_ACCOUNT_ID);
             return error(util:EMPTY_ACCOUNT_ID, ErrorCode = util:CODE_EMPTY_ACCOUNT_ID);
-        } else if util:isEmpty(statementId) {
+        }
+        if util:isEmpty(statementId) {
             log:printDebug(util:EMPTY_STATEMENT_ID);
             return error(util:EMPTY_STATEMENT_ID, ErrorCode = util:CODE_EMPTY_STATEMENT_ID);
         }
@@ -437,13 +417,11 @@ public isolated client class AccountClient {
     # Get all transactions.
     #
     # + return - account transactions list or error
-    resource isolated function get transactions() returns model:TransactionsResponse {
-        return {
-            Data: self.repository.getAllTransactions().toArray(),
-            Links: self.getLinks("/transactions"),
-            Meta: {TotalPages: 1}
-        };
-    }
+    resource isolated function get transactions() returns model:TransactionsResponse => {
+        Data: self.repository.getAllTransactions().toArray(),
+        Links: self.getLinks("/transactions"),
+        Meta: {TotalPages: 1}
+    };
 
     # Get transactions by account ID.
     #
@@ -477,18 +455,34 @@ public isolated client class AccountClient {
             log:printDebug(util:EMPTY_ACCOUNT_ID);
             return error(util:EMPTY_ACCOUNT_ID, ErrorCode = util:CODE_EMPTY_ACCOUNT_ID);
         }
-        model:Transaction[] AccountTransactions = from model:Transaction i in self.repository.getAllTransactions()
+        model:Transaction[] accountTransactions = from model:Transaction i in self.repository.getAllTransactions()
             where i.AccountId == accountId
             select i;
 
-        model:Transaction[] transactions = AccountTransactions.filter(tran =>
-            !(tran.StatementReference is ()) && ((<string[]>tran?.StatementReference).indexOf(statementId, 0) != ()));
-
         return {
-            Data: transactions,
+            Data: self.filterTransactionByStatementId(accountTransactions, statementId),
             Links: self.getLinks(string `/accounts/${accountId}/statement/${statementId}/transactions`),
             Meta: {TotalPages: 1}
         };
+    }
+
+    # Filter the transactions by statement ID.
+    #
+    # + accountTransactions - Account transactions
+    # + statementId - Statement ID
+    # + return - Filtered transactions
+    private isolated function filterTransactionByStatementId(model:Transaction[] accountTransactions,
+            string statementId) returns model:Transaction[] {
+        model:Transaction[] transactions = [];
+        foreach model:Transaction tran in accountTransactions {
+            if !(tran.StatementReference is ()) {
+                string[] statementReference = tran.StatementReference?:[];
+                if statementReference.indexOf(statementId, 0) != () {
+                    transactions.push(tran);
+                }
+            }
+        }
+        return transactions;
     }
 
     # Get the Link matching to the path and consent id
@@ -496,7 +490,7 @@ public isolated client class AccountClient {
     # + path - Path of the request
     # + id - Consent Id of the request
     # + return - Link
-    private isolated function getLinks(string path, string id = "") returns model:Links {
-        return {Self: string `https://api.alphabank.com/open-banking/v3.1/aisp${path}/${id}`};
-    }
+    private isolated function getLinks(string path, string id = "") returns model:Links => {
+        Self: string `https://api.alphabank.com/open-banking/v3.1/aisp${path}/${id}`
+    };
 }
