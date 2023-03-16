@@ -44,7 +44,14 @@ When the different Open Banking endpoints of the service is invoked, the service
 
 4. Deploy API by following [instructions to deploy](https://wso2.com/choreo/docs/get-started/tutorials/create-your-first-rest-api/#step-2-deploy) and [test](https://wso2.com/choreo/docs/get-started/tutorials/create-your-first-rest-api/#step-3-test)
 
-5. Invoke the API.
+5. Navigate to the Manage > Settings section of the newly deployed API and add the following headers to the `Access Control Allow Headers`.
+
+   - x-fapi-auth-date
+   - x-fapi-customer-ip-address
+   - x-fapi-interaction-id
+   - x-customer-user-agent
+
+6. Invoke the API.
 
    Sample URL to retrieve a transactions by ID:
 
