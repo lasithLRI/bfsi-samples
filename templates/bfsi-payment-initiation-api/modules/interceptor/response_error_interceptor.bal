@@ -39,7 +39,8 @@ public isolated service class ResponseErrorInterceptor {
                     Path: "Path.PaymentId"
                 }
             };
-        } else if err is model:PayloadParseError {
+        } 
+        if err is model:PayloadParseError {
             return {
                 mediaType: "application/org+json",
                 body: {
@@ -48,7 +49,8 @@ public isolated service class ResponseErrorInterceptor {
                     Path: "Request.Payload"
                 }
             };
-        } else if err is model:InvalidPayloadError {
+        } 
+        if err is model:InvalidPayloadError {
             return {
                 body: {
                     ErrorCode: err.detail().get("ErrorCode"),

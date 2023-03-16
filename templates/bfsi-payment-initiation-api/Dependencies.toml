@@ -346,8 +346,7 @@ modules = [
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.client"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.interceptor"},
 	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.model"},
-	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.util"},
-	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.validator"}
+	{org = "wso2bfsi", packageName = "bfsi_payment_initiation_api", moduleName = "bfsi_payment_initiation_api.util"}
 ]
 
 

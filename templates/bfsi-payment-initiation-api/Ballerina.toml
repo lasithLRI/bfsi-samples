@@ -6,7 +6,7 @@
   description = "A template to generate Open Banking Account and Transaction REST service"
   displayName = "BFSI Payment Initiation API"
   distribution = "2201.3.1"
-  export=["bfsi_payment_initiation_api", "bfsi_payment_initiation_api.interceptor", "bfsi_payment_initiation_api.model", "bfsi_payment_initiation_api.util", "bfsi_payment_initiation_api.validator", "bfsi_payment_initiation_api.client"]
+  export=["bfsi_payment_initiation_api", "bfsi_payment_initiation_api.interceptor", "bfsi_payment_initiation_api.model", "bfsi_payment_initiation_api.util", "bfsi_payment_initiation_api.client"]
   template = true
   icon = "icon.png"
   keywords = ["Kind/Sample", "Type/RestApi", "Category/Service", "Internal/http", "Cost/Free", "Vertical/bfsi"]

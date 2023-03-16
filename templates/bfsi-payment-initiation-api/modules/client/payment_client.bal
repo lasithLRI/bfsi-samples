@@ -26,13 +26,12 @@ public isolated client class PaymentClient {
             log:printDebug(util:EMPTY_REQUEST_BODY);
             return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
         }
-
         final string domesticPaymentId = uuid:createType1AsString();
         return {
             Data: {
                 DomesticPaymentId: domesticPaymentId,
                 ConsentId: request?.Data?.ConsentId,
-                Status: "AcceptedSettlementInProcess",
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
                 Initiation: request?.Data?.Initiation
             },
             Links: self.getLinks("domestic-payments/", domesticPaymentId),
@@ -48,18 +47,16 @@ public isolated client class PaymentClient {
     # + return - Domestic payment or error
     isolated resource function get domestic\-payments/[string domesticPaymentId]()
                                                 returns model:DomesticPaymentResponse|error {
-
         if domesticPaymentId == "" {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        final json initiation = util:getDomesticPaymentInitiation();
         return {
             Data: {
                 DomesticPaymentId: domesticPaymentId,
                 ConsentId: model:getRandomId(),
-                Status: "AcceptedSettlementInProcess",
-                Initiation: check initiation.fromJsonWithType()
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
+                Initiation: check util:getDomesticPaymentInitiation().fromJsonWithType()
             },
             Links: self.getLinks("domestic-payments/", domesticPaymentId),
             Meta: {
@@ -78,13 +75,12 @@ public isolated client class PaymentClient {
             log:printDebug(util:EMPTY_REQUEST_BODY);
             return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
         }
-
         final string domesticScheduledPaymentId = uuid:createType1AsString();
         return {
             Data: {
                 DomesticScheduledPaymentId: domesticScheduledPaymentId,
                 ConsentId: request.Data.ConsentId,
-                Status: "AcceptedSettlementInProcess",
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
                 Initiation: request.Data.Initiation
             },
             Links: self.getLinks("domestic-scheduled-payments/", domesticScheduledPaymentId),
@@ -104,13 +100,12 @@ public isolated client class PaymentClient {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        final json initiation = util:getDomesticScheduledPaymentInitiation();
         return {
             Data: {
                 DomesticScheduledPaymentId: domesticScheduledPaymentId,
                 ConsentId: model:getRandomId(),
-                Status: "AcceptedSettlementInProcess",
-                Initiation: check initiation.fromJsonWithType()
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
+                Initiation: check util:getDomesticScheduledPaymentInitiation().fromJsonWithType()
             },
             Links: self.getLinks("domestic-scheduled-payments/", domesticScheduledPaymentId),
             Meta: {
@@ -134,7 +129,7 @@ public isolated client class PaymentClient {
             Data: {
                 DomesticStandingOrderId: domesticStandingOrderId,
                 ConsentId: request.Data.ConsentId,
-                Status: "AcceptedSettlementInProcess",
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
                 Initiation: request.Data.Initiation
             },
             Links: self.getLinks("domestic-standing-orders/", domesticStandingOrderId),
@@ -154,13 +149,12 @@ public isolated client class PaymentClient {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        final json initiation = util:getDomesticStandingOrderPaymentInitiation();
         return {
             Data: {
                 DomesticStandingOrderId: domesticStandingOrderId,
                 ConsentId: model:getRandomId(),
-                Status: "AcceptedSettlementInProcess",
-                Initiation: check initiation.fromJsonWithType()
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
+                Initiation: check util:getDomesticStandingOrderPaymentInitiation().fromJsonWithType()
             },
             Links: self.getLinks("domestic-standing-orders/", domesticStandingOrderId),
             Meta: {
@@ -175,7 +169,6 @@ public isolated client class PaymentClient {
     # + return - File payment with ID or error
     isolated resource function post file\-payments(model:FilePaymentRequest request)
                                                     returns model:FilePaymentResponse|error {
-
         if request.length() == 0 {
             log:printDebug(util:EMPTY_REQUEST_BODY);
             return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
@@ -185,7 +178,7 @@ public isolated client class PaymentClient {
             Data: {
                 FilePaymentId: filePaymentId,
                 ConsentId: request.Data.ConsentId,
-                Status: "AcceptedSettlementInProcess",
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
                 Initiation: request.Data.Initiation
             },
             Links: self.getLinks("file-payments/", filePaymentId),
@@ -199,19 +192,18 @@ public isolated client class PaymentClient {
     #
     # + filePaymentId - File payment Id
     # + return - File payment or error
-    isolated resource function get file\-payments/[string filePaymentId]() returns model:FilePaymentResponse|error {
-
+    isolated resource function get file\-payments/[string filePaymentId]() 
+                                                    returns model:FilePaymentResponse|error {
         if filePaymentId == "" {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        json initiation = util:getFilePaymentInitiation();
         return {
             Data: {
                 FilePaymentId: filePaymentId,
                 ConsentId: model:getRandomId(),
-                Status: "AcceptedSettlementInProcess",
-                Initiation: check initiation.fromJsonWithType()
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
+                Initiation: check util:getFilePaymentInitiation().fromJsonWithType()
             },
             Links: self.getLinks("file-payments/", filePaymentId),
             Meta: {
@@ -235,7 +227,7 @@ public isolated client class PaymentClient {
             Data: {
                 InternationalPaymentId: internationalPaymentId,
                 ConsentId: request.Data.ConsentId,
-                Status: "AcceptedSettlementInProcess",
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
                 Initiation: request.Data.Initiation
             },
             Links: self.getLinks("international-payments/", internationalPaymentId),
@@ -255,13 +247,12 @@ public isolated client class PaymentClient {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        final json initiation = util:getInternationalPaymentInitiation();
         return {
             Data: {
                 InternationalPaymentId: internationalPaymentId,
                 ConsentId: model:getRandomId(),
-                Status: "AcceptedSettlementInProcess",
-                Initiation: check initiation.fromJsonWithType()
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
+                Initiation: check util:getInternationalPaymentInitiation().fromJsonWithType()
             },
             Links: self.getLinks("international-payments/", internationalPaymentId),
             Meta: {
@@ -285,7 +276,7 @@ public isolated client class PaymentClient {
             Data: {
                 InternationalScheduledPaymentId: internationalScheduledPaymentId,
                 ConsentId: request.Data.ConsentId,
-                Status: "AcceptedSettlementInProcess",
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
                 Initiation: request.Data.Initiation
             },
             Links: self.getLinks("international-schedules-payments/", internationalScheduledPaymentId),
@@ -305,13 +296,12 @@ public isolated client class PaymentClient {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        final json initiation = util:getInternatioanlScheduledPaymentInitiation();
         return {
             Data: {
                 InternationalScheduledPaymentId: internationalScheduledPaymentId,
                 ConsentId: model:getRandomId(),
-                Status: "AcceptedSettlementInProcess",
-                Initiation: check initiation.fromJsonWithType()
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
+                Initiation: check util:getInternatioanlScheduledPaymentInitiation().fromJsonWithType()
             },
             Links: self.getLinks("international-schedules-payments/", internationalScheduledPaymentId),
             Meta: {
@@ -335,7 +325,7 @@ public isolated client class PaymentClient {
             Data: {
                 InternationalStandingOrderId: internationalStandingorderId,
                 ConsentId: request.Data.ConsentId,
-                Status: "AcceptedSettlementInProcess",
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
                 Initiation: request.Data.Initiation
             },
             Links: self.getLinks("international-standing-orders/", internationalStandingorderId),
@@ -355,13 +345,12 @@ public isolated client class PaymentClient {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        final json initiation = util:getInternatioanlStandingOrderPaymentInitiation();
         return {
             Data: {
                 InternationalStandingOrderId: internationalStandingOrderId,
                 ConsentId: model:getRandomId(),
-                Status: "AcceptedSettlementInProcess",
-                Initiation: check initiation.fromJsonWithType()
+                Status: util:STATUS_SETTLEMENT_IN_PROCESS,
+                Initiation: check util:getInternatioanlStandingOrderPaymentInitiation().fromJsonWithType()
             },
             Links: self.getLinks("international-standing-orders/", internationalStandingOrderId),
             Meta: {
@@ -375,15 +364,14 @@ public isolated client class PaymentClient {
     # + path - Path of the request
     # + paymentId - Domestic payment Id
     # + return - Domestic payment details or error
-    isolated resource function get payments\-details/[string path]/[string paymentId]() returns model:PaymentDetailsResponse|error {
-
+    isolated resource function get payments\-details/[string path]/[string paymentId]() 
+                                                        returns model:PaymentDetailsResponse|error {
         if paymentId == "" {
             log:printDebug(util:EMPTY_PAYMENT_ID);
             return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
         }
-        model:PaymentDetailsResponseData data = self.getPaymentDetailsData(paymentId);
         return {
-            Data: data,
+            Data: self.getPaymentDetailsData(paymentId),
             Links: self.getLinks(path, paymentId),
             Meta: {
                 TotalPages: 1
@@ -391,16 +379,16 @@ public isolated client class PaymentClient {
         };
     }
 
-    # Get the Link matching to the path and consent id
+    # Get the Link matching to the path and consent id.
     #
     # + path - Path of the request
     # + id - Consent Id of the request
     # + return - Link
-    private isolated function getLinks(string path, string id) returns model:Links {
-        return {Self: "https://api.alphabank.com/open-banking/v3.1/pisp/" + path + id};
-    }
+    private isolated function getLinks(string path, string id) returns model:Links => {
+        Self: "https://api.alphabank.com/open-banking/v3.1/pisp/" + path + id
+    };
 
-    # Get the payment details data
+    # Get the payment details data.
     #
     # + id - Payment Id
     # + return - Payment details data
@@ -430,7 +418,7 @@ public isolated client class PaymentClient {
         };
     }
 
-    # Handle the error
+    # Handle the error.
     #
     # + e - Error
     # + return - Error

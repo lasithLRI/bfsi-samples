@@ -10,7 +10,14 @@
 // associated services.
 
 import ballerina/http;
+import ballerina/log;
+import ballerina/time;
+import ballerina/regex;
 import bfsi_payment_initiation_api.model;
+
+const ipv4 = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
+const ipv6 = "((([0-9a-fA-F]){1,4})\\:){7}([0-9a-fA-F]){1,4}";
+const uuid = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
 
 # Get Domestic Payment Initiation payload.
 #
@@ -192,33 +199,27 @@ public isolated function extractCreditorAccount(anydata payload, string path) re
 
     if (path.includes("domestic-payment")) {
         model:DomesticPaymentInitiation initiation = check extractDomesticPaymentInitiation(payload);
-        model:CreditorAccount creditorAcc = check initiation.CreditorAccount.cloneWithType();
-        return creditorAcc;
+        return initiation.CreditorAccount.cloneWithType();
 
     } else if (path.includes("domestic-scheduled-payment")) {
         model:DomesticScheduledPaymentInitiation initiation = check extractDomesticScheduledPaymentInitiation(payload);
-        model:CreditorAccount creditorAcc = check initiation.CreditorAccount.cloneWithType();
-        return creditorAcc;
+        return initiation.CreditorAccount.cloneWithType();
 
     } else if (path.includes("domestic-standing-order")) {
         model:DomesticStandingOrderInitiation initiation = check extractDomesticStandingOrderInitiation(payload);
-        model:CreditorAccount creditorAcc = check initiation.CreditorAccount.cloneWithType();
-        return creditorAcc;
+        return initiation.CreditorAccount.cloneWithType();
 
     } else if (path.includes("international-payment")) {
         model:InternationalPaymentInitiation initiation = check extractInternationalPaymentInitiation(payload);
-        model:CreditorAccount creditorAcc = check initiation.CreditorAccount.cloneWithType();
-        return creditorAcc;
+        return initiation.CreditorAccount.cloneWithType();
 
     } else if (path.includes("international-scheduled-payment")) {
         model:InternationalScheduledPaymentInitiation initiation = check extractInternationalScheduledPaymentInitiation(payload);
-        model:CreditorAccount creditorAcc = check initiation.CreditorAccount.cloneWithType();
-        return creditorAcc;
+        return initiation.CreditorAccount.cloneWithType();
 
     } else if (path.includes("international-standing-orders")) {
         model:InternationalStandingOrderInitiation initiation = check extractInternationalStandingOrderInitiation(payload);
-        model:CreditorAccount creditorAcc = check initiation.CreditorAccount.cloneWithType();
-        return creditorAcc;
+        return initiation.CreditorAccount.cloneWithType();
 
     } else {
         return error("Invalid path", ErrorCode = "UK.OBIE.Field.Invalid");
@@ -237,56 +238,49 @@ public isolated function extractDebtorAccount(anydata payload, string path) retu
         if (initiation.DebtorAccount is ()) {
             return ();
         }
-        model:DebtorAccount debtorAccount = check initiation.DebtorAccount.cloneWithType();
-        return debtorAccount;
+        return initiation.DebtorAccount.cloneWithType();
 
     } else if (path.includes("domestic-scheduled-payment")) {
         model:DomesticScheduledPaymentInitiation initiation = check extractDomesticScheduledPaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
-        model:DebtorAccount debtorAccount = check initiation.DebtorAccount.cloneWithType();
-        return debtorAccount;
+        return initiation.DebtorAccount.cloneWithType();
 
     } else if (path.includes("domestic-standing-order")) {
         model:DomesticStandingOrderInitiation initiation = check extractDomesticStandingOrderInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
-        model:DebtorAccount debtorAccount = check initiation.DebtorAccount.cloneWithType();
-        return debtorAccount;
+        return initiation.DebtorAccount.cloneWithType();
 
     } else if (path.includes("international-payment")) {
         model:InternationalPaymentInitiation initiation = check extractInternationalPaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
-        model:DebtorAccount debtorAccount = check initiation.DebtorAccount.cloneWithType();
-        return debtorAccount;
+        return initiation.DebtorAccount.cloneWithType();
 
     } else if (path.includes("international-scheduled-payment")) {
         model:InternationalScheduledPaymentInitiation initiation = check extractInternationalScheduledPaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
-        model:DebtorAccount debtorAccount = check initiation.DebtorAccount.cloneWithType();
-        return debtorAccount;
+        return initiation.DebtorAccount.cloneWithType();
 
     } else if (path.includes("international-standing-order")) {
         model:InternationalStandingOrderInitiation initiation = check extractInternationalStandingOrderInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
-        model:DebtorAccount debtorAccount = check initiation.DebtorAccount.cloneWithType();
-        return debtorAccount;
+        return initiation.DebtorAccount.cloneWithType();
 
     } else if (path.includes("file-payment")) {
         model:FilePaymentInitiation initiation = check extractFilePaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
-        model:DebtorAccount debtorAccount = check initiation.DebtorAccount.cloneWithType();
-        return debtorAccount;
+        return initiation.DebtorAccount.cloneWithType();
 
     } else {
         return error("Invalid path", ErrorCode = "UK.OBIE.Field.Invalid");
@@ -300,9 +294,7 @@ public isolated function extractDebtorAccount(anydata payload, string path) retu
 public isolated function extractDomesticPaymentInitiation(anydata payload) returns model:DomesticPaymentInitiation|error {
     model:DomesticPaymentRequest request = check payload.cloneWithType();
     model:DomesticPaymentRequestData data = check request.Data.cloneWithType();
-    model:DomesticPaymentInitiation initiation = check data.Initiation.cloneWithType();
-
-    return initiation;
+    return check data.Initiation.cloneWithType();
 }
 
 # Exract Domestic Scheduled Payment Initiation from the payload.
@@ -312,9 +304,7 @@ public isolated function extractDomesticPaymentInitiation(anydata payload) retur
 public isolated function extractDomesticScheduledPaymentInitiation(anydata payload) returns model:DomesticScheduledPaymentInitiation|error {
     model:DomesticScheduledPaymentRequest request = check payload.cloneWithType();
     model:DomesticScheduledPaymentData data = check request.Data.cloneWithType();
-    model:DomesticScheduledPaymentInitiation initiation = check data.Initiation.cloneWithType();
-
-    return initiation;
+    return data.Initiation.cloneWithType();
 }
 
 # Exract Domestic Standing Order Payment Initiation from the payload.
@@ -324,9 +314,7 @@ public isolated function extractDomesticScheduledPaymentInitiation(anydata paylo
 public isolated function extractDomesticStandingOrderInitiation(anydata payload) returns model:DomesticStandingOrderInitiation|error {
     model:DomesticStandingOrderRequest request = check payload.cloneWithType();
     model:DomesticStandingOrderData data = check request.Data.cloneWithType();
-    model:DomesticStandingOrderInitiation initiation = check data.Initiation.cloneWithType();
-
-    return initiation;
+    return check data.Initiation.cloneWithType();
 }
 
 # Exract International Payment Initiation from the payload.
@@ -336,9 +324,7 @@ public isolated function extractDomesticStandingOrderInitiation(anydata payload)
 public isolated function extractInternationalPaymentInitiation(anydata payload) returns model:InternationalPaymentInitiation|error {
     model:InternationalPaymentRequest request = check payload.cloneWithType();
     model:InternationalPaymentData data = check request.Data.cloneWithType();
-    model:InternationalPaymentInitiation initiation = check data.Initiation.cloneWithType();
-
-    return initiation;
+    return data.Initiation.cloneWithType();
 }
 
 # Exract International Scheduled Payment Initiation from the payload.
@@ -348,9 +334,7 @@ public isolated function extractInternationalPaymentInitiation(anydata payload) 
 public isolated function extractInternationalScheduledPaymentInitiation(anydata payload) returns model:InternationalScheduledPaymentInitiation|error {
     model:InternationalScheduledPaymentRequest request = check payload.cloneWithType();
     model:InternationalScheduledPaymentData data = check request.Data.cloneWithType();
-    model:InternationalScheduledPaymentInitiation initiation = check data.Initiation.cloneWithType();
-
-    return initiation;
+    return data.Initiation.cloneWithType();
 }
 
 # Exract International Standing Order Payment Initiation from the payload.
@@ -360,8 +344,7 @@ public isolated function extractInternationalScheduledPaymentInitiation(anydata 
 public isolated function extractInternationalStandingOrderInitiation(anydata payload) returns model:InternationalStandingOrderInitiation|error {
     model:InternationalStandingOrderRequest request = check payload.cloneWithType();
     model:InternationalStandingOrderData data = check request.Data.cloneWithType();
-    model:InternationalStandingOrderInitiation initiation = check data.Initiation.cloneWithType();
-    return initiation;
+    return data.Initiation.cloneWithType();
 }
 
 # Exract File Payment Initiation from the payload.
@@ -371,10 +354,133 @@ public isolated function extractInternationalStandingOrderInitiation(anydata pay
 public isolated function extractFilePaymentInitiation(anydata payload) returns model:FilePaymentInitiation|error {
     model:FilePaymentRequest request = check payload.cloneWithType();
     model:FilePaymentData data = check request.Data.cloneWithType();
-    model:FilePaymentInitiation initiation = check data.Initiation.cloneWithType();
-
-    return initiation;
+    return data.Initiation.cloneWithType();
 }
+
+# Validate x-fapi-auth-date header 
+# 
+# + authDateHeader - x-fapi-auth-date Hedaer
+# + return - error? 
+public isolated function validateAuthDateHeader(string? authDateHeader) returns error? {
+        if !(authDateHeader is ()) && authDateHeader != "" {
+            time:Utc currentTime = time:utcNow();
+            time:Utc timeInHeader;
+            do {
+                timeInHeader = check time:utcFromString(authDateHeader);
+            } on fail var e {
+                return error(e.message());
+            }
+            time:Seconds seconds = time:utcDiffSeconds(currentTime, timeInHeader);
+
+            if seconds > 0d {
+                return ();
+            } else {
+                return error("Invalid Date found in the header");
+            }
+        }
+    }
+
+    # Validate x-fapi-customer-ip-address header 
+# 
+# + ipAddress - x-fapi-customer-ip-address Hedaer
+# + return - error? 
+    public isolated function validateIpAddress(string? ipAddress) returns error? {
+        if !(ipAddress is ()) && ipAddress != "" {
+            boolean isIpv4 = regex:matches(ipAddress, ipv4);
+            boolean isIpv6 = regex:matches(ipAddress, ipv6);
+
+            if isIpv4 || isIpv6 {
+                return ();
+            } else {
+                return error("Found invalid ip address in headers");
+            }
+        }
+    }
+
+    # Validate x-fapi-interaction-id header 
+    # 
+    # + uuidHeader - x-fapi-interaction-id Hedaer
+    # + return - error? 
+    public isolated function validateUUID(string? uuidHeader) returns error? {
+        if !(uuidHeader is ()) && uuidHeader != "" {
+            boolean isUuid = regex:matches(uuidHeader, uuid);
+            return isUuid ? () : error("Found invalid UUID in headers");
+        }
+    }
+
+    # Validates the payload
+    #
+    # + payload - Payload to be validated
+    # + return - Returns error if validation fails
+    public isolated function validatePayload(anydata payload) returns model:InvalidPayloadError? {
+        log:printInfo("Executing PaymentRequestBodyValidator");
+
+        if payload == "" {
+            return error("Payload is empty", ErrorCode = CODE_RESOURCE_INVALID_FORMAT);
+        }
+        if payload is json {
+            if payload.Data == "" || payload.Data == null {
+                return error("Request Payload is not in correct JSON format", ErrorCode = CODE_RESOURCE_INVALID_FORMAT);
+            }
+
+            if payload.Data is json {
+                if payload.Data.Initiation is json {
+                    return;
+                } else {
+                    return error("Request Payload is not in correct JSON format", ErrorCode = CODE_RESOURCE_INVALID_FORMAT);
+                }
+            } else {
+                return error("Request Payload is not in correct JSON format", ErrorCode = CODE_RESOURCE_INVALID_FORMAT);
+            }
+        }
+
+    }
+
+    # Validates the Creditor Account
+    #
+    # + creditorAccount - Creditor Account to be validated
+    # + return - Returns an error if validation fails
+    public isolated function validateCreditorAccount(model:CreditorAccount creditorAccount)
+                            returns model:InvalidPayloadError? {
+        log:printInfo("Executing CreditorAccountValidator");
+
+        string schemeName = creditorAccount.SchemeName;
+        if schemeName == "" {
+            return error("Creditor Account SchemeName is missing", ErrorCode = CODE_FIELD_MISSING);
+        } else if schemeName != "UK.OBIE.IBAN" && schemeName != "UK.OBIE.SortCodeAccountNumber" {
+            return error("Creditor Account SchemeName is invalid", ErrorCode = CODE_FIELD_INVALID);
+        }
+
+        string identification = creditorAccount.Identification;
+        if identification == "" {
+            return error("Creditor Account Identification is missing", ErrorCode = CODE_FIELD_MISSING);
+        } else if identification.length() > 256 {
+            return error("Creditor Account Identification is invalid", ErrorCode = CODE_FIELD_INVALID);
+        }
+    }
+
+    # Validates the Debtor Account
+    #
+    # + debtorAccount - Debtor Account to be validated
+    # + return - Returns error if validation fails
+    public isolated function validateDebtorAccount(model:DebtorAccount debtorAccount)
+                            returns model:InvalidPayloadError? {
+        log:printInfo("Executing DebtorAccountValidator");
+
+        string schemeName = debtorAccount.SchemeName;
+        if schemeName == "" {
+            return error("Debtor Account SchemeName is missing", ErrorCode = CODE_FIELD_MISSING);
+        } else if schemeName != "UK.OBIE.IBAN" && schemeName != "UK.OBIE.SortCodeAccountNumber" {
+            return error("Debtor Account SchemeName is invalid", ErrorCode = CODE_FIELD_INVALID);
+        }
+
+        string identification = debtorAccount.Identification;
+        if identification == "" {
+            return error("Debtor Account Identification is missing", ErrorCode = CODE_FIELD_MISSING);
+        } else if identification.length() > 256 {
+            return error("Debtor Account Identification is invalid", ErrorCode = CODE_FIELD_INVALID);
+        }
+    }
 
 # Represents a subtype of BAD_REQUEST error
 public type BadRequest record {|

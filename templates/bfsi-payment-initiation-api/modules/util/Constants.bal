@@ -17,3 +17,4 @@ public const CODE_HEADER_INVALID = "UK.OBIE.Header.Invalid";
 public const CODE_FIELD_INVALID = "UK.OBIE.Field.Invalid";
 public const CODE_FIELD_MISSING = "UK.OBIE.Field.Missing";
 public const CODE_INTERNAL_SERVER_ERROR = "UK.OBIE.InternalServerError";
+public const STATUS_SETTLEMENT_IN_PROCESS = "AcceptedSettlementInProcess";
