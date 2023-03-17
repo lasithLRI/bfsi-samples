@@ -9,8 +9,8 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import ballerina/log;
 import ballerina/http;
+import ballerina/log;
 import bfsi_payment_initiation_api.util;
 import bfsi_payment_initiation_api.model;
 
@@ -31,41 +31,27 @@ public isolated service class ResponseErrorInterceptor {
         log:printError("Invalid Request: ", err);
 
         if err is model:InvalidResourceIdError {
-            return {
-                mediaType: "application/org+json",
-                body: {
-                    ErrorCode: err.detail().get("ErrorCode"),
-                    Message: err.message(),
-                    Path: "Path.PaymentId"
-                }
-            };
+            return self.generateErrorResponse(err.message(), err.detail().get("ErrorCode"), "Path.PaymentId");
         } 
         if err is model:PayloadParseError {
-            return {
-                mediaType: "application/org+json",
-                body: {
-                    ErrorCode: err.detail().get("ErrorCode"),
-                    Message: err.message(),
-                    Path: "Request.Payload"
-                }
-            };
+            return self.generateErrorResponse(err.message(), err.detail().get("ErrorCode"), "Request");
+
         } 
         if err is model:InvalidPayloadError {
-            return {
-                body: {
-                    ErrorCode: err.detail().get("ErrorCode"),
-                    Message: err.message(),
-                    Path: "Request.Payload"
-                }
-            };
+            return self.generateErrorResponse(err.message(), err.detail().get("ErrorCode"), "Request.Payload");
         }
 
-        return {
-            mediaType: "application/org+json",
-            body: {
-                Message: err.message(),
-                ErrorCode: util:CODE_FIELD_INVALID
-            }
-        };
+        return self.generateErrorResponse(err.message(), util:CODE_FIELD_INVALID, null);
     }
+
+    private isolated function generateErrorResponse(string errorMessage, string errorCode, string? path) 
+    returns util:BadRequest => {
+        mediaType: "application/org+json",
+        body: {
+            ErrorCode: errorCode,
+            Message: errorMessage,
+            Path: path
+        }
+    };
+
 }

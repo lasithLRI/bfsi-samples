@@ -12,19 +12,20 @@
 import ballerina/constraint;
 
 # Represents an international payment request payload.
-public type InternationalPaymentRequest record {
+public type InternationalPaymentRequest record {|
     # Represents the data of an international payment request.
     InternationalPaymentData Data;
     # The Risk section is sent by the initiating party to the bank.
     # It is used to specify additional details for risk scoring for Payments.
     Risk Risk;
-};
+|};
 
 # Represents the data of an international payment request.
-public type InternationalPaymentData record {
+public type InternationalPaymentData record {|
     # OB: Unique identification as assigned by the bank to uniquely identify the consent resource.
     @constraint:String {maxLength: 128, minLength: 1}
     string ConsentId;
-    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for a single international payment.
+    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement
+    #  of funds from the debtor account to a creditor for a single international payment.
     InternationalPaymentInitiation Initiation;
-};
+|};

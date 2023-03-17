@@ -12,19 +12,20 @@
 import ballerina/constraint;
 
 # Represents a domestic scheduled payment request payload.
-public type DomesticScheduledPaymentRequest record {
+public type DomesticScheduledPaymentRequest record {|
     # Represents data of the domestic scheduled payment intitiation request.
     DomesticScheduledPaymentData Data;
     # The Risk section is sent by the initiating party to the bank.
     # It is used to specify additional details for risk scoring for Payments.
     Risk Risk;
-};
+|};
 
 # Represents data of the domestic scheduled payment intitiation request.
-public type DomesticScheduledPaymentData record {
+public type DomesticScheduledPaymentData record {|
     # OB: Unique identification as assigned by the bank to uniquely identify the consent resource.
     @constraint:String {maxLength: 128, minLength: 1}
     string ConsentId;
-    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for a single scheduled domestic payment.
+    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement
+    #  of funds from the debtor account to a creditor for a single scheduled domestic payment.
     DomesticScheduledPaymentInitiation Initiation;
-};
+|};

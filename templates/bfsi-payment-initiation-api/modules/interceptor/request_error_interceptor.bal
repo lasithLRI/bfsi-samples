@@ -9,13 +9,13 @@
 // entered into with WSO2 governing the purchase of this software and any
 // associated services.
 
-import ballerina/log;
 import ballerina/http;
+import ballerina/log;
 import bfsi_payment_initiation_api.util;
 
-// A `RequestErrorInterceptor` service class implementation. It allows intercepting
-// the error that occurred in the request path and handle it accordingly.
-// A `RequestErrorInterceptor` service class can have only one resource function.
+# A `RequestErrorInterceptor` service class implementation. It allows intercepting
+# the error that occurred in the request path and handle it accordingly
+# A `RequestErrorInterceptor` service class can have only one resource function
 public isolated service class RequestErrorInterceptor {
     *http:RequestErrorInterceptor;
 
@@ -23,10 +23,6 @@ public isolated service class RequestErrorInterceptor {
     // to have the default method and path. The error occurred in the interceptor
     // execution can be accessed by the mandatory argument: `error`.
     isolated resource function 'default [string... path](error err) returns util:BadRequest {
-        // In this case, all of the errors are sent as `400 BadRequest` responses with a customized
-        // media type and body. You can also send different status code responses according to
-        // the error type. Furthermore, you can also call `ctx.next()` if you want to continue the 
-        // request flow after fixing the error.
         log:printError("Invalid Request: ", err);
 
         return {

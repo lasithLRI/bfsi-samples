@@ -18,3 +18,11 @@ public const CODE_FIELD_INVALID = "UK.OBIE.Field.Invalid";
 public const CODE_FIELD_MISSING = "UK.OBIE.Field.Missing";
 public const CODE_INTERNAL_SERVER_ERROR = "UK.OBIE.InternalServerError";
 public const STATUS_SETTLEMENT_IN_PROCESS = "AcceptedSettlementInProcess";
+
+public const DOMESTIC_PAYMENT = "domestic-payment";
+public const DOMESTIC_SCHEDULED_PAYMENT = "ddomestic-scheduled-payment";
+public const DOMESTIC_STANDING_ORDER_PAYMENT = "domestic-standing-order";
+public const INTERNATIONAL_PAYMENT = "international-payment";
+public const INTERNATIONAL_SCHEDULED_PAYMENT = "international-scheduled-payment";
+public const INTERNATIONAL_STANDING_ORDER_PAYMENT = "international-standing-order";
+public const FILE_PAYMENT = "ifile-payment";

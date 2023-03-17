@@ -12,19 +12,20 @@
 import ballerina/constraint;
 
 # Represents a domestic standing order intitiation request payload.
-public type DomesticStandingOrderRequest record {
+public type DomesticStandingOrderRequest record {|
     # Represents data of the domestic standing order intitiation request
     DomesticStandingOrderData Data;
     # The Risk section is sent by the initiating party to the bank.
     # It is used to specify additional details for risk scoring for Payments.
     Risk Risk;
-};
+|};
 
 # Represents data of the domestic standing order intitiation request.
-public type DomesticStandingOrderData record {
+public type DomesticStandingOrderData record {|
     # OB: Unique identification as assigned by the bank to uniquely identify the consent resource.
     @constraint:String {maxLength: 128, minLength: 1}
     string ConsentId;
-    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for a domestic standing order.
+    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement
+    #  of funds from the debtor account to a creditor for a domestic standing order.
     DomesticStandingOrderInitiation Initiation;
-};
+|};

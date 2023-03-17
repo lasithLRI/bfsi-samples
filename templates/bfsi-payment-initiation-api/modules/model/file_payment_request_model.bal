@@ -12,16 +12,17 @@
 import ballerina/constraint;
 
 # Represents a file payment request payload.
-public type FilePaymentRequest record {
+public type FilePaymentRequest record {|
     # Represents data of the file payment request.
     FilePaymentData Data;
-};
+|};
 
 # Represents data of the file payment request.
-public type FilePaymentData record {
+public type FilePaymentData record {|
     # OB: Unique identification as assigned by the bank to uniquely identify the consent resource.
     @constraint:String {maxLength: 128, minLength: 1}
     string ConsentId;
-    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds using a payment file.
+    # The Initiation payload is sent by the initiating party to the bank. It is used to request movement
+    #  of funds using a payment file.
     FilePaymentInitiation Initiation;
-};
+|};

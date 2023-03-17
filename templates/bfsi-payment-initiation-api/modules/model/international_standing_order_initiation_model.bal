@@ -11,77 +11,71 @@
 
 import ballerina/constraint;
 
-# The Initiation payload is sent by the initiating party to the bank. It is used to request movement of funds from the debtor account to a creditor for an international standing order.
-public type InternationalStandingOrderInitiation record {
-    # Individual Definitions:
-    # EvryDay - Every day
-    # EvryWorkgDay - Every working day
-    # IntrvlWkDay - An interval specified in weeks (01 to 09), and the day within the week (01 to 07)
-    # WkInMnthDay - A monthly interval, specifying the week of the month (01 to 05) and day within the week (01 to 07)
-    # IntrvlMnthDay - An interval specified in months (between 01 to 06, 12, 24), specifying the day within the month (-5 to -1, 1 to 31)
-    # QtrDay - Quarterly (either ENGLISH, SCOTTISH, or RECEIVED). 
-    # ENGLISH = Paid on the 25th March, 24th June, 29th September and 25th December. 
-    # SCOTTISH = Paid on the 2nd February, 15th May, 1st August and 11th November.
-    # RECEIVED = Paid on the 20th March, 19th June, 24th September and 20th December. 
-    # Individual Patterns:
-    # EvryDay (ScheduleCode)
-    # EvryWorkgDay (ScheduleCode)
-    # IntrvlWkDay:IntervalInWeeks:DayInWeek (ScheduleCode + IntervalInWeeks + DayInWeek)
-    # WkInMnthDay:WeekInMonth:DayInWeek (ScheduleCode + WeekInMonth + DayInWeek)
-    # IntrvlMnthDay:IntervalInMonths:DayInMonth (ScheduleCode + IntervalInMonths + DayInMonth)
-    # QtrDay: + either (ENGLISH, SCOTTISH or RECEIVED) ScheduleCode + QuarterDay
-    # The regular expression for this element combines five smaller versions for each permitted pattern. To aid legibility - the components are presented individually here:
-    # EvryDay
-    # EvryWorkgDay
-    # IntrvlWkDay:0[1-9]:0[1-7]
-    # WkInMnthDay:0[1-5]:0[1-7]
-    # IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01])
-    # QtrDay:(ENGLISH|SCOTTISH|RECEIVED)
-    # Full Regular Expression:
-    # ^(EvryDay)$|^(EvryWorkgDay)$|^(IntrvlWkDay:0[1-9]:0[1-7])$|^(WkInMnthDay:0[1-5]:0[1-7])$|^(IntrvlMnthDay:(0[1-6]|12|24):(-0[1-5]|0[1-9]|[12][0-9]|3[01]))$|^(QtrDay:(ENGLISH|SCOTTISH|RECEIVED))$
+# The Initiation payload is sent by the initiating party to the bank. It is used to request movement of 
+# funds from the debtor account to a creditor for an international standing order.
+public type InternationalStandingOrderInitiation record {|
+    # Frequency of the standing order payment. Allowed values are EvryDay, EvryWorkgDay, IntrvlWkDay,
+    # WkInMnthDay, IntrvlMnthDay and QtrDay.
     string Frequency;
     # Unique reference, as assigned by the creditor, to unambiguously refer to the payment transaction.
-    # Usage: If available, the initiating party should provide this reference in the structured remittance information, to enable reconciliation by the creditor upon receipt of the amount of money.
-    # If the business context requires the use of a creditor reference or a payment remit identification, and only one identifier can be passed through the end-to-end chain, the creditor's reference or payment remittance identification should be quoted in the end-to-end transaction identification.
+    # Usage: If available, the initiating party should provide this reference in the structured remittance
+    #  information, to enable reconciliation by the creditor upon receipt of the amount of money.
+    # If the business context requires the use of a creditor reference or a payment remit identification, 
+    # and only one identifier can be passed through the end-to-end chain, the creditor's reference or 
+    # payment remittance identification should be quoted in the end-to-end transaction identification.
     @constraint:String {maxLength: 35, minLength: 1}
     string Reference?;
-    # Number of the payments that will be made in completing this frequency sequence including any executed since the sequence start date.
+    # Number of the payments that will be made in completing this frequency sequence including any 
+    # executed since the sequence start date.
     @constraint:String {maxLength: 35, minLength: 1}
     string NumberOfPayments?;
-    # The date on which the first payment for a Standing Order schedule will be made.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+    # The date on which the first payment for a Standing Order schedule will be made.All dates in the
+    #  JSON payloads are represented in ISO 8601 date-time format. 
     # All date-time fields in responses must include the timezone. An example is below:
     # 2017-04-05T10:43:07+00:00
     string FirstPaymentDateTime;
-    # The date on which the final payment for a Standing Order schedule will be made.All dates in the JSON payloads are represented in ISO 8601 date-time format. 
+    # The date on which the final payment for a Standing Order schedule will be made.All dates in the
+    #  JSON payloads are represented in ISO 8601 date-time format. 
     # All date-time fields in responses must include the timezone. An example is below:
     # 2017-04-05T10:43:07+00:00
     string FinalPaymentDateTime?;
-    # Specifies the external purpose code in the format of character string with a maximum length of 4 characters.
+    # Specifies the external purpose code in the format of character string with a maximum length of
+    #  4 characters.
     # The list of valid codes is an external code list published separately.
     # External code sets can be downloaded from www.iso20022.org.
     @constraint:String {maxLength: 4, minLength: 1}
     string Purpose?;
-    # Specifies the purpose of an international payment, when there is no corresponding 4 character code available in the ISO20022 list of Purpose Codes.
+    # Specifies the purpose of an international payment, when there is no corresponding 4 character 
+    # code available in the ISO20022 list of Purpose Codes.
     @constraint:String {maxLength: 140, minLength: 1}
     string ExtendedPurpose?;
-    # Specifies which party/parties will bear the charges associated with the processing of the payment transaction.
+    # Specifies which party/parties will bear the charges associated with the processing of the payment
+    #  transaction.
     string ChargeBearer?;
-    # Specifies the currency of the to be transferred amount, which is different from the currency of the debtor's account.
+    # Specifies the currency of the to be transferred amount, which is different from the currency of 
+    # the debtor's account.
     string CurrencyOfTransfer;
-    # Country in which Credit Account is domiciled. Code to identify a country, a dependency, or another area of particular geopolitical interest, on the basis of country names obtained from the United Nations (ISO 3166, Alpha-2 code).
+    # Country in which Credit Account is domiciled. Code to identify a country, a dependency, or another
+    #  area of particular geopolitical interest, on the basis of country names obtained from the United 
+    # Nations (ISO 3166, Alpha-2 code).
     string DestinationCountryCode?;
-    # Amount of money to be moved between the debtor and creditor, before deduction of charges, expressed in the currency as ordered by the initiating party.
+    # Amount of money to be moved between the debtor and creditor, before deduction of charges, expressed
+    #  in the currency as ordered by the initiating party.
     # Usage: This amount has to be transported unchanged through the transaction chain.
     Amount InstructedAmount;
-    # Unambiguous identification of the account of the debtor to which a debit entry will be made as a result of the transaction.
+    # Unambiguous identification of the account of the debtor to which a debit entry will be made as a 
+    # result of the transaction.
     DebtorAccount DebtorAccount?;
     # Party to which an amount of money is due.
     Creditor Creditor?;
-    # Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account.
+    # Party that manages the account on behalf of the account owner, that is manages the registration 
+    # and booking of entries on the account, calculates balances on the account and provides information
+    #  about the account.
     # This is the servicer of the beneficiary account.
     CreditorAgent CreditorAgent?;
     # Provides the details to identify the beneficiary account.
     CreditorAccount CreditorAccount;
-    # Additional information that can not be captured in the structured fields and/or any other specific block.
+    # Additional information that can not be captured in the structured fields and/or any other specific
+    #  block.
     anydata SupplementaryData?;
-};
+|};

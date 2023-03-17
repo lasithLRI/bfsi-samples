@@ -9,7 +9,6 @@
 // associated services.
 
 import ballerina/log;
-import ballerina/uuid;
 import bfsi_payment_initiation_api.model;
 import bfsi_payment_initiation_api.util;
 
@@ -22,11 +21,8 @@ public isolated client class PaymentClient {
     # + return - Domestic payment with ID or error
     isolated resource function post domestic\-payments(model:DomesticPaymentRequest request)
                                                     returns model:DomesticPaymentResponse|error {
-        if request.length() == 0 {
-            log:printDebug(util:EMPTY_REQUEST_BODY);
-            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
-        }
-        final string domesticPaymentId = uuid:createType1AsString();
+        check self.isValidPayload(request);
+        final string domesticPaymentId = model:getRandomId();
         return {
             Data: {
                 DomesticPaymentId: domesticPaymentId,
@@ -47,10 +43,7 @@ public isolated client class PaymentClient {
     # + return - Domestic payment or error
     isolated resource function get domestic\-payments/[string domesticPaymentId]()
                                                 returns model:DomesticPaymentResponse|error {
-        if domesticPaymentId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(domesticPaymentId);
         return {
             Data: {
                 DomesticPaymentId: domesticPaymentId,
@@ -71,11 +64,8 @@ public isolated client class PaymentClient {
     # + return - Domestic scheduled payment with ID or error
     isolated resource function post domestic\-scheduled\-payments(model:DomesticScheduledPaymentRequest request)
                                                     returns model:DomesticScheduledPaymentResponse|error {
-        if request.length() == 0 {
-            log:printDebug(util:EMPTY_REQUEST_BODY);
-            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
-        }
-        final string domesticScheduledPaymentId = uuid:createType1AsString();
+        check self.isValidPayload(request);
+        final string domesticScheduledPaymentId = model:getRandomId();
         return {
             Data: {
                 DomesticScheduledPaymentId: domesticScheduledPaymentId,
@@ -96,10 +86,7 @@ public isolated client class PaymentClient {
     # + return - Domestic scheduled payment or error
     isolated resource function get domestic\-scheduled\-payments/[string domesticScheduledPaymentId]()
                                                     returns model:DomesticScheduledPaymentResponse|error {
-        if domesticScheduledPaymentId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(domesticScheduledPaymentId);
         return {
             Data: {
                 DomesticScheduledPaymentId: domesticScheduledPaymentId,
@@ -120,11 +107,8 @@ public isolated client class PaymentClient {
     # + return - Domestic standing order payment with ID or error
     isolated resource function post domestic\-standing\-orders(model:DomesticStandingOrderRequest request)
                                                     returns model:DomesticStandingOrderResponse|error {
-        if request.length() == 0 {
-            log:printDebug(util:EMPTY_REQUEST_BODY);
-            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
-        }
-        final string domesticStandingOrderId = uuid:createType1AsString();
+        check self.isValidPayload(request);
+        final string domesticStandingOrderId = model:getRandomId();
         return {
             Data: {
                 DomesticStandingOrderId: domesticStandingOrderId,
@@ -145,10 +129,7 @@ public isolated client class PaymentClient {
     # + return - Domestic standing order payment or error
     isolated resource function get domestic\-standing\-orders/[string domesticStandingOrderId]()
                                                     returns model:DomesticStandingOrderResponse|error {
-        if domesticStandingOrderId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(domesticStandingOrderId);
         return {
             Data: {
                 DomesticStandingOrderId: domesticStandingOrderId,
@@ -169,11 +150,8 @@ public isolated client class PaymentClient {
     # + return - File payment with ID or error
     isolated resource function post file\-payments(model:FilePaymentRequest request)
                                                     returns model:FilePaymentResponse|error {
-        if request.length() == 0 {
-            log:printDebug(util:EMPTY_REQUEST_BODY);
-            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
-        }
-        final string filePaymentId = uuid:createType1AsString();
+        check self.isValidPayload(request);
+        final string filePaymentId = model:getRandomId();
         return {
             Data: {
                 FilePaymentId: filePaymentId,
@@ -194,10 +172,7 @@ public isolated client class PaymentClient {
     # + return - File payment or error
     isolated resource function get file\-payments/[string filePaymentId]() 
                                                     returns model:FilePaymentResponse|error {
-        if filePaymentId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(filePaymentId);
         return {
             Data: {
                 FilePaymentId: filePaymentId,
@@ -218,11 +193,8 @@ public isolated client class PaymentClient {
     # + return - International payment with ID or error
     isolated resource function post international\-payments(model:InternationalPaymentRequest request)
                                                     returns model:InternationalPaymentResponse|error {
-        if request.length() == 0 {
-            log:printDebug(util:EMPTY_REQUEST_BODY);
-            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
-        }
-        string internationalPaymentId = uuid:createType1AsString();
+        check self.isValidPayload(request);
+        string internationalPaymentId = model:getRandomId();
         return {
             Data: {
                 InternationalPaymentId: internationalPaymentId,
@@ -243,10 +215,7 @@ public isolated client class PaymentClient {
     # + return - International payment or error
     isolated resource function get international\-payments/[string internationalPaymentId]()
                                                     returns model:InternationalPaymentResponse|error {
-        if internationalPaymentId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(internationalPaymentId);
         return {
             Data: {
                 InternationalPaymentId: internationalPaymentId,
@@ -267,11 +236,8 @@ public isolated client class PaymentClient {
     # + return - International scheduled payment with ID or error
     isolated resource function post international\-scheduled\-payments(model:InternationalScheduledPaymentRequest request)
                                                     returns model:InternationalScheduledPaymentResponse|error {
-        if request.length() == 0 {
-            log:printDebug(util:EMPTY_REQUEST_BODY);
-            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
-        }
-        final string internationalScheduledPaymentId = uuid:createType1AsString();
+        check self.isValidPayload(request);
+        final string internationalScheduledPaymentId = model:getRandomId();
         return {
             Data: {
                 InternationalScheduledPaymentId: internationalScheduledPaymentId,
@@ -292,10 +258,7 @@ public isolated client class PaymentClient {
     # + return - International scheduled payment or error
     isolated resource function get international\-scheduled\-payments/[string internationalScheduledPaymentId]()
                                                         returns model:InternationalScheduledPaymentResponse|error {
-        if internationalScheduledPaymentId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(internationalScheduledPaymentId);
         return {
             Data: {
                 InternationalScheduledPaymentId: internationalScheduledPaymentId,
@@ -316,11 +279,8 @@ public isolated client class PaymentClient {
     # + return - International standing order payment with ID or error
     isolated resource function post international\-standing\-orders(model:InternationalStandingOrderRequest request)
                                                     returns model:InternationalStandingOrderResponse|error {
-        if request.length() == 0 {
-            log:printDebug(util:EMPTY_REQUEST_BODY);
-            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
-        }
-        final string internationalStandingorderId = uuid:createType1AsString();
+        check self.isValidPayload(request);
+        final string internationalStandingorderId = model:getRandomId();
         return {
             Data: {
                 InternationalStandingOrderId: internationalStandingorderId,
@@ -341,10 +301,7 @@ public isolated client class PaymentClient {
     # + return - International standing order payment or error
     isolated resource function get international\-standing\-orders/[string internationalStandingOrderId]()
                                                         returns model:InternationalStandingOrderResponse|error {
-        if internationalStandingOrderId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(internationalStandingOrderId);
         return {
             Data: {
                 InternationalStandingOrderId: internationalStandingOrderId,
@@ -366,10 +323,7 @@ public isolated client class PaymentClient {
     # + return - Domestic payment details or error
     isolated resource function get payments\-details/[string path]/[string paymentId]() 
                                                         returns model:PaymentDetailsResponse|error {
-        if paymentId == "" {
-            log:printDebug(util:EMPTY_PAYMENT_ID);
-            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
-        }
+        check self.isValidPaymentId(paymentId);
         return {
             Data: self.getPaymentDetailsData(paymentId),
             Links: self.getLinks(path, paymentId),
@@ -425,6 +379,28 @@ public isolated client class PaymentClient {
     private isolated function handleError(error e) returns model:PayloadParseError {
         log:printError("Failed to generate payments json. Caused by, ", e);
         return error("Try Again! Failed to generate payments response", ErrorCode = util:CODE_INTERNAL_SERVER_ERROR);
+    }
+
+    # Validate whether the Request Payload is empty.
+    # 
+    # + request - Request Payload
+    # + return - Error if the Request Payload is empty
+    private isolated function isValidPayload(anydata request) returns error? {
+        if request is null || request.toString().length() == 0 {
+            log:printDebug(util:EMPTY_REQUEST_BODY);
+            return error(util:EMPTY_REQUEST_BODY, ErrorCode = util:CODE_RESOURCE_INVALID_FORMAT);
+        }
+
+    }
+    # Validate whether the payment Id is empty.
+    # 
+    # + paymentId - Payment Id
+    # + return - Error if the payment Id is empty
+    private isolated function isValidPaymentId(string paymentId) returns error? {
+        if paymentId.trim() == "" {
+            log:printDebug(util:EMPTY_PAYMENT_ID);
+            return error(util:EMPTY_PAYMENT_ID, ErrorCode = util:CODE_FIELD_MISSING);
+        }
     }
 
 }

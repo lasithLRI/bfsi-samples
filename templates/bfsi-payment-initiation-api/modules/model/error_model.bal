@@ -13,7 +13,8 @@
 public type ErrorDetail record {|
     # Low level textual error code, e.g., OB.Field.Missing
     string ErrorCode;
-    # Recommended but optional reference to the JSON Path of the field with error, e.g., Data.Initiation.InstructedAmount.Currency
+    # Recommended but optional reference to the JSON Path of the field with error, e.g., 
+    # Data.Initiation.InstructedAmount.Currency
     string Path?;
     # URL to help remediate the problem, or provide more information, or to API Reference, or help etc
     string Url?;

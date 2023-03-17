@@ -44,7 +44,7 @@ service / on interceptorListener {
         returns model:DomesticPaymentResponse|error {
 
         log:printInfo("Initiating a domestic payment");
-        check self.validatePayload(payload, "domestic-payments");
+        check self.validatePayload(payload, util:DOMESTIC_PAYMENT);
         return self.paymentClient->/domestic\-payments.post(payload);
     }
 
@@ -52,7 +52,7 @@ service / on interceptorListener {
     #
     # + domesticPaymentId - the input payment ID 
     # + return - Domestic Payment
-    isolated resource function get 'domestic\-payments/[string domesticPaymentId](@http:Header string? x\-fapi\-auth\-date,
+    isolated resource function get domestic\-payments/[string domesticPaymentId](@http:Header string? x\-fapi\-auth\-date,
             @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
             @http:Header string? x\-customer\-user\-agent)
         returns model:DomesticPaymentResponse|error {
@@ -65,7 +65,7 @@ service / on interceptorListener {
     #
     # + domesticPaymentId - the input payment ID 
     # + return - Domestic Payment
-    isolated resource function get domestic\-payments/[string domesticPaymentId]/'payment\-details(
+    isolated resource function get domestic\-payments/[string domesticPaymentId]/payment\-details(
             @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
@@ -77,7 +77,7 @@ service / on interceptorListener {
     # Create a domestic scheduled payment
     #
     # + return - DomesticScheduledPaymentResponse object if successful else returns error
-    isolated resource function post 'domestic\-scheduled\-payments(@http:Header string? x\-fapi\-auth\-date,
+    isolated resource function post domestic\-scheduled\-payments(@http:Header string? x\-fapi\-auth\-date,
             @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
             @http:Header string x\-idempotency\-key, @http:Header string x\-jws\-signature,
             @http:Header string? x\-customer\-user\-agent,
@@ -88,7 +88,7 @@ service / on interceptorListener {
         returns model:DomesticScheduledPaymentResponse|error {
 
         log:printInfo("Initiating a domestic scheduled payment");
-        check self.validatePayload(payload, "domestic-scheduled-payments");
+        check self.validatePayload(payload, util:DOMESTIC_SCHEDULED_PAYMENT);
         return self.paymentClient->/domestic\-scheduled\-payments.post(payload);
     }
 
@@ -109,7 +109,7 @@ service / on interceptorListener {
     #
     # + domesticScheduledPaymentId - the input payment ID
     # + return - Domestic Scheduled Payment
-    isolated resource function get domestic\-scheduled\-payments/[string domesticScheduledPaymentId]/'payment\-details(
+    isolated resource function get domestic\-scheduled\-payments/[string domesticScheduledPaymentId]/payment\-details(
             @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
@@ -130,8 +130,8 @@ service / on interceptorListener {
             } model:DomesticStandingOrderRequest payload)
         returns model:DomesticStandingOrderResponse|error {
 
-        log:printInfo("Initiating a domestic scheduled payment");
-        check self.validatePayload(payload, "domestic-standing-orders");
+        log:printInfo("Initiating a domestic standing order payment");
+        check self.validatePayload(payload, util:DOMESTIC_STANDING_ORDER_PAYMENT);
         return self.paymentClient->/domestic\-standing\-orders.post(payload);
     }
 
@@ -152,7 +152,7 @@ service / on interceptorListener {
     #
     # + domesticStandingOrderId - the input payment ID
     # + return - Domestic Standing Order
-    isolated resource function get domestic\-standing\-orders/[string domesticStandingOrderId]/'payment\-details(
+    isolated resource function get domestic\-standing\-orders/[string domesticStandingOrderId]/payment\-details(
             @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
@@ -173,8 +173,8 @@ service / on interceptorListener {
             } model:FilePaymentRequest payload)
         returns model:FilePaymentResponse|error {
 
-        log:printInfo("Initiating a domestic scheduled payment");
-        check self.validatePayload(payload, "file-payments");
+        log:printInfo("Initiating a file payment");
+        check self.validatePayload(payload, util:FILE_PAYMENT);
         return self.paymentClient->/file\-payments.post(payload);
     }
 
@@ -195,7 +195,7 @@ service / on interceptorListener {
     #
     # + filePaymentId - the input payment ID
     # + return - File Payment
-    isolated resource function get file\-payments/[string filePaymentId]/'payment\-details(@http:Header string? x\-fapi\-auth\-date,
+    isolated resource function get file\-payments/[string filePaymentId]/payment\-details(@http:Header string? x\-fapi\-auth\-date,
             @http:Header string? x\-fapi\-customer\-ip\-address, @http:Header string? x\-fapi\-interaction\-id,
             @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
@@ -216,8 +216,8 @@ service / on interceptorListener {
             } model:InternationalPaymentRequest payload)
         returns model:InternationalPaymentResponse|error {
 
-        log:printInfo("Initiating a domestic scheduled payment");
-        check self.validatePayload(payload, "international-payments");
+        log:printInfo("Initiating a international payment");
+        check self.validatePayload(payload, util:INTERNATIONAL_PAYMENT);
         return self.paymentClient->/international\-payments.post(payload);
     }
 
@@ -238,7 +238,7 @@ service / on interceptorListener {
     #
     # + internationalPaymentId - the input payment ID
     # + return - International Payment
-    isolated resource function get international\-payments/[string internationalPaymentId]/'payment\-details(
+    isolated resource function get international\-payments/[string internationalPaymentId]/payment\-details(
             @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
@@ -259,8 +259,8 @@ service / on interceptorListener {
             } model:InternationalScheduledPaymentRequest payload)
         returns model:InternationalScheduledPaymentResponse|error {
 
-        log:printInfo("Initiating a domestic scheduled payment");
-        check self.validatePayload(payload, "international-scheduled-payments");
+        log:printInfo("Initiating a International scheduled payment");
+        check self.validatePayload(payload, util:INTERNATIONAL_SCHEDULED_PAYMENT);
         return self.paymentClient->/international\-scheduled\-payments.post(payload);
     }
 
@@ -281,7 +281,7 @@ service / on interceptorListener {
     #
     # + internationalScheduledPaymentId - the input payment ID
     # + return - International Scheduled Payment
-    isolated resource function get international\-scheduled\-payments/[string internationalScheduledPaymentId]/'payment\-details(
+    isolated resource function get international\-scheduled\-payments/[string internationalScheduledPaymentId]/payment\-details(
             @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
@@ -303,8 +303,8 @@ service / on interceptorListener {
             } model:InternationalStandingOrderRequest payload)
         returns model:InternationalStandingOrderResponse|error {
 
-        log:printInfo("Initiating a domestic scheduled payment");
-        check self.validatePayload(payload, "international-standing-orders");
+        log:printInfo("Initiating a  International Standing Order payment");
+        check self.validatePayload(payload, util:INTERNATIONAL_STANDING_ORDER_PAYMENT);
         return self.paymentClient->/international\-standing\-orders.post(payload);
     }
 
@@ -325,7 +325,7 @@ service / on interceptorListener {
     #
     # + internationalStandingOrderPaymentId - the input payment ID
     # + return - International Standing Order
-    isolated resource function get international\-standing\-orders/[string internationalStandingOrderPaymentId]/'payment\-details(
+    isolated resource function get international\-standing\-orders/[string internationalStandingOrderPaymentId]/payment\-details(
             @http:Header string? x\-fapi\-auth\-date, @http:Header string? x\-fapi\-customer\-ip\-address,
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
@@ -345,7 +345,7 @@ service / on interceptorListener {
         check util:validatePayload(payload);
 
         model:CreditorAccount|error creditorAccount = util:extractCreditorAccount(payload, path);
-        if !path.includes("file-payments") {
+        if !path.includes(util:FILE_PAYMENT) {
             if creditorAccount is error {
             return error("Creditor Account is missing", ErrorCode = util:CODE_FIELD_MISSING);
         }

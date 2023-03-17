@@ -11,8 +11,8 @@
 
 import ballerina/http;
 import ballerina/log;
-import ballerina/time;
 import ballerina/regex;
+import ballerina/time;
 import bfsi_payment_initiation_api.model;
 
 const ipv4 = "(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
@@ -197,33 +197,37 @@ public isolated function getInternatioanlStandingOrderPaymentInitiation() return
 # + return - the creditor account
 public isolated function extractCreditorAccount(anydata payload, string path) returns model:CreditorAccount|error {
 
-    if (path.includes("domestic-payment")) {
+    if (path.includes(DOMESTIC_PAYMENT)) {
         model:DomesticPaymentInitiation initiation = check extractDomesticPaymentInitiation(payload);
         return initiation.CreditorAccount.cloneWithType();
 
-    } else if (path.includes("domestic-scheduled-payment")) {
+    } 
+    if (path.includes(DOMESTIC_SCHEDULED_PAYMENT)) {
         model:DomesticScheduledPaymentInitiation initiation = check extractDomesticScheduledPaymentInitiation(payload);
         return initiation.CreditorAccount.cloneWithType();
 
-    } else if (path.includes("domestic-standing-order")) {
+    }
+    if (path.includes(DOMESTIC_STANDING_ORDER_PAYMENT)) {
         model:DomesticStandingOrderInitiation initiation = check extractDomesticStandingOrderInitiation(payload);
         return initiation.CreditorAccount.cloneWithType();
 
-    } else if (path.includes("international-payment")) {
+    }
+    if (path.includes(INTERNATIONAL_PAYMENT)) {
         model:InternationalPaymentInitiation initiation = check extractInternationalPaymentInitiation(payload);
         return initiation.CreditorAccount.cloneWithType();
 
-    } else if (path.includes("international-scheduled-payment")) {
+    }
+    if (path.includes(INTERNATIONAL_SCHEDULED_PAYMENT)) {
         model:InternationalScheduledPaymentInitiation initiation = check extractInternationalScheduledPaymentInitiation(payload);
         return initiation.CreditorAccount.cloneWithType();
 
-    } else if (path.includes("international-standing-orders")) {
+    } 
+    if (path.includes(INTERNATIONAL_STANDING_ORDER_PAYMENT)) {
         model:InternationalStandingOrderInitiation initiation = check extractInternationalStandingOrderInitiation(payload);
         return initiation.CreditorAccount.cloneWithType();
 
-    } else {
-        return error("Invalid path", ErrorCode = "UK.OBIE.Field.Invalid");
     }
+    return error("Invalid path", ErrorCode = "UK.OBIE.Field.Invalid");
 }
 
 # Exract debtor account from the payload.
@@ -233,49 +237,49 @@ public isolated function extractCreditorAccount(anydata payload, string path) re
 # + return - the creditor account
 public isolated function extractDebtorAccount(anydata payload, string path) returns model:DebtorAccount|error|() {
 
-    if (path.includes("domestic-payment")) {
+    if (path.includes(DOMESTIC_PAYMENT)) {
         model:DomesticPaymentInitiation initiation = check extractDomesticPaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
         return initiation.DebtorAccount.cloneWithType();
 
-    } else if (path.includes("domestic-scheduled-payment")) {
+    } else if (path.includes(DOMESTIC_SCHEDULED_PAYMENT)) {
         model:DomesticScheduledPaymentInitiation initiation = check extractDomesticScheduledPaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
         return initiation.DebtorAccount.cloneWithType();
 
-    } else if (path.includes("domestic-standing-order")) {
+    } else if (path.includes(DOMESTIC_STANDING_ORDER_PAYMENT)) {
         model:DomesticStandingOrderInitiation initiation = check extractDomesticStandingOrderInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
         return initiation.DebtorAccount.cloneWithType();
 
-    } else if (path.includes("international-payment")) {
+    } else if (path.includes(INTERNATIONAL_PAYMENT)) {
         model:InternationalPaymentInitiation initiation = check extractInternationalPaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
         return initiation.DebtorAccount.cloneWithType();
 
-    } else if (path.includes("international-scheduled-payment")) {
+    } else if (path.includes(INTERNATIONAL_SCHEDULED_PAYMENT)) {
         model:InternationalScheduledPaymentInitiation initiation = check extractInternationalScheduledPaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
         return initiation.DebtorAccount.cloneWithType();
 
-    } else if (path.includes("international-standing-order")) {
+    } else if (path.includes(INTERNATIONAL_STANDING_ORDER_PAYMENT)) {
         model:InternationalStandingOrderInitiation initiation = check extractInternationalStandingOrderInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
         }
         return initiation.DebtorAccount.cloneWithType();
 
-    } else if (path.includes("file-payment")) {
+    } else if (path.includes(FILE_PAYMENT)) {
         model:FilePaymentInitiation initiation = check extractFilePaymentInitiation(payload);
         if (initiation.DebtorAccount is ()) {
             return ();
@@ -360,7 +364,7 @@ public isolated function extractFilePaymentInitiation(anydata payload) returns m
 # Validate x-fapi-auth-date header 
 # 
 # + authDateHeader - x-fapi-auth-date Hedaer
-# + return - error? 
+# + return - Returns an error if the auth date header is future date
 public isolated function validateAuthDateHeader(string? authDateHeader) returns error? {
         if !(authDateHeader is ()) && authDateHeader != "" {
             time:Utc currentTime = time:utcNow();
@@ -383,7 +387,7 @@ public isolated function validateAuthDateHeader(string? authDateHeader) returns 
     # Validate x-fapi-customer-ip-address header 
 # 
 # + ipAddress - x-fapi-customer-ip-address Hedaer
-# + return - error? 
+# + return - Return an error if the ip address is invalid
     public isolated function validateIpAddress(string? ipAddress) returns error? {
         if !(ipAddress is ()) && ipAddress != "" {
             boolean isIpv4 = regex:matches(ipAddress, ipv4);
@@ -400,11 +404,10 @@ public isolated function validateAuthDateHeader(string? authDateHeader) returns 
     # Validate x-fapi-interaction-id header 
     # 
     # + uuidHeader - x-fapi-interaction-id Hedaer
-    # + return - error? 
+    # + return - Return an error if the uuid is invalid
     public isolated function validateUUID(string? uuidHeader) returns error? {
         if !(uuidHeader is ()) && uuidHeader != "" {
-            boolean isUuid = regex:matches(uuidHeader, uuid);
-            return isUuid ? () : error("Found invalid UUID in headers");
+            return regex:matches(uuidHeader, uuid) ? () : error("Found invalid UUID in headers");
         }
     }
 

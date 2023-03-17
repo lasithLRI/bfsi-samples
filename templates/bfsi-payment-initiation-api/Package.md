@@ -1,7 +1,7 @@
 Use template (BFSI Payment Initiation API) to create a project exposing Open Banking Payment Initiation REST APIs
 
 ## Use case
-The API endpoints exposed from this API allow to:
+The `BFSI Payment Initiation API` template can be used to initiate and retrieve payments for a specific bank user. The API endpoints exposed from this API allow to:
 
  - Submit the payment-order for processing.
  - Optionally retrieve the status of a payment-order resource.
@@ -16,13 +16,15 @@ The API endpoints exposed from this API allow to:
     ```ballerina
     bal new -t wso2bfsi/bfsi_payment_initiation_api <PROJECT_NAME>
     ```
-2. Run the project.
+2.  If further modifications are needed, open the `<PROJECT_NAME>` directory in your favorite IDE and customize the code.
+
+3. Run the project.
 
     ```ballerina
     bal run
     ```
 
-3. Invoke the API.
+4. Invoke the API.
 
     Example to Initiate a payment:
 
@@ -88,7 +90,7 @@ The API endpoints exposed from this API allow to:
 
 ### Setup and run on Choreo
 
-1. Perform steps 1 & 2 as mentioned above.
+1. Perform steps 1 to 3 as mentioned above.
 
 2. Push the project to a new Github repository.
 
@@ -108,7 +110,6 @@ The API endpoints exposed from this API allow to:
 6. Invoke the API.
 
     Sample URL to retrieve payment by payment ID:
+    `https://b643d191-c562-4f98-9a19-0831f622b020-prod.e1-us-east-azure.choreoapis.dev/xiqs/bfsi-account-and-transaction-api/1.0.0/transactions/T001`
 
-    ```
-    curl GET 'https://<host>:<port>/domestic-payments/P001' 
-    ```
+    Format: `https://<domain>/<component>/<version>/transactions/T001`
