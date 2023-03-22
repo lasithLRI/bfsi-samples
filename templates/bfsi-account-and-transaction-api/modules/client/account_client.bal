@@ -20,13 +20,11 @@ import bfsi_account_and_transaction_api.util;
 # Represents accounts API service methods.
 public isolated client class AccountClient {
 
-    private final repository:AccountsRepository repository = new ();
-
     # Get all accounts.
     #
     # + return - account list
     resource isolated function get accounts() returns model:AccountsResponse => {
-        Data: self.repository.getAllAccounts().toArray(),
+        Data: repository:accounts.toArray(),
         Links: self.getLinks("/accounts"),
         Meta: {TotalPages: 1}
     };
@@ -37,9 +35,9 @@ public isolated client class AccountClient {
     # + return - account list or error
     resource isolated function get accounts/[string accountId]()
             returns model:AccountsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Account? account = self.repository.getAllAccounts()[accountId];
+        model:Account? account = repository:accounts[accountId];
         if account == () {
             log:printDebug(util:INVALID_ACCOUNT_ID, accountId = accountId);
             return error(util:INVALID_ACCOUNT_ID, ErrorCode = util:CODE_INVALID_ACCOUNT_ID);
@@ -56,7 +54,7 @@ public isolated client class AccountClient {
     #
     # + return - all balances or error
     resource isolated function get balances() returns model:BalanceResponse => {
-        Data: self.repository.getAllBalances().toArray(),
+        Data: repository:balances.toArray(),
         Links: self.getLinks("/balances"),
         Meta: {TotalPages: 1}
     };
@@ -67,9 +65,9 @@ public isolated client class AccountClient {
     # + return - account balances list or error
     resource isolated function get accounts/[string accountId]/balances()
             returns model:BalanceResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Balance[] balances = from model:Balance i in self.repository.getAllBalances()
+        model:Balance[] balances = from model:Balance i in repository:balances
             where i.AccountId == accountId
             select i;
 
@@ -84,7 +82,7 @@ public isolated client class AccountClient {
     #
     # + return - account beneficiaries list or error
     resource isolated function get beneficiaries() returns model:BeneficiariesResponse => {
-        Data: self.repository.getAllBeneficiaries().toArray(),
+        Data: repository:beneficiaries.toArray(),
         Links: self.getLinks("/beneficiaries"),
         Meta: {TotalPages: 1}
     };
@@ -95,9 +93,9 @@ public isolated client class AccountClient {
     # + return - account beneficiaries list or error
     resource isolated function get accounts/[string accountId]/beneficiaries()
             returns model:BeneficiariesResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Beneficiary[] beneficiaries = from model:Beneficiary i in self.repository.getAllBeneficiaries()
+        model:Beneficiary[] beneficiaries = from model:Beneficiary i in repository:beneficiaries
             where i.AccountId == accountId
             select i;
 
@@ -112,7 +110,7 @@ public isolated client class AccountClient {
     #
     # + return - account direct debits list or error
     resource isolated function get direct\-debits() returns model:DirectDebitsResponse => {
-        Data: self.repository.getAllDirectDebits().toArray(),
+        Data: repository:directDebits.toArray(),
         Links: self.getLinks("/direct-debits"),
         Meta: {TotalPages: 1}
     };
@@ -123,9 +121,9 @@ public isolated client class AccountClient {
     # + return - account direct debits list or error
     resource isolated function get accounts/[string accountId]/direct\-debits()
             returns model:DirectDebitsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:DirectDebit[] directDebits = from model:DirectDebit i in self.repository.getAllDirectDebits()
+        model:DirectDebit[] directDebits = from model:DirectDebit i in repository:directDebits
             where i.AccountId == accountId
             select i;
 
@@ -140,7 +138,7 @@ public isolated client class AccountClient {
     #
     # + return - account offers list or error
     resource isolated function get offers() returns model:OffersResponse => {
-        Data: self.repository.getAllOffers().toArray(),
+        Data: repository:offers.toArray(),
         Links: self.getLinks("/offers"),
         Meta: {TotalPages: 1}
     };
@@ -151,9 +149,9 @@ public isolated client class AccountClient {
     # + return - account offers list or error
     resource isolated function get accounts/[string accountId]/offers()
             returns model:OffersResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Offer[] offers = from model:Offer i in self.repository.getAllOffers()
+        model:Offer[] offers = from model:Offer i in repository:offers
             where i.AccountId == accountId
             select i;
         return {
@@ -167,7 +165,7 @@ public isolated client class AccountClient {
     #
     # + return - account parties list or error
     resource isolated function get parties() returns model:PartiesResponse => {
-        Data: self.repository.getAllParties().toArray(),
+        Data: repository:parties.toArray(),
         Links: self.getLinks("/parties"),
         Meta: {TotalPages: 1}
     };
@@ -178,9 +176,9 @@ public isolated client class AccountClient {
     # + return - account parties list or error
     resource isolated function get accounts/[string accountId]/parties()
             returns model:PartiesResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Party[] parties = from model:Party party in self.repository.getAllParties()
+        model:Party[] parties = from model:Party party in repository:parties
             where party.Relationships?.Account?.Id == accountId
             select party;
 
@@ -197,9 +195,9 @@ public isolated client class AccountClient {
     # + return - account parties list or error
     resource isolated function get accounts/[string accountId]/party()
             returns model:PartiesResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Party[] parties = from model:Party party in self.repository.getAllParties()
+        model:Party[] parties = from model:Party party in repository:parties
             where party.Relationships?.Account?.Id == accountId
             limit 1
             select party;
@@ -218,7 +216,7 @@ public isolated client class AccountClient {
     #
     # + return - account products list or error
     resource isolated function get products() returns model:ProductsResponse => {
-        Data: self.repository.getAllProducts().toArray(),
+        Data: repository:products.toArray(),
         Links: self.getLinks("/products"),
         Meta: {TotalPages: 1}
     };
@@ -229,9 +227,9 @@ public isolated client class AccountClient {
     # + return - account products list or error
     resource isolated function get accounts/[string accountId]/products()
             returns model:ProductsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Product[] product = from model:Product i in self.repository.getAllProducts()
+        model:Product[] product = from model:Product i in repository:products
             where i.AccountId == accountId
             select i;
         return {
@@ -245,7 +243,7 @@ public isolated client class AccountClient {
     #
     # + return - account scheduled payments list or error
     resource isolated function get scheduled\-payments() returns model:ScheduledPaymentsResponse => {
-        Data: self.repository.getAllScheduledPayments().toArray(),
+        Data: repository:scheduledPayments.toArray(),
         Links: self.getLinks("/scheduled-payments"),
         Meta: {TotalPages: 1}
     };
@@ -256,10 +254,9 @@ public isolated client class AccountClient {
     # + return - account scheduled payments list or error
     resource isolated function get accounts/[string accountId]/scheduled\-payments()
             returns model:ScheduledPaymentsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:ScheduledPayment[] scheduledPayments = from model:ScheduledPayment
-            i in self.repository.getAllScheduledPayments()
+        model:ScheduledPayment[] scheduledPayments = from model:ScheduledPayment i in repository:scheduledPayments
             where i.AccountId == accountId
             select i;
         return {
@@ -273,7 +270,7 @@ public isolated client class AccountClient {
     #
     # + return - account standing orders list or error
     resource isolated function get standing\-orders() returns model:StandingOrdersResponse => {
-        Data: self.repository.getAllStandingOrders().toArray(),
+        Data: repository:standingOrders.toArray(),
         Links: self.getLinks("/standing-orders"),
         Meta: {TotalPages: 1}
     };
@@ -284,9 +281,9 @@ public isolated client class AccountClient {
     # + return - account standing orders list or error
     resource isolated function get accounts/[string accountId]/standing\-orders()
             returns model:StandingOrdersResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:StandingOrder[] standingOrder = from model:StandingOrder i in self.repository.getAllStandingOrders()
+        model:StandingOrder[] standingOrder = from model:StandingOrder i in repository:standingOrders
             where i.AccountId == accountId
             select i;
         return {
@@ -300,7 +297,7 @@ public isolated client class AccountClient {
     #
     # + return - account statements list or error
     resource isolated function get statements() returns model:StatementsResponse => {
-        Data: self.repository.getAllStatements().toArray(),
+        Data: repository:statements.toArray(),
         Links: self.getLinks("/statements"),
         Meta: {TotalPages: 1}
     };
@@ -311,9 +308,9 @@ public isolated client class AccountClient {
     # + return - account statements list or error
     resource isolated function get accounts/[string accountId]/statements()
             returns model:StatementsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Statement[] statement = from model:Statement i in self.repository.getAllStatements()
+        model:Statement[] statement = from model:Statement i in repository:statements
             where i.AccountId == accountId
             select i;
 
@@ -331,10 +328,10 @@ public isolated client class AccountClient {
     # + return - account statements list or error
     resource isolated function get accounts/[string accountId]/statements/[string statementId]()
             returns model:StatementsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
-        check self.isValidStatementId(statementId);
+        check self.validateAccountId(accountId);
+        check self.validateStatementId(statementId);
 
-        model:Statement? statement = self.repository.getAllStatements()[accountId, statementId];
+        model:Statement? statement = repository:statements[accountId, statementId];
         if statement == () {
             log:printDebug(util:INVALID_STATEMENT_ID, statementId = statementId);
             return error(util:INVALID_STATEMENT_ID, ErrorCode = util:CODE_INVALID_STATEMENT_ID);
@@ -353,10 +350,10 @@ public isolated client class AccountClient {
     # + return - account statements list or error
     resource isolated function get accounts/[string accountId]/statements/[string statementId]/file()
             returns http:Response|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
-        check self.isValidStatementId(statementId);
+        check self.validateAccountId(accountId);
+        check self.validateStatementId(statementId);
 
-        model:Statement? statement = self.repository.getAllStatements()[accountId, statementId];
+        model:Statement? statement = repository:statements[accountId, statementId];
         if statement == () {
             log:printDebug(util:INVALID_STATEMENT_ID, statementId = statementId);
             return error(util:INVALID_STATEMENT_ID, ErrorCode = util:CODE_INVALID_STATEMENT_ID);
@@ -385,7 +382,7 @@ public isolated client class AccountClient {
     #
     # + return - account transactions list or error
     resource isolated function get transactions() returns model:TransactionsResponse => {
-        Data: self.repository.getAllTransactions().toArray(),
+        Data: repository:transactions.toArray(),
         Links: self.getLinks("/transactions"),
         Meta: {TotalPages: 1}
     };
@@ -396,9 +393,9 @@ public isolated client class AccountClient {
     # + return - account transactions list or error
     resource isolated function get accounts/[string accountId]/transactions()
             returns model:TransactionsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
+        check self.validateAccountId(accountId);
 
-        model:Transaction[] transactions = from model:Transaction i in self.repository.getAllTransactions()
+        model:Transaction[] transactions = from model:Transaction i in repository:transactions
             where i.AccountId == accountId
             select i;
 
@@ -416,10 +413,10 @@ public isolated client class AccountClient {
     # + return - account transactions list or error
     resource isolated function get accounts/[string accountId]/statements/[string statementId]/transactions()
             returns model:TransactionsResponse|model:InvalidResourceIdError {
-        check self.isValidAccountId(accountId);
-        check self.isValidStatementId(statementId);
+        check self.validateAccountId(accountId);
+        check self.validateStatementId(statementId);
 
-        model:Transaction[] accountTransactions = from model:Transaction i in self.repository.getAllTransactions()
+        model:Transaction[] accountTransactions = from model:Transaction i in repository:transactions
             where i.AccountId == accountId
             select i;
 
@@ -436,18 +433,11 @@ public isolated client class AccountClient {
     # + statementId - Statement ID
     # + return - Filtered transactions
     private isolated function filterTransactionByStatementId(model:Transaction[] accountTransactions,
-            string statementId) returns model:Transaction[] {
-        model:Transaction[] transactions = [];
-        foreach model:Transaction tran in accountTransactions {
-            if !(tran.StatementReference is ()) {
-                string[] statementReference = tran.StatementReference ?: [];
-                if statementReference.indexOf(statementId, 0) != () {
-                    transactions.push(tran);
-                }
-            }
-        }
-        return transactions;
-    }
+            string statementId) returns model:Transaction[] =>
+        from model:Transaction tran in accountTransactions
+            let string[]? statementReference = tran.StatementReference
+            where statementReference !is () && statementReference.indexOf(statementId, 0) != ()
+            select tran;
 
     # Get the Link matching to the path and consent id
     #
@@ -462,7 +452,7 @@ public isolated client class AccountClient {
     #
     # + accountId - Account ID to be validated
     # + return - `InvalidResourceIdError` if the account ID is invalid
-    private isolated function isValidAccountId(string accountId) returns model:InvalidResourceIdError? {
+    private isolated function validateAccountId(string accountId) returns model:InvalidResourceIdError? {
         if util:isEmpty(accountId) {
             log:printDebug(util:EMPTY_ACCOUNT_ID);
             return error(util:EMPTY_ACCOUNT_ID, ErrorCode = util:CODE_EMPTY_ACCOUNT_ID);
@@ -473,7 +463,7 @@ public isolated client class AccountClient {
     #
     # + statementId - Statement ID to be validated
     # + return - `InvalidResourceIdError` if the statement ID is invalid
-    private isolated function isValidStatementId(string statementId) returns model:InvalidResourceIdError? {
+    private isolated function validateStatementId(string statementId) returns model:InvalidResourceIdError? {
         if util:isEmpty(statementId) {
             log:printDebug(util:EMPTY_STATEMENT_ID);
             return error(util:EMPTY_STATEMENT_ID, ErrorCode = util:CODE_EMPTY_STATEMENT_ID);

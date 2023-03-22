@@ -53,4 +53,5 @@ public isolated function getRandomId() returns string => uuid:createType4AsStrin
 #
 # + value - the string to be checked
 # + return - true if the string is empty, else false
-public isolated function isEmpty(string value) returns boolean => value.trim() == "" || value.trim().length() == 0;
+public isolated function isEmpty(string value) returns boolean => 
+    let string trimmedValue = value.trim() in trimmedValue == "" || trimmedValue.length() == 0;
