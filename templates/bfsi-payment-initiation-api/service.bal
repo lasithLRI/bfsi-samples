@@ -43,7 +43,8 @@ service / on interceptorListener {
         )
         returns model:DomesticPaymentResponse|error {
 
-        log:printInfo("Initiating a domestic payment");
+        log:printDebug("Initiating a domestic payment for idempotent request", 
+                                        idempotencyKey = x\-idempotency\-key);
         check self.validatePayload(payload.toJson(), util:DOMESTIC_PAYMENT);
         return self.paymentClient->/domestic\-payments.post(payload);
     }
@@ -57,7 +58,7 @@ service / on interceptorListener {
             @http:Header string? x\-customer\-user\-agent)
         returns model:DomesticPaymentResponse|error {
 
-        log:printInfo("Retriveing Domestic Payment ", paymentId = domesticPaymentId);
+        log:printDebug("Retriveing Domestic Payment ", paymentId = domesticPaymentId);
         return self.paymentClient->/domestic\-payments/[domesticPaymentId];
     }
 
@@ -70,7 +71,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
 
-        log:printInfo("Retriveing Domestic Payment Details", paymentId = domesticPaymentId);
+        log:printDebug("Retriveing Domestic Payment Details", paymentId = domesticPaymentId);
         return self.paymentClient->/payments\-details/domestic\-payments/[domesticPaymentId];
     }
 
@@ -87,7 +88,8 @@ service / on interceptorListener {
         )
         returns model:DomesticScheduledPaymentResponse|error {
 
-        log:printInfo("Initiating a domestic scheduled payment");
+        log:printDebug("Initiating a domestic scheduled payment for idempotent request", 
+                                        idempotencyKey = x\-idempotency\-key);
         check self.validatePayload(payload.toJson(), util:DOMESTIC_SCHEDULED_PAYMENT);
         return self.paymentClient->/domestic\-scheduled\-payments.post(payload);
     }
@@ -101,7 +103,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:DomesticScheduledPaymentResponse|error {
 
-        log:printInfo("Retriveing Domestic Scheduled Payment", paymentId = domesticScheduledPaymentId);
+        log:printDebug("Retriveing Domestic Scheduled Payment", paymentId = domesticScheduledPaymentId);
         return self.paymentClient->/domestic\-scheduled\-payments/[domesticScheduledPaymentId];
     }
 
@@ -114,7 +116,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
 
-        log:printInfo("Retriveing Domestic Scheduled Payment Details", paymentId = domesticScheduledPaymentId);
+        log:printDebug("Retriveing Domestic Scheduled Payment Details", paymentId = domesticScheduledPaymentId);
         return self.paymentClient->/payments\-details/domestic\-scheduled\-payments/[domesticScheduledPaymentId];
     }
 
@@ -130,7 +132,8 @@ service / on interceptorListener {
             } model:DomesticStandingOrderRequest payload)
         returns model:DomesticStandingOrderResponse|error {
 
-        log:printInfo("Initiating a domestic standing order payment");
+        log:printDebug("Initiating a domestic standing order payment for idempotent request", 
+                                        idempotencyKey = x\-idempotency\-key);
         check self.validatePayload(payload.toJson(), util:DOMESTIC_STANDING_ORDER_PAYMENT);
         return self.paymentClient->/domestic\-standing\-orders.post(payload);
     }
@@ -144,7 +147,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:DomesticStandingOrderResponse|error {
 
-        log:printInfo("Retriveing Domestic Standing Order", paymentId = domesticStandingOrderId);
+        log:printDebug("Retriveing Domestic Standing Order", paymentId = domesticStandingOrderId);
         return self.paymentClient->/domestic\-standing\-orders/[domesticStandingOrderId];
     }
 
@@ -157,7 +160,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
 
-        log:printInfo("Retriveing Domestic Standing Order Details", paymentId = domesticStandingOrderId);
+        log:printDebug("Retriveing Domestic Standing Order Details", paymentId = domesticStandingOrderId);
         return self.paymentClient->/payments\-details/domestic\-standing\-orders/[domesticStandingOrderId];
     }
 
@@ -173,7 +176,8 @@ service / on interceptorListener {
             } model:FilePaymentRequest payload)
         returns model:FilePaymentResponse|error {
 
-        log:printInfo("Initiating a file payment");
+        log:printDebug("Initiating a file payment for idempotent request", 
+                                        idempotencyKey = x\-idempotency\-key);
         check self.validatePayload(payload.toJson(), util:FILE_PAYMENT);
         return self.paymentClient->/file\-payments.post(payload);
     }
@@ -187,7 +191,7 @@ service / on interceptorListener {
             @http:Header string? x\-customer\-user\-agent)
         returns model:FilePaymentResponse|error {
 
-        log:printInfo("Retriveing File Payment", paymentId = filePaymentId);
+        log:printDebug("Retriveing File Payment", paymentId = filePaymentId);
         return self.paymentClient->/file\-payments/[filePaymentId];
     }
 
@@ -200,7 +204,7 @@ service / on interceptorListener {
             @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
 
-        log:printInfo("Retriveing File Payment Details", paymentId = filePaymentId);
+        log:printDebug("Retriveing File Payment Details", paymentId = filePaymentId);
         return self.paymentClient->/payments\-details/file\-payments/[filePaymentId];
     }
 
@@ -216,7 +220,8 @@ service / on interceptorListener {
             } model:InternationalPaymentRequest payload)
         returns model:InternationalPaymentResponse|error {
 
-        log:printInfo("Initiating a international payment");
+        log:printDebug("Initiating a international payment for idempotent request", 
+                                        idempotencyKey = x\-idempotency\-key);
         check self.validatePayload(payload.toJson(), util:INTERNATIONAL_PAYMENT);
         return self.paymentClient->/international\-payments.post(payload);
     }
@@ -230,7 +235,7 @@ service / on interceptorListener {
             @http:Header string? x\-customer\-user\-agent)
         returns model:InternationalPaymentResponse|error {
 
-        log:printInfo("Retriveing International Payment", paymentId = internationalPaymentId);
+        log:printDebug("Retriveing International Payment", paymentId = internationalPaymentId);
         return self.paymentClient->/international\-payments/[internationalPaymentId];
     }
 
@@ -243,7 +248,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
 
-        log:printInfo("Retriveing International Payment Details", paymentId = internationalPaymentId);
+        log:printDebug("Retriveing International Payment Details", paymentId = internationalPaymentId);
         return self.paymentClient->/payments\-details/international\-payments/[internationalPaymentId];
     }
 
@@ -259,7 +264,8 @@ service / on interceptorListener {
             } model:InternationalScheduledPaymentRequest payload)
         returns model:InternationalScheduledPaymentResponse|error {
 
-        log:printInfo("Initiating a International scheduled payment");
+        log:printDebug("Initiating a International scheduled payment for idempotent request", 
+                                        idempotencyKey = x\-idempotency\-key);
         check self.validatePayload(payload.toJson(), util:INTERNATIONAL_SCHEDULED_PAYMENT);
         return self.paymentClient->/international\-scheduled\-payments.post(payload);
     }
@@ -273,7 +279,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:InternationalScheduledPaymentResponse|error {
 
-        log:printInfo("Retriveing International Scheduled Payment", paymentId = internationalScheduledPaymentId);
+        log:printDebug("Retriveing International Scheduled Payment", paymentId = internationalScheduledPaymentId);
         return self.paymentClient->/international\-scheduled\-payments/[internationalScheduledPaymentId];
     }
 
@@ -286,7 +292,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
 
-        log:printInfo("Retriveing International Scheduled Payment Details", paymentId = internationalScheduledPaymentId);
+        log:printDebug("Retriveing International Scheduled Payment Details", paymentId = internationalScheduledPaymentId);
         return self.paymentClient->/payments\-details/international\-scheduled\-payments/[internationalScheduledPaymentId];
     }
 
@@ -303,7 +309,8 @@ service / on interceptorListener {
             } model:InternationalStandingOrderRequest payload)
         returns model:InternationalStandingOrderResponse|error {
 
-        log:printInfo("Initiating a  International Standing Order payment");
+        log:printDebug("Initiating a  International Standing Order payment for idempotent request", 
+                                        idempotencyKey = x\-idempotency\-key);
         check self.validatePayload(payload.toJson(), util:INTERNATIONAL_STANDING_ORDER_PAYMENT);
         return self.paymentClient->/international\-standing\-orders.post(payload);
     }
@@ -317,7 +324,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:InternationalStandingOrderResponse|error {
 
-        log:printInfo("Retriveing International Standing Order", paymentId = internationalStandingOrderPaymentId);
+        log:printDebug("Retriveing International Standing Order", paymentId = internationalStandingOrderPaymentId);
         return self.paymentClient->/international\-standing\-orders/[internationalStandingOrderPaymentId];
     }
 
@@ -330,7 +337,7 @@ service / on interceptorListener {
             @http:Header string? x\-fapi\-interaction\-id, @http:Header string? x\-customer\-user\-agent)
         returns model:PaymentDetailsResponse|error {
 
-        log:printInfo("Retriveing International Standing Order Details", paymentId = internationalStandingOrderPaymentId);
+        log:printDebug("Retriveing International Standing Order Details", paymentId = internationalStandingOrderPaymentId);
         return self.paymentClient->/payments\-details/international\-standing\-orders/[internationalStandingOrderPaymentId];
     }
 

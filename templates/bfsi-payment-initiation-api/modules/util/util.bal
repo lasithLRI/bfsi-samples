@@ -23,21 +23,21 @@ const UUID = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$";
 #
 # + return - a domestic payment initiation payload.
 public isolated function getDomesticPaymentInitiation() returns map<json> => {
-    "InstructionIdentification": "ACME412",
-    "EndToEndIdentification": "FRESCO.21302.GFX.20",
-    "InstructedAmount": {
-        "Amount": "165.88",
-        "Currency": "GBP"
+    InstructionIdentification: "ACME412",
+    EndToEndIdentification: "FRESCO.21302.GFX.20",
+    InstructedAmount: {
+        Amount: "165.88",
+        Currency: "GBP"
     },
-    "CreditorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "08080021325698",
-        "Name": "ACME Inc",
-        "SecondaryIdentification": "0002"
+    CreditorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "08080021325698",
+        Name: "ACME Inc",
+        SecondaryIdentification: "0002"
     },
-    "RemittanceInformation": {
-        "Reference": "FRESCO-101",
-        "Unstructured": "Internal ops code 5120101"
+    RemittanceInformation: {
+        Reference: "FRESCO-101",
+        Unstructured: "Internal ops code 5120101"
     }
 };
 
@@ -45,25 +45,25 @@ public isolated function getDomesticPaymentInitiation() returns map<json> => {
 #
 # + return - a domestic scheduled payment initiation payload.
 public isolated function getDomesticScheduledPaymentInitiation() returns map<json> => {
-    "InstructionIdentification": "89f0a53a91ee47f6a383536f851d6b5a",
-    "RequestedExecutionDateTime": "2018-08-06T00:00:00+00:00",
-    "InstructedAmount": {
-        "Amount": "200.00",
-        "Currency": "GBP"
+    InstructionIdentification: "89f0a53a91ee47f6a383536f851d6b5a",
+    RequestedExecutionDateTime: "2018-08-06T00:00:00+00:00",
+    InstructedAmount: {
+        Amount: "200.00",
+        Currency: "GBP"
     },
-    "DebtorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "11280001234567",
-        "Name": "Andrea Frost"
+    DebtorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "11280001234567",
+        Name: "Andrea Frost"
     },
-    "CreditorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "08080021325698",
-        "Name": "Tom Kirkman"
+    CreditorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "08080021325698",
+        Name: "Tom Kirkman"
     },
-    "RemittanceInformation": {
-        "Reference": "DSR-037",
-        "Unstructured": "Internal ops code 5120103"
+    RemittanceInformation: {
+        Reference: "DSR-037",
+        Unstructured: "Internal ops code 5120103"
     }
 };
 
@@ -71,31 +71,31 @@ public isolated function getDomesticScheduledPaymentInitiation() returns map<jso
 #
 # + return - a domestic standing order payment initiation payload.
 public isolated function getDomesticStandingOrderPaymentInitiation() returns map<json> => {
-    "Frequency": "EvryDay",
-    "Reference": "Pocket money for Damien",
-    "FirstPaymentDateTime": "2023-06-06T06:06:06+00:00",
-    "FirstPaymentAmount": {
-        "Amount": "6.66",
-        "Currency": "GBP"
+    Frequency: "EvryDay",
+    Reference: "Pocket money for Damien",
+    FirstPaymentDateTime: "2023-06-06T06:06:06+00:00",
+    FirstPaymentAmount: {
+        Amount: "6.66",
+        Currency: "GBP"
     },
-    "RecurringPaymentAmount": {
-        "Amount": "7.00",
-        "Currency": "GBP"
+    RecurringPaymentAmount: {
+        Amount: "7.00",
+        Currency: "GBP"
     },
-    "FinalPaymentDateTime": "2025-06-06T06:06:06+00:00",
-    "FinalPaymentAmount": {
-        "Amount": "7.00",
-        "Currency": "GBP"
+    FinalPaymentDateTime: "2025-06-06T06:06:06+00:00",
+    FinalPaymentAmount: {
+        Amount: "7.00",
+        Currency: "GBP"
     },
-    "DebtorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "11280001234567",
-        "Name": "Andrea Smith"
+    DebtorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "11280001234567",
+        Name: "Andrea Smith"
     },
-    "CreditorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "08080021325698",
-        "Name": "Bob Clements"
+    CreditorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "08080021325698",
+        Name: "Bob Clements"
     }
 };
 
@@ -103,38 +103,38 @@ public isolated function getDomesticStandingOrderPaymentInitiation() returns map
 #
 # + return - a file payment initiation payload.
 public isolated function getFilePaymentInitiation() returns map<json> => {
-    "FileType": "UK.OBIE.pain.001.001.08",
-    "FileHash": "m5ah/h1UjLvJYMxqAoZmj9dKdjZnsGNm+yMkJp/KuqQ",
-    "FileReference": "GB2OK238",
-    "NumberOfTransactions": "100",
-    "ControlSum": 3459.30
+    FileType: "UK.OBIE.pain.001.001.08",
+    FileHash: "m5ah/h1UjLvJYMxqAoZmj9dKdjZnsGNm+yMkJp/KuqQ",
+    FileReference: "GB2OK238",
+    NumberOfTransactions: "100",
+    ControlSum: 3459.30
 };
 
 # Get a International payment initiation payload.
 #
 # + return - an international payment initiation payload.
 public isolated function getInternationalPaymentInitiation() returns map<json> => {
-    "InstructionIdentification": "ACME412",
-    "EndToEndIdentification": "FRESCO.21302.GFX.20",
-    "InstructionPriority": "Normal",
-    "CurrencyOfTransfer": "USD",
-    "InstructedAmount": {
-        "Amount": "165.88",
-        "Currency": "GBP"
+    InstructionIdentification: "ACME412",
+    EndToEndIdentification: "FRESCO.21302.GFX.20",
+    InstructionPriority: "Normal",
+    CurrencyOfTransfer: "USD",
+    InstructedAmount: {
+        Amount: "165.88",
+        Currency: "GBP"
     },
-    "CreditorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "08080021325698",
-        "Name": "ACME Inc",
-        "SecondaryIdentification": "0002"
+    CreditorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "08080021325698",
+        Name: "ACME Inc",
+        SecondaryIdentification: "0002"
     },
-    "RemittanceInformation": {
-        "Reference": "FRESCO-101",
-        "Unstructured": "Internal ops code 5120101"
+    RemittanceInformation: {
+        Reference: "FRESCO-101",
+        Unstructured: "Internal ops code 5120101"
     },
-    "ExchangeRateInformation": {
-        "UnitCurrency": "GBP",
-        "RateType": "Actual"
+    ExchangeRateInformation: {
+        UnitCurrency: "GBP",
+        RateType: "Actual"
     }
 };
 
@@ -142,27 +142,27 @@ public isolated function getInternationalPaymentInitiation() returns map<json> =
 #
 # + return - an international scheduled payment initiation payload.
 public isolated function getInternatioanlScheduledPaymentInitiation() returns map<json> => {
-    "InstructionIdentification": "ACME412",
-    "EndToEndIdentification": "FRESCO.21302.GFX.20",
-    "RequestedExecutionDateTime": "2023-06-06T06:06:06+00:00",
-    "InstructedAmount": {
-        "Amount": "165.88",
-        "Currency": "USD"
+    InstructionIdentification: "ACME412",
+    EndToEndIdentification: "FRESCO.21302.GFX.20",
+    RequestedExecutionDateTime: "2023-06-06T06:06:06+00:00",
+    InstructedAmount: {
+        Amount: "165.88",
+        Currency: "USD"
     },
-    "CurrencyOfTransfer": "USD",
-    "CreditorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "08080021325698",
-        "Name": "ACME Inc",
-        "SecondaryIdentification": "0002"
+    CurrencyOfTransfer: "USD",
+    CreditorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "08080021325698",
+        Name: "ACME Inc",
+        SecondaryIdentification: "0002"
     },
-    "RemittanceInformation": {
-        "Reference": "FRESCO-101",
-        "Unstructured": "Internal ops code 5120101"
+    RemittanceInformation: {
+        Reference: "FRESCO-101",
+        Unstructured: "Internal ops code 5120101"
     },
-    "ExchangeRateInformation": {
-        "UnitCurrency": "GBP",
-        "RateType": "Actual"
+    ExchangeRateInformation: {
+        UnitCurrency: "GBP",
+        RateType: "Actual"
     }
 };
 
@@ -170,24 +170,24 @@ public isolated function getInternatioanlScheduledPaymentInitiation() returns ma
 #
 # + return - an international standing order payment initiation payload.
 public isolated function getInternatioanlStandingOrderPaymentInitiation() returns map<json> => {
-    "Frequency": "EvryWorkgDay",
-    "FirstPaymentDateTime": "2023-06-06T06:06:06+00:00",
-    "FinalPaymentDateTime": "2025-06-06T06:06:06+00:00",
-    "DebtorAccount": {
-        "SchemeName": "UK.OBIE.SortCodeAccountNumber",
-        "Identification": "11280001234567",
-        "Name": "Andrea Frost"
+    Frequency: "EvryWorkgDay",
+    FirstPaymentDateTime: "2023-06-06T06:06:06+00:00",
+    FinalPaymentDateTime: "2025-06-06T06:06:06+00:00",
+    DebtorAccount: {
+        SchemeName: "UK.OBIE.SortCodeAccountNumber",
+        Identification: "11280001234567",
+        Name: "Andrea Frost"
     },
-    "CreditorAccount": {
-        "SchemeName": "UK.OBIE.IBAN",
-        "Identification": "DE89370400440532013000",
-        "Name": "Tom Kirkman"
+    CreditorAccount: {
+        SchemeName: "UK.OBIE.IBAN",
+        Identification: "DE89370400440532013000",
+        Name: "Tom Kirkman"
     },
-    "InstructedAmount": {
-        "Amount": "20",
-        "Currency": "EUR"
+    InstructedAmount: {
+        Amount: "20",
+        Currency: "EUR"
     },
-    "CurrencyOfTransfer": "EUR"
+    CurrencyOfTransfer: "EUR"
 };
 
 # Exract creditor account from the payload.
