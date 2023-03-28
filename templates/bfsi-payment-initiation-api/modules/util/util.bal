@@ -199,32 +199,33 @@ public isolated function extractCreditorAccount(json payload, string path) retur
 
     if path.includes(DOMESTIC_PAYMENT) {
         model:DomesticPaymentInitiation initiation = check extractDomesticPaymentInitiation(payload);
-        return initiation.CreditorAccount.ensureType();
+        log:printError("Extracting Domestic Payment Initiation", initiation=initiation);
+        return initiation.CreditorAccount.cloneWithType();
 
     }
     if path.includes(DOMESTIC_SCHEDULED_PAYMENT) {
         model:DomesticScheduledPaymentInitiation initiation = check extractDomesticScheduledPaymentInitiation(payload);
-        return initiation.CreditorAccount.ensureType();
+        return initiation.CreditorAccount.cloneWithType();
 
     }
     if path.includes(DOMESTIC_STANDING_ORDER_PAYMENT) {
         model:DomesticStandingOrderInitiation initiation = check extractDomesticStandingOrderInitiation(payload);
-        return initiation.CreditorAccount.ensureType();
+        return initiation.CreditorAccount.cloneWithType();
 
     }
     if path.includes(INTERNATIONAL_PAYMENT) {
         model:InternationalPaymentInitiation initiation = check extractInternationalPaymentInitiation(payload);
-        return initiation.CreditorAccount.ensureType();
+        return initiation.CreditorAccount.cloneWithType();
 
     }
     if path.includes(INTERNATIONAL_SCHEDULED_PAYMENT) {
         model:InternationalScheduledPaymentInitiation initiation = check extractInternationalScheduledPaymentInitiation(payload);
-        return initiation.CreditorAccount.ensureType();
+        return initiation.CreditorAccount.cloneWithType();
 
     }
     if path.includes(INTERNATIONAL_STANDING_ORDER_PAYMENT) {
         model:InternationalStandingOrderInitiation initiation = check extractInternationalStandingOrderInitiation(payload);
-        return initiation.CreditorAccount.ensureType();
+        return initiation.CreditorAccount.cloneWithType();
 
     }
     return error("Invalid path", ErrorCode = "UK.OBIE.Field.Invalid");
@@ -302,7 +303,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
 # + return - the Domestic Payment Initiation
 public isolated function extractDomesticPaymentInitiation(json payload)
     returns model:DomesticPaymentInitiation|error => 
-                        (check payload.Data.Initiation).ensureType();
+                        (check payload.Data.Initiation).cloneWithType();
 
 
 # Exract Domestic Scheduled Payment Initiation from the payload.
@@ -311,7 +312,7 @@ public isolated function extractDomesticPaymentInitiation(json payload)
 # + return - the Domestic Scheduled Payment Initiation
 public isolated function extractDomesticScheduledPaymentInitiation(json payload)
     returns model:DomesticScheduledPaymentInitiation|error => 
-                        (check payload.Data.Initiation).ensureType();
+                        (check payload.Data.Initiation).cloneWithType();
 
 
 # Exract Domestic Standing Order Payment Initiation from the payload.
@@ -320,7 +321,7 @@ public isolated function extractDomesticScheduledPaymentInitiation(json payload)
 # + return - the Domestic Standing Order Payment Initiation
 public isolated function extractDomesticStandingOrderInitiation(json payload)
     returns model:DomesticStandingOrderInitiation|error => 
-                        (check payload.Data.Initiation).ensureType();
+                        (check payload.Data.Initiation).cloneWithType();
 
 
 # Exract International Payment Initiation from the payload.
@@ -329,7 +330,7 @@ public isolated function extractDomesticStandingOrderInitiation(json payload)
 # + return - the International Payment Initiation
 public isolated function extractInternationalPaymentInitiation(json payload)
     returns model:InternationalPaymentInitiation|error => 
-                        (check payload.Data.Initiation).ensureType();
+                        (check payload.Data.Initiation).cloneWithType();
 
 # Exract International Scheduled Payment Initiation from the payload.
 #
@@ -337,7 +338,7 @@ public isolated function extractInternationalPaymentInitiation(json payload)
 # + return - the International Scheduled Payment Initiation
 public isolated function extractInternationalScheduledPaymentInitiation(json payload)
     returns model:InternationalScheduledPaymentInitiation|error => 
-                        (check payload.Data.Initiation).ensureType();
+                        (check payload.Data.Initiation).cloneWithType();
 
 # Exract International Standing Order Payment Initiation from the payload.
 #
@@ -345,7 +346,7 @@ public isolated function extractInternationalScheduledPaymentInitiation(json pay
 # + return - the International Standing Order Payment Initiation
 public isolated function extractInternationalStandingOrderInitiation(json payload)
     returns model:InternationalStandingOrderInitiation|error => 
-                        (check payload.Data.Initiation).ensureType();
+                        (check payload.Data.Initiation).cloneWithType();
 
 # Exract File Payment Initiation from the payload.
 #
@@ -353,9 +354,9 @@ public isolated function extractInternationalStandingOrderInitiation(json payloa
 # + return - the File Payment Initiation
 public isolated function extractFilePaymentInitiation(anydata payload) 
                                 returns model:FilePaymentInitiation|error {
-    model:FilePaymentRequest request = check payload.ensureType();
-    model:FilePaymentData data = check request.Data.ensureType();
-    return data.Initiation.ensureType();
+    model:FilePaymentRequest request = check payload.cloneWithType();
+    model:FilePaymentData data = check request.Data.cloneWithType();
+    return data.Initiation.cloneWithType();
 }
 
 # Validate x-fapi-auth-date header 
@@ -430,6 +431,7 @@ public isolated function validateCreditorAccount(model:CreditorAccount creditorA
     }
 
     string identification = creditorAccount.Identification;
+    log:printInfo("Executing CreditorAccountValidator" , identification = identification);
     if identification == "" {
         return error("Creditor Account Identification is missing", ErrorCode = CODE_FIELD_MISSING);
     }

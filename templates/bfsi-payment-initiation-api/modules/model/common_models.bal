@@ -119,7 +119,7 @@ public type CreditorAccount record {|
     # Name of the identification scheme, in a coded form as published in an external list.
     string SchemeName;
     # Beneficiary account identification.
-    string Identification = getRandomId();
+    string Identification;
     # The account name is the name or names of the account owner(s) represented at an account level, as displayed by the bank's online channels.
     # Note, the account name is not the product name or the nickname of the account.
     string Name?;
@@ -133,7 +133,7 @@ public type DebtorAccount record {|
     # Name of the identification scheme, in a coded form as published in an external list.
     string SchemeName;
     # Beneficiary account identification.
-    string Identification = getRandomId();
+    string Identification;
     # The account name is the name or names of the account owner(s) represented at an account level, as displayed by the bank's online channels.
     # Note, the account name is not the product name or the nickname of the account.
     string Name?;
