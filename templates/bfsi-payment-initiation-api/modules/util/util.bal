@@ -199,32 +199,32 @@ public isolated function extractCreditorAccount(json payload, string path) retur
 
     if path.includes(DOMESTIC_PAYMENT) {
         model:DomesticPaymentInitiation initiation = check extractDomesticPaymentInitiation(payload);
-        return initiation.CreditorAccount.cloneWithType();
+        return initiation.CreditorAccount.ensureType();
 
     }
     if path.includes(DOMESTIC_SCHEDULED_PAYMENT) {
         model:DomesticScheduledPaymentInitiation initiation = check extractDomesticScheduledPaymentInitiation(payload);
-        return initiation.CreditorAccount.cloneWithType();
+        return initiation.CreditorAccount.ensureType();
 
     }
     if path.includes(DOMESTIC_STANDING_ORDER_PAYMENT) {
         model:DomesticStandingOrderInitiation initiation = check extractDomesticStandingOrderInitiation(payload);
-        return initiation.CreditorAccount.cloneWithType();
+        return initiation.CreditorAccount.ensureType();
 
     }
     if path.includes(INTERNATIONAL_PAYMENT) {
         model:InternationalPaymentInitiation initiation = check extractInternationalPaymentInitiation(payload);
-        return initiation.CreditorAccount.cloneWithType();
+        return initiation.CreditorAccount.ensureType();
 
     }
     if path.includes(INTERNATIONAL_SCHEDULED_PAYMENT) {
         model:InternationalScheduledPaymentInitiation initiation = check extractInternationalScheduledPaymentInitiation(payload);
-        return initiation.CreditorAccount.cloneWithType();
+        return initiation.CreditorAccount.ensureType();
 
     }
     if path.includes(INTERNATIONAL_STANDING_ORDER_PAYMENT) {
         model:InternationalStandingOrderInitiation initiation = check extractInternationalStandingOrderInitiation(payload);
-        return initiation.CreditorAccount.cloneWithType();
+        return initiation.CreditorAccount.ensureType();
 
     }
     return error("Invalid path", ErrorCode = "UK.OBIE.Field.Invalid");
@@ -242,7 +242,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
         if initiation.DebtorAccount is () {
             return ();
         }
-        return initiation.DebtorAccount.cloneWithType();
+        return initiation.DebtorAccount.ensureType();
 
     }
     if path.includes(DOMESTIC_SCHEDULED_PAYMENT) {
@@ -250,7 +250,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
         if initiation.DebtorAccount is () {
             return ();
         }
-        return initiation.DebtorAccount.cloneWithType();
+        return initiation.DebtorAccount.ensureType();
 
     }
     if path.includes(DOMESTIC_STANDING_ORDER_PAYMENT) {
@@ -258,7 +258,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
         if initiation.DebtorAccount is () {
             return ();
         }
-        return initiation.DebtorAccount.cloneWithType();
+        return initiation.DebtorAccount.ensureType();
 
     }
     if path.includes(INTERNATIONAL_PAYMENT) {
@@ -266,7 +266,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
         if initiation.DebtorAccount is () {
             return ();
         }
-        return initiation.DebtorAccount.cloneWithType();
+        return initiation.DebtorAccount.ensureType();
 
     }
     if path.includes(INTERNATIONAL_SCHEDULED_PAYMENT) {
@@ -274,7 +274,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
         if initiation.DebtorAccount is () {
             return ();
         }
-        return initiation.DebtorAccount.cloneWithType();
+        return initiation.DebtorAccount.ensureType();
 
     }
     if path.includes(INTERNATIONAL_STANDING_ORDER_PAYMENT) {
@@ -282,7 +282,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
         if initiation.DebtorAccount is () {
             return ();
         }
-        return initiation.DebtorAccount.cloneWithType();
+        return initiation.DebtorAccount.ensureType();
 
     }
     if path.includes(FILE_PAYMENT) {
@@ -290,7 +290,7 @@ public isolated function extractDebtorAccount(json payload, string path) returns
         if initiation.DebtorAccount is () {
             return ();
         }
-        return initiation.DebtorAccount.cloneWithType();
+        return initiation.DebtorAccount.ensureType();
 
     }
     return error("Invalid path", ErrorCode = "UK.OBIE.Field.Invalid");
@@ -353,8 +353,8 @@ public isolated function extractInternationalStandingOrderInitiation(json payloa
 # + payload - the payload
 # + return - the File Payment Initiation
 public isolated function extractFilePaymentInitiation(anydata payload) returns model:FilePaymentInitiation|error {
-    model:FilePaymentRequest request = check payload.cloneWithType();
-    model:FilePaymentData data = check request.Data.cloneWithType();
+    model:FilePaymentRequest request = check payload.ensureType();
+    model:FilePaymentData data = check request.Data.ensureType();
     return data.Initiation.ensureType();
 }
 
