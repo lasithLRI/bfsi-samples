@@ -199,7 +199,6 @@ public isolated function extractCreditorAccount(json payload, string path) retur
 
     if path.includes(DOMESTIC_PAYMENT) {
         model:DomesticPaymentInitiation initiation = check extractDomesticPaymentInitiation(payload);
-        log:printError("Extracting Domestic Payment Initiation", initiation=initiation);
         return initiation.CreditorAccount.cloneWithType();
 
     }
@@ -431,7 +430,6 @@ public isolated function validateCreditorAccount(model:CreditorAccount creditorA
     }
 
     string identification = creditorAccount.Identification;
-    log:printInfo("Executing CreditorAccountValidator" , identification = identification);
     if identification == "" {
         return error("Creditor Account Identification is missing", ErrorCode = CODE_FIELD_MISSING);
     }
