@@ -13,4 +13,5 @@
   name = "bfsi_payment_initiation_api"
   org = "wso2bfsi"
   version = "1.0.0"
+  visibility="private"
 
