@@ -42,7 +42,7 @@ public isolated function validateUUIDHeader(string? header) returns model:Invali
         // This is an optional header. Hence, if the header is not present, skips the validation.
         return;
     }
-    if regex:matches(header, PATTERN_UUID) {
+    if !regex:matches(header, PATTERN_UUID) {
         return error("Found invalid UUID in headers", ErrorCode = util:CODE_INVALID_REQUEST_HEADER);
     }
 }
