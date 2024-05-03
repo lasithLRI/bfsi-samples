@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -30,7 +30,6 @@ import javax.validation.constraints.NotBlank;
  * Model class for FDX registry reference attribute.
  */
 public class RegistryReference {
-
     @SerializedName("registered_entity_name")
     private String registeredEntityName;
 

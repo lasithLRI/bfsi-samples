@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -28,12 +28,9 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-
-
 /**
  * Validator class for validating the scope.
  */
-
 public class ScopesValidator implements ConstraintValidator<ValidateScopes, Object> {
     private static final Log log = LogFactory.getLog(ScopesValidator.class);
     @Override

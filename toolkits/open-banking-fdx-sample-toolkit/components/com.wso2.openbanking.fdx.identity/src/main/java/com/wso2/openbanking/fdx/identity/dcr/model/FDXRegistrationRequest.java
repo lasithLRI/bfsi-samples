@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -23,7 +23,6 @@ import com.wso2.openbanking.accelerator.identity.dcr.model.RegistrationRequest;
 import com.wso2.openbanking.accelerator.identity.dcr.validation.DCRCommonConstants;
 import com.wso2.openbanking.accelerator.identity.dcr.validation.validationgroups.AttributeChecks;
 import com.wso2.openbanking.accelerator.identity.dcr.validation.validationgroups.MandatoryChecks;
-
 import com.wso2.openbanking.fdx.identity.dcr.validation.annotation.ValidateDurationPeriod;
 import com.wso2.openbanking.fdx.identity.dcr.validation.annotation.ValidateDurationType;
 import com.wso2.openbanking.fdx.identity.dcr.validation.annotation.ValidateMaximumPeriod;
@@ -39,7 +38,6 @@ import javax.validation.constraints.Positive;
 /**
  * Model class for FDX dcr registration request.
  */
-
 @ValidateMaximumPeriod(message = "Invalid duration period or lookback period:" + DCRCommonConstants.INVALID_META_DATA,
         groups = AttributeChecks.class)
 @ValidateDurationPeriod(message = "Duration period is required for time_bound duration type:" +
@@ -162,7 +160,6 @@ public class FDXRegistrationRequest extends RegistrationRequest {
             DCRCommonConstants.INVALID_META_DATA, groups = MandatoryChecks.class)
     public List<String> getCallbackUris() {
         return super.getCallbackUris();
-
     }
 
     @Override
@@ -171,10 +168,4 @@ public class FDXRegistrationRequest extends RegistrationRequest {
     public String getScope() {
         return super.getScope();
     }
-
-
-
-
-
-
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.wso2.openbanking.fdx.identity.dcr.validation.impl;
 
 import com.wso2.openbanking.accelerator.identity.dcr.validation.DCRCommonConstants;
@@ -29,12 +30,9 @@ import org.apache.commons.logging.LogFactory;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-
 /**
  * Validator class for validating the Duration Period and Lookback Period parameters.
  */
-
-
 public class MaximumPeriodValidator implements ConstraintValidator<ValidateMaximumPeriod, Object> {
 
     private static final Log log = LogFactory.getLog(MaximumPeriodValidator.class);
@@ -81,5 +79,4 @@ public class MaximumPeriodValidator implements ConstraintValidator<ValidateMaxim
 
        return true;
     }
-
 }

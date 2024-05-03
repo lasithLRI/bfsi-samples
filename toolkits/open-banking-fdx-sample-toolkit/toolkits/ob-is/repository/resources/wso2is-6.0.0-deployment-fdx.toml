@@ -339,19 +339,19 @@ retrieve_uma_permission_info_through_introspection = true
 
 [oauth.grant_type.refresh_token]
 enable=true
-grant_handler="com.wso2.openbanking.identity.grant.type.handlers.SampleOBRefreshGrantHandler"
+grant_handler="com.wso2.openbanking.accelerator.identity.grant.type.handlers.OBRefreshGrantHandler"
 
 [oauth.grant_type.authorization_code]
 enable=true
-grant_handler="com.wso2.openbanking.identity.grant.type.handlers.SampleOBAuthorizationCodeGrantHandler"
+grant_handler="com.wso2.openbanking.accelerator.identity.grant.type.handlers.OBAuthorizationCodeGrantHandler"
 
 [oauth.grant_type.password]
 enable=true
-grant_handler="com.wso2.openbanking.identity.grant.type.handlers.SampleOBPasswordGrantHandler"
+grant_handler="com.wso2.openbanking.accelerator.identity.grant.type.handlers.OBPasswordGrantHandler"
 
 [oauth.grant_type.client_credentials]
 enable=true
-grant_handler="com.wso2.openbanking.identity.grant.type.handlers.SampleOBClientCredentialsGrantHandler"
+grant_handler="com.wso2.openbanking.accelerator.identity.grant.type.handlers.OBClientCredentialsGrantHandler"
 
 [oauth.oidc.extensions]
 claim_callback_handler="com.wso2.openbanking.accelerator.identity.claims.OBDefaultOIDCClaimsCallbackHandler"
@@ -382,7 +382,7 @@ connection_verification_timeout=1
 validator = "com.wso2.openbanking.fdx.identity.dcr.validation.FDXRegistrationValidatorImpl"
 jwks_url_sandbox =  "https://keystore.openbankingtest.org.uk/0015800001HQQrZAAX/oQ4KoaavpOuoE7rvQsZEOV.jwks"
 jwks_url_production = "https://keystore.openbankingtest.org.uk/0015800001HQQrZAAX/oQ4KoaavpOuoE7rvQsZEOV.jwks"
-applicationupdater = "com.wso2.openbanking.fdx.identity.listener.application.SampleApplicationUpdaterImpl"
+applicationupdater = "com.wso2.openbanking.accelerator.identity.listener.application.ApplicationUpdaterImpl"
 #include access token and client uri (optinal) in response
 append_registration_attributes_in_response = true
 registration_client_uri = "https://localhost:8243/fdxv6.0.0recipientapi/6.0.0/register/"
@@ -513,18 +513,18 @@ class = "com.wso2.openbanking.accelerator.consent.extensions.authorize.impl.NonR
 priority = 1
 
 [[open_banking.consent.authorize_steps.retrieve]]
-class = "impl.authorize.com.wso2.fdx.consent.extensions.SampleRetrievalStep"
+class = "com.wso2.openbanking.accelerator.consent.extensions.authorize.impl.DefaultConsentRetrievalStep"
 priority = 2
 
 [[open_banking.consent.authorize_steps.persist]]
-class = "impl.authorize.com.wso2.fdx.consent.extensions.SampleConsentPersistStep"
+class = "com.wso2.openbanking.accelerator.consent.extensions.authorize.impl.DefaultConsentPersistStep"
 priority = 1
 
 [open_banking.consent.manage]
-handler="impl.manage.com.wso2.fdx.consent.extensions.SampleConsentManageHandler"
+handler="com.wso2.openbanking.accelerator.consent.extensions.manage.impl.DefaultConsentManageHandler"
 
 [open_banking.consent.validation]
-validator="validate.com.wso2.fdx.consent.extensions.SampleConsentValidator"
+validator="com.wso2.openbanking.accelerator.consent.extensions.validate.impl.DefaultConsentValidator"
 
 [open_banking.consent.validation.signature]
 alias="wso2carbon"
@@ -555,12 +555,11 @@ consent_id_claim_name = "fdxConsentId"
 
 
 [open_banking.identity.authentication_webapp]
-servlet_extension = "authservlet.com.wso2.fdx.consent.extensions.OBSampleAuthServletImpl"
+servlet_extension = "com.wso2.openbanking.consent.extensions.authservlet.OBSampleAuthServletImpl"
 
 [open_banking.identity.extensions]
-request_object_validator="com.wso2.openbanking.identity.auth.extensions.request.validator.SampleRequestObjectValidator"
+request_object_validator="com.wso2.openbanking.accelerator.identity.auth.extensions.request.validator.DefaultOBRequestObjectValidator"
 push_auth_request_validator="com.wso2.openbanking.accelerator.identity.push.auth.extension.request.validator.PushAuthRequestValidator"
-claim_provider="com.wso2.openbanking.identity.claims.OBSampleClaimProvider"
 
 [open_banking.identity.application_information_webapp]
 sp_metadata_filter="com.wso2.openbanking.accelerator.identity.sp.metadata.extension.impl.DefaultSPMetadataFilter"

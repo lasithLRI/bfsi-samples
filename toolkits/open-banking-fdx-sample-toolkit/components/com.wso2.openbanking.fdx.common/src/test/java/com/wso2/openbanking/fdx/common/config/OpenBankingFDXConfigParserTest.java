@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.wso2.openbanking.fdx.common.config;
 
 import com.wso2.openbanking.accelerator.common.exception.OpenBankingRuntimeException;
@@ -53,7 +54,6 @@ public class OpenBankingFDXConfigParserTest {
     public void testConfigParserInitiationWithoutPath() {
 
         OpenBankingFDXConfigParser.getInstance();
-
     }
 
     //Runtime exception is thrown here because the xml file is empty
@@ -110,8 +110,8 @@ public class OpenBankingFDXConfigParserTest {
         File file = new File(".");
 
         Assert.assertEquals(carbonHome, file.getAbsolutePath());
-
     }
+
     @Test(priority = 7)
     public void testSingleton() {
 
@@ -121,5 +121,4 @@ public class OpenBankingFDXConfigParserTest {
         OpenBankingFDXConfigParser instance2 = OpenBankingFDXConfigParser.getInstance(dummyConfigFile);
         Assert.assertEquals(instance2, instance1);
     }
-
 }

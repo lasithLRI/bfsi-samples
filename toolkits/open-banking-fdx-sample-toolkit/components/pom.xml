@@ -33,8 +33,7 @@
         <module>com.wso2.openbanking.fdx.common</module>
         <module>com.wso2.openbanking.fdx.gateway</module>
         <module>com.wso2.openbanking.fdx.identity</module>
-        <module>com.wso2.openbanking.fdx.consent.extensions</module>
-        <module>com.wso2.openbanking.fdx.data.publisher</module>
     </modules>
 
 </project>
+

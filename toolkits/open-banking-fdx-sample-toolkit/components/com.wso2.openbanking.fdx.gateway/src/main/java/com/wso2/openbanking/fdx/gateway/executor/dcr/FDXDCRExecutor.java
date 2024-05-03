@@ -1,13 +1,19 @@
-/*
- * Copyright (c) 2021, WSO2 Inc. (http://www.wso2.com). All Rights Reserved.
+/**
+ * Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com).
  *
- * This software is the property of WSO2 Inc. and its suppliers, if any.
- * Dissemination of any information or reproduction of any material contained
- * herein is strictly forbidden, unless permitted by WSO2 in accordance with
- * the WSO2 Commercial License available at http://wso2.com/licenses.
- * For specific language governing the permissions and limitations under this
- * license, please see the license as well as any agreement you’ve entered into
- * with WSO2 governing the purchase of this software and any associated services.
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.wso2.openbanking.fdx.gateway.executor.dcr;
@@ -35,6 +41,7 @@ public class FDXDCRExecutor extends DCRExecutor {
 
     @Override
     public void preProcessRequest(OBAPIRequestContext obapiRequestContext) {
+
         if (obapiRequestContext.getMsgInfo().getHeaders()
                 .containsKey(FDXGatewayConstants.INTERACTION_ID_HEADER)) {
             String interactionId = obapiRequestContext.getMsgInfo().getHeaders()
@@ -55,29 +62,30 @@ public class FDXDCRExecutor extends DCRExecutor {
         }
 
         super.preProcessRequest(obapiRequestContext);
-
     }
 
     @Override
     public void postProcessRequest(OBAPIRequestContext obapiRequestContext) {
-        super.postProcessRequest(obapiRequestContext);
 
+        super.postProcessRequest(obapiRequestContext);
     }
 
     @Override
     public void preProcessResponse(OBAPIResponseContext obapiResponseContext) {
+
         super.preProcessResponse(obapiResponseContext);
     }
 
 
     @Override
     public void postProcessResponse(OBAPIResponseContext obapiResponseContext) {
+
         super.postProcessResponse(obapiResponseContext);
         obapiResponseContext.setAddedHeaders(responseHeaders);
-
     }
 
     private void handleBadRequestError(OBAPIRequestContext obapiRequestContext, String message) {
+
         OpenBankingExecutorError error = new OpenBankingExecutorError("Bad request",
                 "invalid_header_fields", message, "400");
         ArrayList<OpenBankingExecutorError> executorErrors = obapiRequestContext.getErrors();
