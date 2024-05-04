@@ -42,3 +42,6 @@ node_modules/
 
 # Ignore test output directories
 test-output/
+
+# Ignore .iml files in any directory
+**/*.iml
