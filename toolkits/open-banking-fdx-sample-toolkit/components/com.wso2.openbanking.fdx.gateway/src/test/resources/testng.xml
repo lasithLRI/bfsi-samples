@@ -17,6 +17,7 @@
     <test name="executor-tests">
         <classes>
             <class name="com.wso2.openbanking.fdx.gateway.executor.dcr.FDXDCRExecutorTest"/>
+            <class name="com.wso2.openbanking.fdx.gateway.util.FDXGatewayUtilsTest"/>
         </classes>
     </test>
 </suite>
