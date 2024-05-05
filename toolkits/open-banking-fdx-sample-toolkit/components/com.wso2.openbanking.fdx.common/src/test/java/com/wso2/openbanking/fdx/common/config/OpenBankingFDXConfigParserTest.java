@@ -60,47 +60,42 @@ public class OpenBankingFDXConfigParserTest {
     @Test(expectedExceptions = OpenBankingRuntimeException.class, priority = 2)
     public void testRuntimeExceptionInvalidConfigFile() {
 
-        String path = absolutePathForTestResources + "/open-banking-fdx-empty.xml";
-        OpenBankingFDXConfigParser.getInstance(path);
+        System.setProperty("carbon.config.dir.path", absolutePathForTestResources + "/test-data");
+        OpenBankingFDXConfigParser.getInstance();
     }
 
     @Test(expectedExceptions = OpenBankingRuntimeException.class, priority = 3)
     public void testRuntimeExceptionNonExistentFile() {
 
-        String path = absolutePathForTestResources + "/open-banking-sample.xml";
-        OpenBankingFDXConfigParser.getInstance(path);
-
+        System.setProperty("carbon.config.dir.path", absolutePathForTestResources + "/value");
+        OpenBankingFDXConfigParser.getInstance();
     }
 
     @Test(priority = 4, dataProvider = "dcrConfigs", dataProviderClass = CommonTestDataProvider.class)
     public void testConfigParserInit(String configName, String configValue) {
 
-        String dummyConfigFile = absolutePathForTestResources + "/open-banking-fdx.xml";
-
-        OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance(dummyConfigFile);
+        System.setProperty("carbon.config.dir.path", absolutePathForTestResources);
+        OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance();
         Map<String, Object> dcrConfigs = openBankingFDXConfigParser.getConfiguration();
 
         Assert.assertEquals(dcrConfigs.get(configName), configValue);
-
     }
 
     @Test(priority = 5, dataProvider = "sampleArrayConfig", dataProviderClass = CommonTestDataProvider.class)
     public void testReadChildElementArrays(String configName, List<String> configValue) {
 
-        String dummyConfigFile = absolutePathForTestResources + "/open-banking-fdx.xml";
-
-        OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance(dummyConfigFile);
+        System.setProperty("carbon.config.dir.path", absolutePathForTestResources);
+        OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance();
         Map<String, Object> dcrConfigs = openBankingFDXConfigParser.getConfiguration();
 
         Assert.assertEquals(dcrConfigs.get(configName), configValue);
     }
 
     @Test(priority = 6)
-    public void testReplaceSystemProperty() {
+    public void testReplaceSystemPropertyMethod() {
 
-        String dummyConfigFile = absolutePathForTestResources + "/open-banking-fdx.xml";
-
-        OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance(dummyConfigFile);
+        System.setProperty("carbon.config.dir.path", absolutePathForTestResources);
+        OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance();
         Map<String, Object> dcrConfigs = openBankingFDXConfigParser.getConfiguration();
 
         String carbonHome = (String) dcrConfigs.get("CarbonHome");
@@ -115,10 +110,11 @@ public class OpenBankingFDXConfigParserTest {
     @Test(priority = 7)
     public void testSingleton() {
 
-        String dummyConfigFile = absolutePathForTestResources + "/open-banking-fdx.xml";
+        System.setProperty("carbon.config.dir.path", absolutePathForTestResources);
 
-        OpenBankingFDXConfigParser instance1 = OpenBankingFDXConfigParser.getInstance(dummyConfigFile);
-        OpenBankingFDXConfigParser instance2 = OpenBankingFDXConfigParser.getInstance(dummyConfigFile);
+        OpenBankingFDXConfigParser instance1 = OpenBankingFDXConfigParser.getInstance();
+        OpenBankingFDXConfigParser instance2 = OpenBankingFDXConfigParser.getInstance();
         Assert.assertEquals(instance2, instance1);
     }
+
 }

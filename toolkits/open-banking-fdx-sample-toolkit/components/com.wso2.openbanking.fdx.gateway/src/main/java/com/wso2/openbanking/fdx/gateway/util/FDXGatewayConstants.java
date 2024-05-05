@@ -18,7 +18,6 @@
 
 package com.wso2.openbanking.fdx.gateway.util;
 
-
 /**
  * Gateway Constant Class.
  */

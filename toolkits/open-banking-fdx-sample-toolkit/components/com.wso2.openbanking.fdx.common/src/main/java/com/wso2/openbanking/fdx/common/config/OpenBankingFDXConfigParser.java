@@ -32,7 +32,6 @@ import org.wso2.securevault.SecretResolverFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -43,7 +42,6 @@ import java.util.Stack;
 
 import javax.xml.stream.XMLStreamException;
 
-
 /**
  * Config parser for open-banking-fdx.xml.
  */
@@ -51,16 +49,17 @@ public class OpenBankingFDXConfigParser {
 
     // To enable attempted thread-safety using double-check locking
     private static final Object lock = new Object();
+
     private static final Log log = LogFactory.getLog(OpenBankingFDXConfigParser.class);
 
     private static volatile OpenBankingFDXConfigParser parser;
-    private static String configFilePath;
 
     private SecretResolver secretResolver;
 
-    private OMElement rootElement;
+    private  OMElement rootElement;
 
     private static final Map<String, Object> configuration = new HashMap<>();
+
 
     /**
      * Private Constructor of config parser.
@@ -87,62 +86,27 @@ public class OpenBankingFDXConfigParser {
         return parser;
     }
 
-    /**
-     * Method to get an instance of ConfigParser when custom file path is provided.
-     *
-     * @param filePath Custom file path
-     * @return OpenBankingConfigParser object
-     */
-    public static OpenBankingFDXConfigParser getInstance(String filePath) {
 
-        configFilePath = filePath;
-        return getInstance();
-    }
 
     /**
      * Method to read the configuration (in a recursive manner) as a model and put them in the configuration map.
      */
     private void buildConfiguration() {
 
-        InputStream inStream = null;
+        File openBankingConfigXml = new File(CarbonUtils.getCarbonConfigDirPath(),
+                   CommonConstants.OB_CONFIG_FILE);
 
-        try {
-            if (configFilePath != null) {
-                File openBankingConfigXml = new File(configFilePath);
-                if (openBankingConfigXml.exists()) {
-                    inStream = new FileInputStream(openBankingConfigXml);
-                }
-            } else {
-                File openBankingConfigXml = new File(CarbonUtils.getCarbonConfigDirPath(),
-                        CommonConstants.OB_CONFIG_FILE);
-                if (openBankingConfigXml.exists()) {
-                    inStream = new FileInputStream(openBankingConfigXml);
-                }
-            }
-            if (inStream == null) {
-                String message = "open-banking configuration not found at: " + configFilePath + " . Cause - ";
-                if (log.isDebugEnabled()) {
-                    log.debug(message);
-                }
-                throw new FileNotFoundException(message);
-            }
+        try (InputStream inStream = new FileInputStream(openBankingConfigXml)) {
             StAXOMBuilder builder = new StAXOMBuilder(inStream);
             builder.setDoDebug(false);
             rootElement = builder.getDocumentElement();
             Stack<String> nameStack = new Stack<>();
             secretResolver = SecretResolverFactory.create(rootElement, true);
             readChildElements(rootElement, nameStack);
+
         } catch (IOException | XMLStreamException | OMException e) {
-            throw new OpenBankingRuntimeException("Error occurred while building configuration from " +
-                    "open-banking-fdx.xml", e);
-        } finally {
-            try {
-                if (inStream != null) {
-                    inStream.close();
-                }
-            } catch (IOException e) {
-                log.error("Error closing the input stream for open-banking-fdx.xml", e);
-            }
+            String message = "Error occurred while building configuration from " + CommonConstants.OB_CONFIG_FILE;
+            throw new OpenBankingRuntimeException(message, e);
         }
     }
 

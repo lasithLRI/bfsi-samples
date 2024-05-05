@@ -26,7 +26,6 @@ import java.util.Map;
 /**
  * Util class which includes helper methods required for FDX DCR.
  */
-
 public class FDXRegistrationUtils {
 
     /**

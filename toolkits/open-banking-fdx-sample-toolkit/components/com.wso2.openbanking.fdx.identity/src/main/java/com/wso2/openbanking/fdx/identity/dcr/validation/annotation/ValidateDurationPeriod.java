@@ -29,12 +29,9 @@ import javax.validation.Payload;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-
-
 /**
  * Annotation  class for validating the duration period when the duration type contains TIME_BOUND.
  */
-
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented

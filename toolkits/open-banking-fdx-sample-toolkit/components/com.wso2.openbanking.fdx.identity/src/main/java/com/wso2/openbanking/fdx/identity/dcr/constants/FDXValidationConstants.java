@@ -18,7 +18,6 @@
 
 package com.wso2.openbanking.fdx.identity.dcr.constants;
 
-
 /**
  * Constants used for FDX specific validations.
  */
