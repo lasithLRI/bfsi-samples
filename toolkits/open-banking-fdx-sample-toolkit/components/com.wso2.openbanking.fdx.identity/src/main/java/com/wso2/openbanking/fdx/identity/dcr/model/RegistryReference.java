@@ -30,6 +30,7 @@ import javax.validation.constraints.NotBlank;
  * Model class for FDX registry reference attribute.
  */
 public class RegistryReference {
+
     @SerializedName("registered_entity_name")
     private String registeredEntityName;
 

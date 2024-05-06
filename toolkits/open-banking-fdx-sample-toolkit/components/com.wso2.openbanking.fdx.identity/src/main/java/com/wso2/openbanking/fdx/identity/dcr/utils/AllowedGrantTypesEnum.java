@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * Enum for FDX supported grant types.
  */
 public enum AllowedGrantTypesEnum {
+
     AUTHORIZATION_CODE("authorization_code"),
     REFRESH_TOKEN("refresh_token"),
 

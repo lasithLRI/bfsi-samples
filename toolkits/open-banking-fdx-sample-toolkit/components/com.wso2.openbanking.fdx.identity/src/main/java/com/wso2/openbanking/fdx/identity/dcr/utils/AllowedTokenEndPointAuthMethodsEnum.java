@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * Enum for FDX supported token endpoint auth methods.
  */
 public enum AllowedTokenEndPointAuthMethodsEnum {
+
     PRIVATE_KEY_JWT("private_key_jwt"),
     TLS_CLIENT_AUTH("tls_client_auth");
     private final String value;

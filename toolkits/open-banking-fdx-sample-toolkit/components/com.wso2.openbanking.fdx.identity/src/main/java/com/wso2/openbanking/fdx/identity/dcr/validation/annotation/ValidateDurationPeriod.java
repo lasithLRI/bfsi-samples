@@ -37,6 +37,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = {DurationPeriodValidator.class})
 public @interface ValidateDurationPeriod {
+
     String message() default "Duration period is required when duration type is TIME_BOUND";
 
     Class<?>[] groups() default {};

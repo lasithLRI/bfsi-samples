@@ -22,6 +22,7 @@ package com.wso2.openbanking.fdx.identity.dcr.util;
  * FDX Registration Test Constants.
  */
 public class RegistrationTestConstants {
+
     public static String registrationRequestJson = "{\n" +
             //"  \"iss\": \"pP2KoaavpOuoE7rvQsZEuE6\",\n" +
             "  \"iat\": 1694075713,\n" +

@@ -27,6 +27,7 @@ import java.util.UUID;
   *  FDX Gateway Utils.
   */
 public class FDXGatewayUtils {
+
      private static final Log log = LogFactory.getLog(FDXGatewayUtils.class);
 
      /**

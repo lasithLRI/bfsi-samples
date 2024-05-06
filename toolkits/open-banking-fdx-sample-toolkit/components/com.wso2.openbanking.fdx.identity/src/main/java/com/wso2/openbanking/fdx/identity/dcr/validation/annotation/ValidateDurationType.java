@@ -37,6 +37,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = {DurationTypeValidator.class})
 public @interface ValidateDurationType {
+
     String message() default "Requested duration types are not allowed";
 
     Class<?>[] groups() default {};

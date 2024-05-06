@@ -43,6 +43,7 @@ import javax.validation.constraints.Positive;
 @ValidateDurationPeriod(message = "Duration period is required for time_bound duration type:" +
         DCRCommonConstants.INVALID_META_DATA, groups = AttributeChecks.class)
 public class FDXRegistrationRequest extends RegistrationRequest {
+
     @SerializedName("client_name")
     private String clientName;
 
