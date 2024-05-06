@@ -19,6 +19,7 @@
 package com.wso2.openbanking.fdx.gateway.util;
 
 import com.wso2.openbanking.fdx.gateway.testutils.GatewayTestDataProvider;
+import org.apache.commons.lang.StringUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,6 +30,7 @@ public class FDXGatewayUtilsTest {
 
     @Test(dataProvider = "uuid", dataProviderClass = GatewayTestDataProvider.class)
     public void testValidUUID(String uuid, boolean expectedResult) {
+
         Assert.assertEquals(FDXGatewayUtils.isValidUUID(uuid), expectedResult);
     }
 }

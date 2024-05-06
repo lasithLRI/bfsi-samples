@@ -25,6 +25,9 @@ import com.wso2.openbanking.fdx.common.utils.CommonConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.securevault.SecretResolver;
@@ -111,15 +114,10 @@ public class OpenBankingFDXConfigParser {
     }
 
     /**
-     * Method to obtain map of configs.
+     * Method to obtain configs values.
      *
-     * @return Config map
+     * @return Config value
      */
-    public Map<String, Object> getConfiguration() {
-
-        return configuration;
-    }
-
     public Object getConfiguration(String config) {
 
         return configuration.get(config);
@@ -175,8 +173,7 @@ public class OpenBankingFDXConfigParser {
      */
     private boolean elementHasText(OMElement element) {
 
-        String text = element.getText();
-        return text != null && !text.trim().isEmpty();
+        return StringUtils.isNotBlank(element.getText());
     }
 
     /**

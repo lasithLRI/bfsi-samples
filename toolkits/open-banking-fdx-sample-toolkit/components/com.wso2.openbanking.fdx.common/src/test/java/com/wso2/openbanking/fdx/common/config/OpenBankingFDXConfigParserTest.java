@@ -27,7 +27,6 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -72,23 +71,23 @@ public class OpenBankingFDXConfigParserTest {
     }
 
     @Test(priority = 4, dataProvider = "dcrConfigs", dataProviderClass = CommonTestDataProvider.class)
-    public void testConfigParserInit(String configName, String configValue) {
+    public void testConfigParserInit(String configName, String expectedConfigValue) {
 
         System.setProperty("carbon.config.dir.path", absolutePathForTestResources);
         OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance();
-        Map<String, Object> dcrConfigs = openBankingFDXConfigParser.getConfiguration();
+        Object configValue = openBankingFDXConfigParser.getConfiguration(configName);
 
-        Assert.assertEquals(dcrConfigs.get(configName), configValue);
+        Assert.assertEquals(configValue , expectedConfigValue);
     }
 
     @Test(priority = 5, dataProvider = "sampleArrayConfig", dataProviderClass = CommonTestDataProvider.class)
-    public void testReadChildElementArrays(String configName, List<String> configValue) {
+    public void testReadChildElementArrays(String configName, List<String> expectedConfigValue) {
 
         System.setProperty("carbon.config.dir.path", absolutePathForTestResources);
         OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance();
-        Map<String, Object> dcrConfigs = openBankingFDXConfigParser.getConfiguration();
+        Object configValue = openBankingFDXConfigParser.getConfiguration(configName);
 
-        Assert.assertEquals(dcrConfigs.get(configName), configValue);
+        Assert.assertEquals(configValue, expectedConfigValue);
     }
 
     @Test(priority = 6)
@@ -96,9 +95,8 @@ public class OpenBankingFDXConfigParserTest {
 
         System.setProperty("carbon.config.dir.path", absolutePathForTestResources);
         OpenBankingFDXConfigParser openBankingFDXConfigParser = OpenBankingFDXConfigParser.getInstance();
-        Map<String, Object> dcrConfigs = openBankingFDXConfigParser.getConfiguration();
 
-        String carbonHome = (String) dcrConfigs.get("CarbonHome");
+        String carbonHome = (String) openBankingFDXConfigParser.getConfiguration("CarbonHome");
         if (carbonHome.endsWith("\\.\\.")) {
             carbonHome = carbonHome.substring(0, carbonHome.length() - 2);
         }
