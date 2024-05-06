@@ -128,3 +128,4 @@ public class FDXRegistrationResponse extends RegistrationResponse {
         this.registryReferences = registryReferences;
     }
 }
+

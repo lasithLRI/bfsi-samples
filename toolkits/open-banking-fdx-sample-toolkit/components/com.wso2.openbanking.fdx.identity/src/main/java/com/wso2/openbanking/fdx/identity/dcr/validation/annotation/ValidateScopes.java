@@ -44,3 +44,4 @@ public @interface ValidateScopes {
 
     Class<? extends Payload>[] payload() default {};
 }
+

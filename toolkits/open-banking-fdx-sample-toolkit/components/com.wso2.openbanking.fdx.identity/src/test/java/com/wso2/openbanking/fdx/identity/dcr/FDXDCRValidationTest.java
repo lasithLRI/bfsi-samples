@@ -579,6 +579,5 @@ public class FDXDCRValidationTest {
     public IObjectFactory getObjectFactory() {
         return new org.powermock.modules.testng.PowerMockObjectFactory();
     }
-
-
 }
+

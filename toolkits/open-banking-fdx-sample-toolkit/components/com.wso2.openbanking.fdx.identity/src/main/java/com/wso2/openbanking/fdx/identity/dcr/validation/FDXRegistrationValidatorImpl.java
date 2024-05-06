@@ -98,7 +98,6 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
                 FDXValidationConstants.DURATION_PERIOD);
         FDXRegistrationUtils.convertDoubleValueToInt(registrationRequest.getRequestParameters(),
                 FDXValidationConstants.LOOKBACK_PERIOD);
-
     }
 
     @Override

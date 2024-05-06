@@ -43,3 +43,4 @@ public @interface ValidateDurationType {
 
     Class<? extends Payload>[] payload() default {};
 }
+

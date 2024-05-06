@@ -53,3 +53,4 @@ public enum FDXDurationTypesEnum {
                 .collect(Collectors.toList()));
     }
 }
+

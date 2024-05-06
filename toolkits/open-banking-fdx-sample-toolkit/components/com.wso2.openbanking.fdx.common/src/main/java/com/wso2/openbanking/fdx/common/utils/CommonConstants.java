@@ -18,7 +18,6 @@
 
 package com.wso2.openbanking.fdx.common.utils;
 
-
 /**
  * Common Constant Class.
  */

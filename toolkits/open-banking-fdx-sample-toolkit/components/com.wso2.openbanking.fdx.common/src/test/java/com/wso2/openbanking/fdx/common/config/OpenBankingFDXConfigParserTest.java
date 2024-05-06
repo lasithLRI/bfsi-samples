@@ -28,7 +28,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.List;
 
-
 /**
  * Test Class for FDX Config Parser.
  */
@@ -116,3 +115,4 @@ public class OpenBankingFDXConfigParserTest {
     }
 
 }
+

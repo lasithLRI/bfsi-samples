@@ -34,3 +34,4 @@ public class FDXGatewayUtilsTest {
         Assert.assertEquals(FDXGatewayUtils.isValidUUID(uuid), expectedResult);
     }
 }
+

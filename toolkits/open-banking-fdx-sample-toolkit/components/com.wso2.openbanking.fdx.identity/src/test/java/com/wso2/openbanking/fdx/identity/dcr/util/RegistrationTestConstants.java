@@ -75,7 +75,5 @@ public class RegistrationTestConstants {
             "    \"registered_entity_id\": \"4HCHXIURY78NNH6JH\", \n" +
             "    \"registry\": \"GLIEF\" \n" +
             "  }";
-
-
-
 }
+

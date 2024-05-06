@@ -89,5 +89,5 @@ public class IdentityTestDataProvider {
                 {"sample_auth_method", tlsClientAUth}
         };
     }
-
 }
+

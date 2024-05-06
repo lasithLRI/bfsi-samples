@@ -52,3 +52,4 @@ public class DurationTypeValidator implements ConstraintValidator<ValidateDurati
         return true;
     }
 }
+

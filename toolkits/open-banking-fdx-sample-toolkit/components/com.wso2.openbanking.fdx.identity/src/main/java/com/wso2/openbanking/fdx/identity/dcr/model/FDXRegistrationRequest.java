@@ -169,3 +169,4 @@ public class FDXRegistrationRequest extends RegistrationRequest {
         return super.getScope();
     }
 }
+

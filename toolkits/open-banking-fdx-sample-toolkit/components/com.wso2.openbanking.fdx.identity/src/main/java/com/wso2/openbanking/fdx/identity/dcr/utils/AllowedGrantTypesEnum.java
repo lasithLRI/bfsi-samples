@@ -55,3 +55,4 @@ public enum AllowedGrantTypesEnum {
                 .collect(Collectors.toList()));
     }
 }
+

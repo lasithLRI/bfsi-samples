@@ -54,3 +54,4 @@ public enum FDXScopesEnum {
                 .collect(Collectors.toList()));
     }
 }
+

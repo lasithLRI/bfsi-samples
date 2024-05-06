@@ -47,3 +47,4 @@ public enum AllowedTokenEndPointAuthMethodsEnum {
         return Collections.unmodifiableList(allowedTokenEndPointAuthMethods);
     }
 }
+
