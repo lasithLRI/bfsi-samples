@@ -51,7 +51,6 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
         Map<String, Object> requestParameters = registrationRequest.getRequestParameters();
         JsonElement jsonElement = gson.toJsonTree(requestParameters);
         FDXRegistrationRequest fdxRegistrationRequest = gson.fromJson(jsonElement, FDXRegistrationRequest.class);
-        fdxRegistrationRequest.setSoftwareStatementBody(registrationRequest.getSoftwareStatementBody());
 
         //do validations related to registration request
         ValidatorUtils.getValidationViolations(fdxRegistrationRequest);
@@ -65,8 +64,6 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
                 FDXValidationConstants.DURATION_PERIOD);
         FDXRegistrationUtils.convertDoubleValueToInt(registrationRequest.getRequestParameters(),
                 FDXValidationConstants.LOOKBACK_PERIOD);
-
-
     }
 
     @Override

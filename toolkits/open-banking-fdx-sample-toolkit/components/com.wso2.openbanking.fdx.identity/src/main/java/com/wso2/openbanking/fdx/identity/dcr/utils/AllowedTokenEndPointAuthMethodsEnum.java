@@ -30,14 +30,15 @@ public enum AllowedTokenEndPointAuthMethodsEnum {
 
     PRIVATE_KEY_JWT("private_key_jwt"),
     TLS_CLIENT_AUTH("tls_client_auth");
-    private final String value;
+
+    private final String authMethod;
 
     public String getValue() {
-        return value;
+        return authMethod;
     }
 
     AllowedTokenEndPointAuthMethodsEnum(String value) {
-        this.value = value;
+        this.authMethod = value;
     }
 
     public static List<String> getAllowedAuthMethods() {

@@ -78,8 +78,6 @@ public class FDXDCRExecutorTest {
 
         List<String> roles = new ArrayList<>();
         configuredAPIList.put("DynamicClientRegistration", roles);
-
-
     }
 
     @Test
@@ -112,7 +110,7 @@ public class FDXDCRExecutorTest {
         msgInfoDTO.setHeaders(requestHeaders);
         Mockito.doReturn(msgInfoDTO).when(obapiRequestContext).getMsgInfo();
 
-       dcrExecutor.preProcessRequest(obapiRequestContext);
+        dcrExecutor.preProcessRequest(obapiRequestContext);
 
         Mockito.verify(obapiRequestContext).setError(true);
     }
@@ -166,8 +164,6 @@ public class FDXDCRExecutorTest {
 
         fdxdcrExecutor.postProcessResponse(obapiResponseContext);
         Mockito.verify(obapiResponseContext).setAddedHeaders(responseHeaders);
-
-
     }
 
     @ObjectFactory

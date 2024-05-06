@@ -50,7 +50,7 @@ public class IdentityTestDataProvider {
 
     @DataProvider(name = "nullAndEmptyArray")
     public Object[][] nullAndEmptyArrayTestDataProvider() {
-        
+
         return new Object[][] {
                 { null },
                 { Collections.emptyList() }

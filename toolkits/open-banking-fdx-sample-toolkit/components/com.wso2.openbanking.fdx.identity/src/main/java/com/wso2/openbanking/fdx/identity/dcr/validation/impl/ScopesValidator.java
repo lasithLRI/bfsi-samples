@@ -52,6 +52,7 @@ public class ScopesValidator implements ConstraintValidator<ValidateScopes, Obje
             }
 
         }
+
         return true;
     }
 }
