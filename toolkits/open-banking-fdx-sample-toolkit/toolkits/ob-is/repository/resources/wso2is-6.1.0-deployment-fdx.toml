@@ -3,9 +3,9 @@
 hostname = "localhost"
 node_ip = "127.0.0.1"
 base_path = "https://$ref{server.hostname}:${carbon.management.port}"
-serverDetails = "WSO2 IS as KM 5.11.0"
+serverDetails = "WSO2 IS as KM 6.1.0"
 mode = "single"
-userAgent = "WSO2 IS as KM 5.11.0"
+userAgent = "WSO2 IS as KM 6.1.0"
 offset = 3
 
 [keystore.primary]
@@ -394,14 +394,16 @@ connection_verification_timeout=1
 
 #=======================dcr configs======================
 [open_banking.dcr]
-validator = "com.wso2.openbanking.fdx.identity.dcr.validation.FDXRegistrationValidatorImpl"
+validator = "org.wso2.openbanking.fdx.identity.dcr.validation.FDXRegistrationValidatorImpl"
 jwks_url_sandbox = "https://keystore.openbankingtest.org.uk/0015800001HQQrZAAX/oQ4KoaavpOuoE7rvQsZEOV.jwks"
 jwks_url_production = "https://keystore.openbankingtest.org.uk/0015800001HQQrZAAX/oQ4KoaavpOuoE7rvQsZEOV.jwks"
-applicationupdater = "com.wso2.openbanking.fdx.identity.listener.application.SampleApplicationUpdaterImpl"
-use_softwareIdForAppName = true
-append_registration_attributes_in_response = false
-scope = "cdr-registration"
+applicationupdater = "com.wso2.openbanking.accelerator.identity.listener.application.ApplicationUpdaterImpl"
+#include access token and client uri (optinal) in response
+append_registration_attributes_in_response = true
 registration_client_uri = "https://localhost:8243/fdxv6.0.0recipientapi/6.0.0/register/"
+use_softwareIdForAppName = true
+
+
 #jwks_endpoint_name = ""
 [open_banking.dcr.jwks_retriever]
 connection_timeout = 3000
@@ -409,6 +411,16 @@ read_timeout = 3000
 
 [[open_banking.dcr.regulatory_issuers.iss]]
 name = "OpenBanking Ltd"
+
+
+[open_banking.dcr.registration.redirect_uris]
+required = true
+
+[open_banking.dcr.registration.token_endpoint_authentication]
+required = false
+
+[open_banking.dcr.registration.software_statement]
+required =  false
 
 [open_banking.dcr.registration.software_environment_identification]
 ssa_property_name = "software_environment"
@@ -587,3 +599,4 @@ enable_role_validation = true
 maximum_duration_period = 200
 maximum_lookback_period = 356
 default_token_endpoint_auth_method = "tls_client_auth"
+

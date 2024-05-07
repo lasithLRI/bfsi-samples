@@ -21,11 +21,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.wso2.openbanking</groupId>
+    <groupId>org.wso2.openbanking</groupId>
     <artifactId>ob-compliance-toolkit-fdx</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
-
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>

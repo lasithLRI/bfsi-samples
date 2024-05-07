@@ -19,12 +19,15 @@
 
 <Server xmlns="http://wso2.org/projects/carbon/open-banking-fdx.xml">
      <DCR>
+         <!-- number of days -->
          {% if open_banking_fdx.dcr.maximum_duration_period is defined %}
          <MaximumDurationPeriod>{{ open_banking_fdx.dcr.maximum_duration_period }}</MaximumDurationPeriod>
          {% endif %}
+          <!-- number of days -->
          {% if open_banking_fdx.dcr.maximum_lookback_period is defined %}
          <MaximumLookbackPeriod>{{ open_banking_fdx.dcr.maximum_lookback_period }}</MaximumLookbackPeriod>
          {% endif %}
+          <!-- allowed values are 'private_key_jwt'  and 'tls_client_auth' -->
          {% if open_banking_fdx.dcr.token_endpoint_auth_method is defined %}
          <DefaultTokenEndpointAuthMethod>{{ open_banking_fdx.dcr.default_token_endpoint_auth_method }}</DefaultTokenEndpointAuthMethod>
          {% else %}

@@ -412,6 +412,7 @@ password="$ref{super_admin.password}"
 token_endpoint = "https://localhost:9443/oauth2/token"
 use_softwareIdForAppName = true
 isRequestJWT = false
+isSSAIncluded = false
 #[open_banking.dcr.jwks_retriever]
 #connection_timeout = 3000
 #read_timeout = 3000
@@ -424,7 +425,6 @@ api_subscribe = "api/am/devportal/v3/subscriptions/multiple"
 retrieve_subscribe="api/am/devportal/v3/subscriptions"
 
 [[open_banking.dcr.regulatory_api]]
-#api_name = "CDR-DynamicClientRegistration"
 api_name = "FDXV600RecipientAPI"
 roles = "AISP,PISP"
 
@@ -469,7 +469,7 @@ priority = 1
 name = "com.wso2.openbanking.accelerator.gateway.executor.impl.api.resource.access.validation.APIResourceAccessValidationExecutor"
 priority = 2
 [[open_banking.gateway.openbanking_gateway_executors.type.executors]]
-name = "com.wso2.openbanking.fdx.gateway.executor.dcr.FDXDCRExecutor"
+name = "org.wso2.openbanking.fdx.gateway.executor.dcr.FDXDCRExecutor"
 priority = 3
 [[open_banking.gateway.openbanking_gateway_executors.type.executors]]
 name = "com.wso2.openbanking.accelerator.gateway.executor.impl.error.handler.OBDefaultErrorHandler"

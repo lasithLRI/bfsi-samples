@@ -49,16 +49,16 @@
                                 <!-- Copying jars to lib -->
                                 <copy todir="${project.basedir}/carbon-home/repository/components/lib" overwrite="true">
                                     <fileset
-                                            dir="../../components/com.wso2.openbanking.fdx.identity/target">
+                                            dir="../../components/org.wso2.openbanking.fdx.identity/target">
                                         <filename
-                                                regex="com.wso2.openbanking.fdx.identity-(\d.*?)\.jar$"/>
+                                                regex="org.wso2.openbanking.fdx.identity-(\d.*?)\.jar$"/>
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.basedir}/carbon-home/repository/components/lib" overwrite="true">
                                     <fileset
-                                            dir="../../components/com.wso2.openbanking.fdx.common/target">
+                                            dir="../../components/org.wso2.openbanking.fdx.common/target">
                                         <filename
-                                                regex="com.wso2.openbanking.fdx.common-(\d.*?)\.jar$"/>
+                                                regex="org.wso2.openbanking.fdx.common-(\d.*?)\.jar$"/>
                                     </fileset>
                                 </copy>
                             </target>
