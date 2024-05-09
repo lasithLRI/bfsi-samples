@@ -36,7 +36,11 @@ import org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils;
 import org.wso2.openbanking.fdx.identity.dcr.utils.FDXValidatorUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils.getJsonObject;
+import static org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils.isJsonString;
 
 /**
  * FDX specific registration validator class..
@@ -108,13 +112,19 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
     @Override
     public String getRegistrationResponse(Map<String, Object> spMetaData) {
 
-        for (Map.Entry<String, Object> entry : spMetaData.entrySet()) {
-            if (entry.getValue() instanceof ArrayList) {
-                ArrayList<Object> list = ((ArrayList<Object>) entry.getValue());
-                //Convert JSON strings within the ArrayList to JSON objects
-                FDXRegistrationUtils.convertJsonStringsToJsonObjects(list);
+        spMetaData.forEach((key, value) -> {
+            if (value instanceof ArrayList) {
+                List<Object> metaDataList = (ArrayList<Object>) value;
+
+                // Convert JSON strings  in metadata list to JSON objects
+                for (Object element : metaDataList) {
+                    if (isJsonString(element)) {
+                        metaDataList.set(metaDataList.indexOf(element), getJsonObject(element.toString()));
+                    }
+                }
+
             }
-        }
+        });
 
         // Append registration access token and registration client URI to the DCR response if the config is enabled
         if (IdentityCommonUtil.getDCRModifyResponseConfig()) {

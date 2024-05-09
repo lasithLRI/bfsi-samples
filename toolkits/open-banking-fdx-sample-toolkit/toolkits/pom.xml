@@ -21,15 +21,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.wso2.openbanking</groupId>
-        <artifactId>open-banking-sample-toolkit</artifactId>
+        <artifactId>ob-compliance-toolkit-fdx</artifactId>
+        <groupId>org.wso2.openbanking</groupId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>open-banking-toolkit-modules</artifactId>
+    <artifactId>open-banking-toolkit-fdx-modules</artifactId>
     <packaging>pom</packaging>
-    <name>WSO2 Open Banking - Toolkit Modules</name>
+    <name>WSO2 Open Banking - FDX Toolkit Modules</name>
     <url>http://wso2.org</url>
 
     <modules>

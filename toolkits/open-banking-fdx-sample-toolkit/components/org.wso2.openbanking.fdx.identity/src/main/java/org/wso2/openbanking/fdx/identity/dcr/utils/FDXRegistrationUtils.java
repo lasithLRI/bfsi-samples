@@ -18,11 +18,11 @@
 
 package org.wso2.openbanking.fdx.identity.dcr.utils;
 
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 /**
  * Util class which includes helper methods required for FDX DCR.
@@ -30,21 +30,26 @@ import java.util.Optional;
 public class FDXRegistrationUtils {
 
     /**
-     * Converts JSON strings within a list of metadata objects to JSON objects.
-     * If the metadata list contains JSON strings, this method identifies them and converts
-     * them to JSON objects.
+     * Checks if the given object is a JSON string.
      *
-     * @param spMetaData The list of metadata objects which may contain JSON strings.
+     * @param obj The object to be checked.
+     * @return true if the object is a JSON string, false otherwise.
      */
-    public static void convertJsonStringsToJsonObjects(List<Object> spMetaData) {
+    public static boolean isJsonString(Object obj) {
 
-        spMetaData.replaceAll(metadata -> Optional.of(metadata)
-                .filter(String.class :: isInstance)
-                .map(String.class::cast)
-                .filter(element -> element.contains("{"))
-                .map(element -> (Object) new JsonParser().parse(element))
-                .orElse(metadata));
+        return obj instanceof String && obj.toString().contains("{");
     }
+
+    /**
+     * Convert the given string to a JSON object.
+     *
+     * @param jsonString The string to be parsed as JSON.
+     * @return The JSON object parsed from the string.
+     */
+    public static JsonObject getJsonObject(String jsonString) {
+        return new JsonParser().parse(jsonString).getAsJsonObject();
+    }
+
 
     /**
      * Converts Double value to integer for the specified key in the given map.
@@ -59,5 +64,8 @@ public class FDXRegistrationUtils {
             map.put(key, doubleValue.intValue());
         }
     }
+
+
+
 }
 

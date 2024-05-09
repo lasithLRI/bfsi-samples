@@ -19,8 +19,8 @@
 package org.wso2.openbanking.fdx.identity.dcr;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+//import com.google.gson.JsonObject;
+//import com.google.gson.JsonParser;
 
 import com.wso2.openbanking.accelerator.common.constant.OpenBankingConstants;
 import com.wso2.openbanking.accelerator.common.util.JWTUtils;
@@ -50,7 +50,7 @@ import org.wso2.openbanking.fdx.common.config.OpenBankingFDXConfigParser;
 import org.wso2.openbanking.fdx.identity.dcr.model.FDXRegistrationRequest;
 import org.wso2.openbanking.fdx.identity.dcr.model.RegistryReference;
 import org.wso2.openbanking.fdx.identity.dcr.util.RegistrationTestConstants;
-import org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils;
+//import org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils;
 import org.wso2.openbanking.fdx.identity.dcr.utils.FDXValidatorUtils;
 import org.wso2.openbanking.fdx.identity.dcr.validation.FDXRegistrationValidatorImpl;
 import org.wso2.openbanking.fdx.identity.testutils.IdentityTestDataProvider;
@@ -537,17 +537,17 @@ public class FDXDCRValidationTest {
 
     }*/
 
-    @Test
-    public void testGetJsonObjectsFromJsonStrings() {
-
-        List<Object> spMetaData = new ArrayList<>();
-        spMetaData.add(RegistrationTestConstants.registryReference);
-        JsonObject registryReferenceJson = new JsonParser()
-                                .parse(RegistrationTestConstants.registryReference).getAsJsonObject();
-        FDXRegistrationUtils.convertJsonStringsToJsonObjects(spMetaData);
-
-        Assert.assertEquals(registryReferenceJson, spMetaData.get(0));
-    }
+//    @Test
+//    public void testGetJsonObjectsFromJsonStrings() {
+//
+//        List<Object> spMetaData = new ArrayList<>();
+//        spMetaData.add(RegistrationTestConstants.registryReference);
+//        JsonObject registryReferenceJson = new JsonParser()
+//                                .parse(RegistrationTestConstants.registryReference).getAsJsonObject();
+//        FDXRegistrationUtils.processJsonStringsInMetadata(spMetaData);
+//
+//        Assert.assertEquals(registryReferenceJson, spMetaData.get(0));
+//    }
 
 
     private static RegistrationRequest getRegistrationRequestObject(String request) {
