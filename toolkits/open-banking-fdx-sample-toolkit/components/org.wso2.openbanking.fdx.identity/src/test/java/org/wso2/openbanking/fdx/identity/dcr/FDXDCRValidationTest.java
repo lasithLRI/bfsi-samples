@@ -57,7 +57,6 @@ import java.util.Map;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
@@ -126,7 +125,7 @@ public class FDXDCRValidationTest {
         when(IdentityCommonUtil.getDCRModifyResponseConfig()).thenReturn(false);
 
         registrationValidator.getRegistrationResponse(spMetaData);
-        verify(metaDataList, times(1)).set(0, jsonObject);
+        verify(metaDataList).set(0, jsonObject);
     }
 
     @Test
