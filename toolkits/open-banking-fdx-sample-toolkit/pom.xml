@@ -160,8 +160,6 @@
                         <threshold>Low</threshold>
                         <xmlOutput>true</xmlOutput>
                         <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory>
-                        <!--<excludeFilterFile>findbugs_exclude.xml</excludeFilterFile>-->
-                        <!--Exclude generated sources-->
                     </configuration>
                     <executions>
                         <execution>

@@ -33,18 +33,18 @@ public enum AllowedTokenEndPointAuthMethodsEnum {
 
     private final String authMethod;
 
-    public String getValue() {
+    public String getAuthMethod() {
         return authMethod;
     }
 
-    AllowedTokenEndPointAuthMethodsEnum(String value) {
-        this.authMethod = value;
+    AllowedTokenEndPointAuthMethodsEnum(String authMethod) {
+        this.authMethod = authMethod;
     }
 
     public static List<String> getAllowedAuthMethods() {
 
         List<String> allowedTokenEndPointAuthMethods = Arrays.stream(AllowedTokenEndPointAuthMethodsEnum.values())
-                .map(AllowedTokenEndPointAuthMethodsEnum::getValue)
+                .map(AllowedTokenEndPointAuthMethodsEnum::getAuthMethod)
                 .collect(Collectors.toList());
 
         return Collections.unmodifiableList(allowedTokenEndPointAuthMethods);

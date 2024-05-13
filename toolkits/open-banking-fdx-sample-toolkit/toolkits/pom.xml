@@ -21,8 +21,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>ob-compliance-toolkit-fdx</artifactId>
         <groupId>org.wso2.openbanking</groupId>
+        <artifactId>ob-compliance-toolkit-fdx</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

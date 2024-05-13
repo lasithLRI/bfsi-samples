@@ -43,11 +43,14 @@ public class FDXRegistrationUtils {
     /**
      * Convert the given string to a JSON object.
      *
-     * @param jsonString The string to be parsed as JSON.
+     * @param string The string to be parsed as JSON.
      * @return The JSON object parsed from the string.
      */
-    public static JsonObject getJsonObject(String jsonString) {
-        return new JsonParser().parse(jsonString).getAsJsonObject();
+    public static JsonObject getJsonObject(String string) {
+        if (isJsonString(string)) {
+            return new JsonParser().parse(string).getAsJsonObject();
+        }
+        return null;
     }
 
 

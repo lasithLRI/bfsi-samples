@@ -163,7 +163,6 @@ public class FDXDCRExecutorTest {
         Mockito.when(obapiResponseContext.getContextProperty(FDXGatewayConstants.INTERACTION_ID_HEADER))
                 .thenReturn(interactionId);
 
-
         Map<String, String> responseHeaders = new HashMap<>();
         responseHeaders.put(FDXGatewayConstants.INTERACTION_ID_HEADER, interactionId);
 

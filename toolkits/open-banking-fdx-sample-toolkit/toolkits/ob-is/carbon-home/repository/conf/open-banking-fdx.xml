@@ -21,7 +21,7 @@
     <DCR>
         <MaximumDurationPeriod>200</MaximumDurationPeriod>
         <MaximumLookbackPeriod>356</MaximumLookbackPeriod>
-        <TokenEndpointAuthMethod>tls_client_auth</TokenEndpointAuthMethod>
+        <DefaultTokenEndpointAuthMethod>tls_client_auth</DefaultTokenEndpointAuthMethod>
     </DCR>
 </Server>
 

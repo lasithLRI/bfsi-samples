@@ -28,7 +28,7 @@
          <MaximumLookbackPeriod>{{ open_banking_fdx.dcr.maximum_lookback_period }}</MaximumLookbackPeriod>
          {% endif %}
           <!-- allowed values are 'private_key_jwt'  and 'tls_client_auth' -->
-         {% if open_banking_fdx.dcr.token_endpoint_auth_method is defined %}
+         {% if open_banking_fdx.dcr.default_token_endpoint_auth_method is defined %}
          <DefaultTokenEndpointAuthMethod>{{ open_banking_fdx.dcr.default_token_endpoint_auth_method }}</DefaultTokenEndpointAuthMethod>
          {% else %}
          <DefaultTokenEndpointAuthMethod>private_key_jwt</DefaultTokenEndpointAuthMethod>

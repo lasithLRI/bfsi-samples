@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.openbanking.fdx.identity.dcr.util;
+package org.wso2.openbanking.fdx.identity.testutils;
 
 /**
  * FDX Registration Test Constants.

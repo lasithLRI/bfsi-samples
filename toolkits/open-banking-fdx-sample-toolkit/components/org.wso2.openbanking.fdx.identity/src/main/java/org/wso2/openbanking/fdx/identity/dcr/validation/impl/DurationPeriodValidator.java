@@ -40,7 +40,7 @@ public class DurationPeriodValidator implements ConstraintValidator<ValidateDura
         Integer durationPeriod = fdxRegistrationRequest.getDurationPeriod();
         List<String> durationTypes = fdxRegistrationRequest.getDurationType();
 
-        if (durationTypes != null && durationTypes.contains(FDXDurationTypesEnum.TIME_BOUND.getValue())) {
+        if (durationTypes != null && durationTypes.contains(FDXDurationTypesEnum.TIME_BOUND.getDurationType())) {
             if (durationPeriod == null) {
                 log.error("Duration period not provided for time bound duration type");
                 return false;

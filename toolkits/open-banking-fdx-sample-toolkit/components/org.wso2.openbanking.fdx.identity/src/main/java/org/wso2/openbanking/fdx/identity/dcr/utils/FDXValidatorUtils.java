@@ -81,7 +81,8 @@ public class FDXValidatorUtils {
 
             // Determine the authentication method to add, based on whether the default auth method is allowed
             String authMethodToAdd = (allowedAuthMethods.contains(defaultTokenEndpointAuthMethod)) ?
-                    defaultTokenEndpointAuthMethod : AllowedTokenEndPointAuthMethodsEnum.PRIVATE_KEY_JWT.getValue();
+                    defaultTokenEndpointAuthMethod : AllowedTokenEndPointAuthMethodsEnum
+                                                        .PRIVATE_KEY_JWT.getAuthMethod();
 
             registrationRequest.setTokenEndPointAuthentication(authMethodToAdd);
             registrationRequest.getRequestParameters()

@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
  * Data Provider for FDX Identity Tests.
  */
@@ -89,6 +88,29 @@ public class IdentityTestDataProvider {
                 {"private_key_jwt", privateKeyJwt},
                 {"tls_client_auth", tlsClientAUth},
                 {"sample_auth_method", tlsClientAUth}
+        };
+    }
+
+    @DataProvider(name = "jsonStrings")
+    public Object[][] jsonData() {
+        return new Object[][] {
+                {"{\"key\": \"value\"}", true},
+                {"Invalid JSON string", false},
+                {123, false},
+                {null, false},
+                {"", false}
+        };
+    }
+
+    @DataProvider(name = "conversionData")
+    public Object[][] conversionData() {
+        return new Object[][] {
+
+                {"key1", 10.5, 10},
+                {"key2", 7.8, 7},
+                {"key3", "value", "value"},
+                {"key4", null, null},
+                {"key5", 20, 20}
         };
     }
 }

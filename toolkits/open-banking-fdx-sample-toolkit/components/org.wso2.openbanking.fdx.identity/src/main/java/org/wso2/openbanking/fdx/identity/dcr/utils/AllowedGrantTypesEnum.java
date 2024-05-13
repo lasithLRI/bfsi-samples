@@ -35,11 +35,11 @@ public enum AllowedGrantTypesEnum {
 
     private final String grantType;
 
-    AllowedGrantTypesEnum(String value) {
-        this.grantType = value;
+    AllowedGrantTypesEnum(String grantType) {
+        this.grantType = grantType;
     }
 
-    public String getValue() {
+    public String getGrantType() {
         return grantType;
     }
 
@@ -52,7 +52,7 @@ public enum AllowedGrantTypesEnum {
     public static List<String> getAllowedGrantTypes() {
 
         return Collections.unmodifiableList(Arrays.stream(AllowedGrantTypesEnum.values())
-                .map(AllowedGrantTypesEnum::getValue)
+                .map(AllowedGrantTypesEnum::getGrantType)
                 .collect(Collectors.toList()));
     }
 }

@@ -31,14 +31,14 @@ public enum FDXDurationTypesEnum {
     ONE_TIME("one_time"),
     TIME_BOUND("time_bound"),
     PERSISTENT("persistent");
-    private final String value;
+    private final String durationType;
 
-    FDXDurationTypesEnum(String value) {
-        this.value = value;
+    FDXDurationTypesEnum(String durationType) {
+        this.durationType = durationType;
     }
 
-    public String getValue() {
-        return value;
+    public String getDurationType() {
+        return durationType;
     }
 
 
@@ -51,7 +51,7 @@ public enum FDXDurationTypesEnum {
     public static List<String> getAllDurationTypes() {
 
         return Collections.unmodifiableList(Arrays.stream(FDXDurationTypesEnum.values())
-                .map(FDXDurationTypesEnum::getValue)
+                .map(FDXDurationTypesEnum::getDurationType)
                 .collect(Collectors.toList()));
     }
 }

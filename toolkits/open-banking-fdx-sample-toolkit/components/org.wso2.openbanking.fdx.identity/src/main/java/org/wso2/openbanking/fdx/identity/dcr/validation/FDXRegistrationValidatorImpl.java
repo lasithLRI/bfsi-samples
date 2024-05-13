@@ -83,14 +83,12 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
         spMetaData.forEach((key, value) -> {
             if (value instanceof ArrayList) {
                 List<Object> metaDataList = (ArrayList<Object>) value;
-
                 // Convert JSON strings  in metadata list to JSON objects
                 for (Object element : metaDataList) {
                     if (isJsonString(element)) {
                         metaDataList.set(metaDataList.indexOf(element), getJsonObject(element.toString()));
                     }
                 }
-
             }
         });
 
@@ -110,7 +108,6 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
                     ValidatorUtils.getRegistrationClientURI() + clientId);
         }
 
-        Gson gson = new Gson();
         JsonElement jsonElement = gson.toJsonTree(spMetaData);
         FDXRegistrationResponse fdxRegistrationResponse =
                 gson.fromJson(jsonElement, FDXRegistrationResponse.class);
