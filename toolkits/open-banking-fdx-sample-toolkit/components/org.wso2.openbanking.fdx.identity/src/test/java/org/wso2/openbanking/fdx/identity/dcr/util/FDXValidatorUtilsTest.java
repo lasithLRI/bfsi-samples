@@ -19,6 +19,7 @@
 package org.wso2.openbanking.fdx.identity.dcr.util;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wso2.openbanking.accelerator.common.constant.OpenBankingConstants;
 import com.wso2.openbanking.accelerator.identity.dcr.exception.DCRValidationException;
 import com.wso2.openbanking.accelerator.identity.dcr.model.RegistrationRequest;
@@ -407,7 +408,7 @@ public class FDXValidatorUtilsTest {
         registrationRequest = getRegistrationRequestObject(RegistrationTestConstants.registrationRequestJson);
 
         // set all request parameters to the registration request
-        Type type = new com.google.gson.reflect.TypeToken<Map<String, Object>>() { }.getType();
+        Type type = new TypeToken<Map<String, Object>>() { }.getType();
         Map<String, Object> requestParameters = gson.fromJson(RegistrationTestConstants.registrationRequestJson, type);
         registrationRequest.setRequestParameters(requestParameters);
 

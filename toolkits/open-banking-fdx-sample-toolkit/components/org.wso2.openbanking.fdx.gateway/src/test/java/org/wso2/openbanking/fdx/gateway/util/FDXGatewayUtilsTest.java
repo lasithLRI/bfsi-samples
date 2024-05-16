@@ -19,10 +19,12 @@
 package org.wso2.openbanking.fdx.gateway.util;
 
 import com.wso2.openbanking.accelerator.gateway.executor.model.OBAPIRequestContext;
-import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.wso2.openbanking.fdx.gateway.testutils.GatewayTestDataProvider;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Test for FDX Gateway Utils.
@@ -38,10 +40,10 @@ public class FDXGatewayUtilsTest {
     @Test
     public void handleInvalidHeaderFieldsError() {
 
-        OBAPIRequestContext obapiRequestContext = Mockito.mock(OBAPIRequestContext.class);
+        OBAPIRequestContext obapiRequestContext = mock(OBAPIRequestContext.class);
 
         FDXGatewayUtils.handleInvalidHeaderFieldsError(obapiRequestContext, "sample error message");
-        Mockito.verify(obapiRequestContext).setError(true);
+        verify(obapiRequestContext).setError(true);
     }
 }
 

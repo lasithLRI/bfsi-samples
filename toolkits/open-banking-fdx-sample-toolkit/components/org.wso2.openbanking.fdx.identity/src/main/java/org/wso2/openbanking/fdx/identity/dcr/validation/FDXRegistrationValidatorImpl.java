@@ -23,7 +23,6 @@ import com.google.gson.JsonElement;
 import com.wso2.openbanking.accelerator.identity.dcr.exception.DCRValidationException;
 import com.wso2.openbanking.accelerator.identity.dcr.model.RegistrationRequest;
 import com.wso2.openbanking.accelerator.identity.dcr.utils.ValidatorUtils;
-import com.wso2.openbanking.accelerator.identity.dcr.validation.DCRCommonConstants;
 import com.wso2.openbanking.accelerator.identity.dcr.validation.RegistrationValidator;
 import com.wso2.openbanking.accelerator.identity.util.IdentityCommonConstants;
 import com.wso2.openbanking.accelerator.identity.util.IdentityCommonUtil;
@@ -130,11 +129,6 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
         // add grant types and an authentication method to the registration request
         FDXValidatorUtils.addAllowedGrantTypes(registrationRequest);
         FDXValidatorUtils.addAllowedTokenEndpointAuthMethod(registrationRequest);
-
-        // Set client name as the software ID in the registration request
-        registrationRequest.setSoftwareId(fdxRegistrationRequest.getClientName());
-        registrationRequest.getRequestParameters().put(DCRCommonConstants.SOFTWARE_ID,
-                fdxRegistrationRequest.getClientName());
 
         //convert duration_period and lookback_period values to integers
         FDXRegistrationUtils.convertDoubleValueToInt(registrationRequest.getRequestParameters(),

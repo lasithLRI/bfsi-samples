@@ -24,5 +24,7 @@ package org.wso2.openbanking.fdx.gateway.util;
 public class FDXGatewayConstants {
 
     public static final String INTERACTION_ID_HEADER = "x-fapi-interaction-id";
+    public static final String SOFTWARE_ID = "software_id";
+    public static final String CLIENT_NAME = "client_name";
 }
 
