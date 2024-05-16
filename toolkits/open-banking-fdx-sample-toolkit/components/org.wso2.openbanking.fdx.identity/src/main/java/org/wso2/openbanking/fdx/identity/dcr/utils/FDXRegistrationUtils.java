@@ -46,6 +46,7 @@ public class FDXRegistrationUtils {
      * @return The JSON object parsed from the string.
      */
     public static JsonObject getJsonObject(String string) {
+
         if (isJsonString(string)) {
             return new JsonParser().parse(string).getAsJsonObject();
         }

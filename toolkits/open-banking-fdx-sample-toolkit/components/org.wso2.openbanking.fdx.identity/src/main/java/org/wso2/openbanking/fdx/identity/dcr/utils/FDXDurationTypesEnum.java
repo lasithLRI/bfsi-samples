@@ -31,6 +31,7 @@ public enum FDXDurationTypesEnum {
     ONE_TIME("one_time"),
     TIME_BOUND("time_bound"),
     PERSISTENT("persistent");
+
     private final String durationType;
 
     FDXDurationTypesEnum(String durationType) {

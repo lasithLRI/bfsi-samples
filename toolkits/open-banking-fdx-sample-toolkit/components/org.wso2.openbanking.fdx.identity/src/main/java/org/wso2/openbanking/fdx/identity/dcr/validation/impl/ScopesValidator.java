@@ -33,8 +33,10 @@ import javax.validation.ConstraintValidatorContext;
  * Validator class for validating the scope.
  */
 public class ScopesValidator implements ConstraintValidator<ValidateScopes, String> {
+
     private static final Log log = LogFactory.getLog(ScopesValidator.class);
     @Override
+
     public boolean isValid(String requestedScopes, ConstraintValidatorContext constraintValidatorContext) {
 
         List<String> fdxScopes = FDXScopesEnum.getAllFDXScopes();

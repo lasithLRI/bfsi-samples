@@ -112,6 +112,5 @@ public class OpenBankingFDXConfigParserTest {
         OpenBankingFDXConfigParser instance2 = OpenBankingFDXConfigParser.getInstance();
         Assert.assertEquals(instance2, instance1);
     }
-
 }
 

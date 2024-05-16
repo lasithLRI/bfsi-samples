@@ -32,7 +32,9 @@ import javax.validation.ConstraintValidatorContext;
  * Validator class for duration type validation.
  */
 public class DurationTypeValidator implements ConstraintValidator<ValidateDurationType, List<String>> {
+
     private static final Log log = LogFactory.getLog(DurationTypeValidator.class);
+
     @Override
     public boolean isValid(List<String> durationTypes, ConstraintValidatorContext constraintValidatorContext) {
 
