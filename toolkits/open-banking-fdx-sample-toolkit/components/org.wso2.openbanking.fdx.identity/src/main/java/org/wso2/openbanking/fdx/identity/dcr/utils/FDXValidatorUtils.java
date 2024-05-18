@@ -44,7 +44,7 @@ public class FDXValidatorUtils {
         List<String> requestedGrantTypes = registrationRequest.getGrantTypes();
         List<String> allowedGrantTypes = AllowedGrantTypesEnum.getAllowedGrantTypes();
 
-        // If requested grant types are provided, filter and collect only those that are allowed;
+        // If grant types are provided in the request, filter and collect only those that are allowed;
         // Otherwise, use the default allowed grant types.
         List<String> grantTypesToAdd = Optional.ofNullable(requestedGrantTypes)
                 .map(types -> types.stream().filter(allowedGrantTypes::contains).collect(Collectors.toList()))

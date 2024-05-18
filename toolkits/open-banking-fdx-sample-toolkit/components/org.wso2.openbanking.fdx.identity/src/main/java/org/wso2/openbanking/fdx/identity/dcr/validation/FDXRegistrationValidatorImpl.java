@@ -26,10 +26,10 @@ import com.wso2.openbanking.accelerator.identity.dcr.utils.ValidatorUtils;
 import com.wso2.openbanking.accelerator.identity.dcr.validation.RegistrationValidator;
 import com.wso2.openbanking.accelerator.identity.util.IdentityCommonConstants;
 import com.wso2.openbanking.accelerator.identity.util.IdentityCommonUtil;
-import org.wso2.openbanking.fdx.identity.dcr.constants.FDXValidationConstants;
+import org.wso2.openbanking.fdx.common.utils.CommonConstants;
+import org.wso2.openbanking.fdx.common.utils.FDXCommonUtils;
 import org.wso2.openbanking.fdx.identity.dcr.model.FDXRegistrationRequest;
 import org.wso2.openbanking.fdx.identity.dcr.model.FDXRegistrationResponse;
-import org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils;
 import org.wso2.openbanking.fdx.identity.dcr.utils.FDXValidatorUtils;
 
 import java.util.ArrayList;
@@ -131,10 +131,10 @@ public class FDXRegistrationValidatorImpl extends RegistrationValidator {
         FDXValidatorUtils.addAllowedTokenEndpointAuthMethod(registrationRequest);
 
         //convert duration_period and lookback_period values to integers
-        FDXRegistrationUtils.convertDoubleValueToInt(registrationRequest.getRequestParameters(),
-                FDXValidationConstants.DURATION_PERIOD);
-        FDXRegistrationUtils.convertDoubleValueToInt(registrationRequest.getRequestParameters(),
-                FDXValidationConstants.LOOKBACK_PERIOD);
+        FDXCommonUtils.convertDoubleValueToInt(registrationRequest.getRequestParameters(),
+                CommonConstants.DURATION_PERIOD);
+        FDXCommonUtils.convertDoubleValueToInt(registrationRequest.getRequestParameters(),
+                CommonConstants.LOOKBACK_PERIOD);
     }
 }
 

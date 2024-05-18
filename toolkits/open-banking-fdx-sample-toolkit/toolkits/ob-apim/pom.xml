@@ -76,6 +76,13 @@
                                 <!-- Copying jars to lib -->
                                 <copy todir="${project.basedir}/carbon-home/repository/components/lib" overwrite="true">
                                     <fileset
+                                            dir="../../components/org.wso2.openbanking.fdx.common/target">
+                                        <filename
+                                                regex="org.wso2.openbanking.fdx.common-(\d.*?)\.jar$"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.basedir}/carbon-home/repository/components/lib" overwrite="true">
+                                    <fileset
                                             dir="../../components/org.wso2.openbanking.fdx.gateway/target">
                                         <filename
                                                 regex="org.wso2.openbanking.fdx.gateway-(\d.*?)\.jar$"/>

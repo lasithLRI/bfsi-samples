@@ -18,14 +18,24 @@
 
 package org.wso2.openbanking.fdx.common.utils;
 
+import java.util.Map;
+
 /**
- * Common Constant Class.
+ * FDX Common Utils.
  */
-public class CommonConstants {
+public class FDXCommonUtils {
 
-    // Config related constants
-    public static final String OB_CONFIG_FILE = "open-banking-fdx.xml";
+    /**
+     * Converts Double value to integer for the specified key in the given map.
+     *
+     * @param map The map containing key-value pairs.
+     * @param key The list of keys for which Double values need to be converted to integers.
+     */
+    public static void convertDoubleValueToInt(Map<String, Object> map, String key) {
 
-    public static final String DURATION_PERIOD = "duration_period";
-    public static final String LOOKBACK_PERIOD = "lookback_period";
+        if (map.get(key) instanceof Double) {
+            Double doubleValue = (Double) map.get(key);
+            map.put(key, doubleValue.intValue());
+        }
+    }
 }

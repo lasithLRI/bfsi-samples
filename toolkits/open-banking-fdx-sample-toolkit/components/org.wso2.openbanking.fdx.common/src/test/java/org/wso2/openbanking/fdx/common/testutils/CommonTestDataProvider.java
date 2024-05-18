@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data Provider FDX CDS Common Tests.
+ * Data Provider FDX Common Tests.
  */
 public class CommonTestDataProvider {
 
@@ -48,6 +48,19 @@ public class CommonTestDataProvider {
 
         return new Object[][] {
                 {"SampleArray.RepeatableTag", expectedList }
+        };
+    }
+
+    @DataProvider(name = "conversionData")
+    public Object[][] conversionData() {
+
+        return new Object[][] {
+
+                {"key1", 10.5, 10},
+                {"key2", 7.8, 7},
+                {"key3", "value", "value"},
+                {"key4", null, null},
+                {"key5", 20, 20}
         };
     }
 }

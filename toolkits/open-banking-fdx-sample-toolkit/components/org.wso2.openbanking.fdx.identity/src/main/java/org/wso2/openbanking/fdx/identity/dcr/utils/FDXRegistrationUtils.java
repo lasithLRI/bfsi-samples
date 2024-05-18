@@ -21,7 +21,6 @@ package org.wso2.openbanking.fdx.identity.dcr.utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.util.Map;
 
 /**
  * Util class which includes helper methods required for FDX DCR.
@@ -51,20 +50,6 @@ public class FDXRegistrationUtils {
             return new JsonParser().parse(string).getAsJsonObject();
         }
         return null;
-    }
-
-    /**
-     * Converts Double value to integer for the specified key in the given map.
-     *
-     * @param map The map containing key-value pairs.
-     * @param key The list of keys for which Double values need to be converted to integers.
-     */
-    public static void convertDoubleValueToInt(Map<String, Object> map, String key) {
-
-        if (map.get(key) instanceof Double) {
-            Double doubleValue = (Double) map.get(key);
-            map.put(key, doubleValue.intValue());
-        }
     }
 }
 

@@ -37,8 +37,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 import org.wso2.openbanking.fdx.common.config.OpenBankingFDXConfigParser;
-import org.wso2.openbanking.fdx.identity.dcr.constants.FDXValidationConstants;
-import org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils;
+import org.wso2.openbanking.fdx.common.utils.CommonConstants;
+import org.wso2.openbanking.fdx.common.utils.FDXCommonUtils;
 import org.wso2.openbanking.fdx.identity.dcr.utils.FDXValidatorUtils;
 import org.wso2.openbanking.fdx.identity.dcr.validation.FDXRegistrationValidatorImpl;
 import org.wso2.openbanking.fdx.identity.testutils.RegistrationTestConstants;
@@ -60,8 +60,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 /**
  * Test Class for FDX DCR Validation class.
  */
-@PrepareForTest({OpenBankingFDXConfigParser.class, ValidatorUtils.class, FDXRegistrationUtils.class,
-                FDXValidatorUtils.class, IdentityCommonUtil.class})
+@PrepareForTest({OpenBankingFDXConfigParser.class, ValidatorUtils.class, FDXValidatorUtils.class,
+        IdentityCommonUtil.class, FDXCommonUtils.class})
 @PowerMockIgnore({"javax.net.ssl.*", "jdk.internal.reflect.*"})
 public class FDXDCRValidationTest {
 
@@ -128,7 +128,7 @@ public class FDXDCRValidationTest {
         mockStatic(OpenBankingFDXConfigParser.class);
         mockStatic(FDXValidatorUtils.class);
         mockStatic(ValidatorUtils.class);
-        mockStatic(FDXRegistrationUtils.class);
+        mockStatic(FDXCommonUtils.class);
 
         RegistrationRequest registrationRequest = getRegistrationRequestObject(RegistrationTestConstants
                                                                 .registrationRequestJson);
@@ -146,10 +146,10 @@ public class FDXDCRValidationTest {
         verifyStatic(FDXValidatorUtils.class);
         FDXValidatorUtils.addAllowedTokenEndpointAuthMethod(registrationRequest);
 
-        verifyStatic(FDXRegistrationUtils.class);
-        FDXRegistrationUtils.convertDoubleValueToInt(requestParameters, FDXValidationConstants.DURATION_PERIOD);
-        verifyStatic(FDXRegistrationUtils.class);
-        FDXRegistrationUtils.convertDoubleValueToInt(requestParameters, FDXValidationConstants.LOOKBACK_PERIOD);
+        verifyStatic(FDXCommonUtils.class);
+        FDXCommonUtils.convertDoubleValueToInt(requestParameters, CommonConstants.DURATION_PERIOD);
+        verifyStatic(FDXCommonUtils.class);
+        FDXCommonUtils.convertDoubleValueToInt(requestParameters, CommonConstants.LOOKBACK_PERIOD);
     }
 
     private static RegistrationRequest getRegistrationRequestObject(String request) {

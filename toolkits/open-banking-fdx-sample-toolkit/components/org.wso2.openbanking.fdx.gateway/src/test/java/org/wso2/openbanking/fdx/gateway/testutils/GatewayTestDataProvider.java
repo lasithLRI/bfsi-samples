@@ -20,6 +20,8 @@ package org.wso2.openbanking.fdx.gateway.testutils;
 
 import org.testng.annotations.DataProvider;
 
+import javax.ws.rs.HttpMethod;
+
 /**
  * Data Provider for FDX Gateway Tests.
  */
@@ -32,6 +34,15 @@ public class GatewayTestDataProvider {
                 {"", false},
                 {"770aef3-6784-41f7-8e0e", false},
                 {"770aef3-6784-41f7-8e0e-ff5f97bddb3", true}
+        };
+    }
+
+    @DataProvider(name = "httpMethod")
+    public Object[][] httpMethodTestDataProvider() {
+
+        return new Object[][] {
+                {HttpMethod.POST},
+                {HttpMethod.PUT}
         };
     }
 }

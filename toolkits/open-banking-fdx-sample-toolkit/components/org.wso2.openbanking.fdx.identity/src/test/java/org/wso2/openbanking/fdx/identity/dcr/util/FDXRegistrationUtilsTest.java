@@ -24,9 +24,6 @@ import org.testng.annotations.Test;
 import org.wso2.openbanking.fdx.identity.dcr.utils.FDXRegistrationUtils;
 import org.wso2.openbanking.fdx.identity.testutils.IdentityTestDataProvider;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Test Class for FDX Registration Utils class.
  */
@@ -65,15 +62,5 @@ public class FDXRegistrationUtilsTest {
         JsonObject jsonObject = FDXRegistrationUtils.getJsonObject(nullInput);
 
         Assert.assertNull(jsonObject);
-    }
-
-    @Test(dataProvider = "conversionData", dataProviderClass = IdentityTestDataProvider.class)
-    public void testConvertDoubleValueToInt(String key, Object value , Object expectedValue) {
-
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        FDXRegistrationUtils.convertDoubleValueToInt(map, key);
-
-        Assert.assertEquals(map.get(key), expectedValue);
     }
 }

@@ -18,14 +18,25 @@
 
 package org.wso2.openbanking.fdx.common.utils;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import org.wso2.openbanking.fdx.common.testutils.CommonTestDataProvider;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Common Constant Class.
+ * Test Class for FDX Common Utils class.
  */
-public class CommonConstants {
+public class FDXCommonUtilsTest {
 
-    // Config related constants
-    public static final String OB_CONFIG_FILE = "open-banking-fdx.xml";
+    @Test(dataProvider = "conversionData", dataProviderClass = CommonTestDataProvider.class)
+    public void testConvertDoubleValueToInt(String key, Object value , Object expectedValue) {
 
-    public static final String DURATION_PERIOD = "duration_period";
-    public static final String LOOKBACK_PERIOD = "lookback_period";
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        FDXCommonUtils.convertDoubleValueToInt(map, key);
+
+        Assert.assertEquals(map.get(key), expectedValue);
+    }
 }

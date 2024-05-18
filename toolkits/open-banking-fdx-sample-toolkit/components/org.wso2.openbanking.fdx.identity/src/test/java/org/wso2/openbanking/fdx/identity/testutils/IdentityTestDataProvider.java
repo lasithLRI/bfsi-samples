@@ -101,18 +101,5 @@ public class IdentityTestDataProvider {
                 {"", false}
         };
     }
-
-    @DataProvider(name = "conversionData")
-    public Object[][] conversionData() {
-
-        return new Object[][] {
-
-                {"key1", 10.5, 10},
-                {"key2", 7.8, 7},
-                {"key3", "value", "value"},
-                {"key4", null, null},
-                {"key5", 20, 20}
-        };
-    }
 }
 

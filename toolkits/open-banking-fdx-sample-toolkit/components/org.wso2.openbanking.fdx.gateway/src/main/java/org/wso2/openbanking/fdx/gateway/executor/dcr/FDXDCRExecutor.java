@@ -23,12 +23,15 @@ import com.wso2.openbanking.accelerator.gateway.executor.dcr.DCRExecutor;
 import com.wso2.openbanking.accelerator.gateway.executor.model.OBAPIRequestContext;
 import com.wso2.openbanking.accelerator.gateway.executor.model.OBAPIResponseContext;
 import org.apache.commons.lang3.StringUtils;
+import org.wso2.openbanking.fdx.common.utils.CommonConstants;
+import org.wso2.openbanking.fdx.common.utils.FDXCommonUtils;
 import org.wso2.openbanking.fdx.gateway.util.FDXGatewayConstants;
 import org.wso2.openbanking.fdx.gateway.util.FDXGatewayUtils;
 
-import javax.ws.rs.HttpMethod;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.HttpMethod;
 
 /**
  * Executor for adding X-FAPI-INTERACTION-ID to DCR response headers.
@@ -60,7 +63,8 @@ public class FDXDCRExecutor extends DCRExecutor {
             // set client name as the software id in DCR request payload
             Map<String, Object>  requestParameters  = gson.fromJson(obapiRequestContext
                     .getRequestPayload(), Map.class);
-            requestParameters.put(FDXGatewayConstants.SOFTWARE_ID, requestParameters.get(FDXGatewayConstants.CLIENT_NAME));
+            requestParameters.put(FDXGatewayConstants.SOFTWARE_ID,
+                    requestParameters.get(FDXGatewayConstants.CLIENT_NAME));
             String requestPayload = gson.toJson(requestParameters);
             obapiRequestContext.setModifiedPayload(requestPayload);
         }
@@ -86,6 +90,8 @@ public class FDXDCRExecutor extends DCRExecutor {
             Map<String, Object> responseParameters = gson.fromJson(obapiResponseContext
                     .getResponsePayload(), Map.class);
             responseParameters.remove(FDXGatewayConstants.SOFTWARE_ID);
+            FDXCommonUtils.convertDoubleValueToInt(responseParameters, CommonConstants.DURATION_PERIOD);
+            FDXCommonUtils.convertDoubleValueToInt(responseParameters, CommonConstants.LOOKBACK_PERIOD);
             String responsePayload = gson.toJson(responseParameters);
             obapiResponseContext.setModifiedPayload(responsePayload);
         }

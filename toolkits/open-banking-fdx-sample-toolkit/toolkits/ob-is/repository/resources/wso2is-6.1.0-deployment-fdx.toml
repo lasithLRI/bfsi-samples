@@ -49,10 +49,10 @@ GetAllRolesOfUserEnabled = false
 
 # for registry data
 [database.shared_db]
-url = "jdbc:mysql://localhost:3306/openbank_govdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_GOV_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 
 [database.shared_db.pool_options]
 maxActive = "150"
@@ -67,10 +67,10 @@ defaultAutoCommit=false
 
 # for api manager data
 [database.identity_db]
-url = "jdbc:mysql://localhost:3306/openbank_apimgtdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_APIMGT_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 
 [database.identity_db.pool_options]
 maxActive = "150"
@@ -85,10 +85,10 @@ defaultAutoCommit=false
 
 # for km-config registry
 [database.config]
-url = "jdbc:mysql://localhost:3306/openbank_iskm_configdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_IS_CONFIG_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 
 [database.config.pool_options]
 maxActive = "150"
@@ -103,10 +103,10 @@ defaultAutoCommit=false
 
 # for user-mgt data
 [database.user]
-url = "jdbc:mysql://localhost:3306/openbank_userdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_USER_STORE_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 
 [database.user.pool_options]
 maxActive = "150"
@@ -122,10 +122,10 @@ defaultAutoCommit=false
 # for Open Banking  data
 [[datasource]]
 id="WSO2OB_DB"
-url = "jdbc:mysql://localhost:3306/openbank_openbankingdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_OB_STORE_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 jmx_enable=false
 pool_options.maxActive = "150"
 pool_options.maxWait = "60000"

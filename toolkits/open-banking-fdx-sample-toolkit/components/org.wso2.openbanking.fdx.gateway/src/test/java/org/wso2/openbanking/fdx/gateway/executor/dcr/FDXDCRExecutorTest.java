@@ -18,6 +18,8 @@
 
 package org.wso2.openbanking.fdx.gateway.executor.dcr;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.wso2.openbanking.accelerator.common.config.OpenBankingConfigurationService;
 import com.wso2.openbanking.accelerator.gateway.executor.dcr.DCRExecutor;
 import com.wso2.openbanking.accelerator.gateway.executor.model.OBAPIRequestContext;
@@ -33,6 +35,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.ObjectFactory;
 import org.testng.annotations.Test;
 import org.wso2.carbon.apimgt.common.gateway.dto.MsgInfoDTO;
+import org.wso2.openbanking.fdx.gateway.testutils.GatewayTestDataProvider;
 import org.wso2.openbanking.fdx.gateway.util.FDXGatewayConstants;
 
 import java.util.ArrayList;
@@ -138,12 +141,43 @@ public class FDXDCRExecutorTest {
         requestHeaders.put(FDXGatewayConstants.INTERACTION_ID_HEADER, interactionId);
         msgInfoDTO.setHeaders(requestHeaders);
         when(obapiRequestContext.getMsgInfo()).thenReturn(msgInfoDTO);
-        when(obapiRequestContext.getRequestPayload()).thenReturn("{ }");
 
         fdxdcrExecutor.preProcessRequest(obapiRequestContext);
 
         verify(obapiRequestContext)
                 .addContextProperty(FDXGatewayConstants.INTERACTION_ID_HEADER, interactionId);
+    }
+
+    @Test(dataProvider = "httpMethod", dataProviderClass = GatewayTestDataProvider.class)
+    public void testSetSoftwareId(String httpMethod) {
+
+        when(openBankingConfigurationService.getConfigurations()).thenReturn(configMap);
+        when(gatewayDataHolder.getOpenBankingConfigurationService())
+                .thenReturn(openBankingConfigurationService);
+        mockStatic(GatewayDataHolder.class);
+        when(GatewayDataHolder.getInstance()).thenReturn(gatewayDataHolder);
+
+        OBAPIRequestContext obapiRequestContext = mock(OBAPIRequestContext.class);
+        FDXDCRExecutor fdxdcrExecutor = spy(new FDXDCRExecutor());
+
+        String interactionId = "770aef3-6784-41f7-8e0e-ff5f97bddb3";
+
+        MsgInfoDTO msgInfoDTO = new MsgInfoDTO();
+        msgInfoDTO.setHttpMethod(httpMethod);
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put(FDXGatewayConstants.INTERACTION_ID_HEADER, interactionId);
+        msgInfoDTO.setHeaders(requestHeaders);
+
+        Gson gson = new Gson();
+        JsonObject emptyJsonObject = new JsonObject();
+        String emptyJsonString = gson.toJson(emptyJsonObject);
+
+        when(obapiRequestContext.getMsgInfo()).thenReturn(msgInfoDTO);
+        when(obapiRequestContext.getRequestPayload()).thenReturn(emptyJsonString);
+
+        fdxdcrExecutor.preProcessRequest(obapiRequestContext);
+
+        verify(obapiRequestContext).setModifiedPayload(emptyJsonString);
     }
 
     @Test
@@ -165,7 +199,6 @@ public class FDXDCRExecutorTest {
         when(obapiResponseContext.getMsgInfo()).thenReturn(msgInfoDTO);
         when(obapiResponseContext.getContextProperty(FDXGatewayConstants.INTERACTION_ID_HEADER))
                 .thenReturn(interactionId);
-        when(obapiResponseContext.getResponsePayload()).thenReturn("{ }");
 
         Map<String, String> responseHeaders = new HashMap<>();
         responseHeaders.put(FDXGatewayConstants.INTERACTION_ID_HEADER, interactionId);

@@ -39,10 +39,10 @@ GetAllRolesOfUserEnabled = false
 
 # for registry data
 [database.shared_db]
-url = "jdbc:mysql://localhost:3306/openbank_govdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_GOV_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 
 [database.shared_db.pool_options]
 maxActive = "150"
@@ -57,10 +57,10 @@ defaultAutoCommit=true
 
 # for api manager data
 [database.apim_db]
-url = "jdbc:mysql://localhost:3306/openbank_apimgtdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_APIMGT_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 
 [database.apim_db.pool_options]
 maxActive = "150"
@@ -75,10 +75,10 @@ defaultAutoCommit=true
 
 # for am-config registry
 [database.config]
-url = "jdbc:mysql://localhost:3306/openbank_am_configdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_AM_CONFIG_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 
 [database.config.pool_options]
 maxActive = "150"
@@ -94,10 +94,10 @@ defaultAutoCommit=true
 # for user management data
 [[datasource]]
 id="WSO2UM_DB"
-url = "jdbc:mysql://localhost:3306/openbank_userdb?autoReconnect=true&amp;useSSL=false"
-username = "root"
-password = "Heirs2013#"
-driver = "com.mysql.jdbc.Driver"
+url = "DB_USER_STORE_URL"
+username = "DB_USER"
+password = "DB_PASS"
+driver = "DB_DRIVER"
 jmx_enable=false
 pool_options.maxActive = "150"
 pool_options.maxWait = "60000"
@@ -426,11 +426,10 @@ retrieve_subscribe="api/am/devportal/v3/subscriptions"
 
 [[open_banking.dcr.regulatory_api]]
 api_name = "FDXV600RecipientAPI"
-roles = "AISP,PISP"
 
 [[open_banking.dcr.regulatory_api]]
 api_name = "AccountandTransactionAPI"
-roles = "AISP"
+
 
 [open_banking.dcr.registration.software_environment_identification]
 ssa_property_name = "software_environment"
