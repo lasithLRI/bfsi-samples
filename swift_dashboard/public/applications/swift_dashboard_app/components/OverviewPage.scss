@@ -1,0 +1,31 @@
+  .dashboard-row {
+    display: flex;
+    // margin-bottom: 1.25rem; /* 20px */
+    // min-height: 18.75rem; /* 300px */
+  }
+  
+  .dashboard-column {
+    flex: 1rem 1rem 18.75rem;
+    padding: 0 0.625rem; /* 10px */
+    display: flex; /* Enable flex for children */
+  }
+  
+  .dashboard-column.completion {
+    flex: 0.5; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.errors {
+    flex: 0.4; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.activity {
+    flex: 0.9; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.distribution {
+    flex: 0.6; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.trend {
+    flex: 0.8; /* Increase trend chart to 80% */
+  }

@@ -1,0 +1,1399 @@
+html, body {
+    font-family: Arial, sans-serif;
+    background-color: #d1d1d1;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+    overflow-x: hidden;
+    width: auto;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(to left, #595858, #000000);
+    color: white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* 2px 4px */
+  }
+  
+  .header .logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.9) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1); /* 1px 2px */
+  }
+  
+  .header nav a {
+    color: white;
+    margin-left: 1.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .header nav a:hover {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .header nav a:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0.125rem; /* 2px */
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    transition: width 0.3s ease;
+  }
+  
+  .header nav a:hover:after {
+    width: 100%;
+  }
+  
+  .overview-page, .messages-page {
+    padding: 1rem;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .dashboard-row {
+    display: flex;
+    margin-bottom: 1.25rem; /* 20px */
+    min-height: 18.75rem; /* 300px */
+  }
+  
+  .dashboard-column {
+    flex: 1 1 18.75rem;
+    padding: 0 0.625rem; /* 10px */
+    display: flex; /* Enable flex for children */
+  }
+  
+  .dashboard-column.completion {
+    flex: 0.5; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.errors {
+    flex: 0.4; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.activity {
+    flex: 0.9; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.distribution {
+    flex: 0.6; /* Reduce the width to 30% of row */
+  }
+
+  .dashboard-column.trend {
+    flex: 0.8; /* Increase trend chart to 80% */
+  }
+  
+  .chart-component, .summary-component {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 1rem; /* 16px */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* 2px 4px */
+    flex: 1; /* Fill available space */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Reduced title size */
+  .chart-component h3, .summary-component h3 {
+    margin: 0;
+    font-size: 1rem; /* 16px */
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .summary-component {
+    font-size: 0.625rem; /* 10px */
+  }
+  
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.625rem; /* 10px */
+  }
+  
+  .toggle-container {
+    display: flex;
+    gap: 0.625rem; /* 10px */
+    flex-wrap: wrap;
+  }
+  
+  .toggle-bar {
+    display: flex;
+    border-radius: 0.375rem; /* 6px */
+    overflow: hidden;
+    background-color: #ffffff;
+    height: 1.5rem; /* 24px */
+  }
+  
+  .toggle-button {
+    background: none;
+    border: none;
+    padding: 0 0.625rem; /* 10px */
+    font-size: 0.75rem; /* 12px */
+    cursor: pointer;
+    height: 100%;
+  }
+  
+  /* Toggle footer adjustment */
+  .toggle-footer-pie, .toggle-footer-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0.9375rem; /* 15px */
+    margin-top: auto;
+    min-height: 2.5rem; /* 40px */
+  }
+
+  .toggle-footer-pie {
+    justify-content: left;
+    margin-left: 0.6rem;
+  }
+  
+  .toggle-footer-bar {
+    height: 2rem;
+    margin-top: 0;
+    justify-content: right; /* 13px */
+  }
+
+  /* Styles for the weeks input */
+  
+  .weeks-input-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .weeks-input-container label {
+    font-size: 0.75rem;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .weeks-input {
+    width: 1.75rem;
+    padding: 0.25rem 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .toggle-footer-bar.type-distribution {
+    padding-top: 1.2rem; 
+  }
+  
+  .toggle-footer-pie {
+    padding-top: 0.625rem; /* 10px */
+  }
+  
+  .toggle-button.active {
+    background-color: #000000c3;
+    color: white;
+  }
+
+  .chart-container {
+    flex: 1;
+    min-height: 575%;
+    position: relative;
+    margin-bottom: 0;
+  }
+
+  .chart-container.type-distribution {
+    min-height: 400%;
+  }
+  
+  /* Make sure charts maintain aspect ratio */
+  .chart-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .chart-container.type-distribution canvas {
+    height: 100% !important;
+  }
+  
+  /* Message Type Distribution Chart styles */
+  .message-type-chart-container {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    height: calc(100% - 2.5rem); /* 40px */
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.625rem 0; /* 10px */
+  }
+  
+  .message-type-chart-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 80% !important;
+  }
+  
+  /* Summary component specific */
+  .summary-component h3 {
+    margin-bottom: 0.625rem; /* 10px */
+  }
+  
+  /* Donut chart layout */
+  .donut-chart-layout {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .donut-chart-container {
+    /* Reduce from 1 to 0.65 to make it narrower */
+    position: relative;
+    margin-left: 0;
+  }
+  
+  /* Message counts styling */
+  /* Updated MessageCounts.css */
+/* Updated MessageCounts.css - Reduced sizes */
+.message-counts {
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 0 1rem;  
+    padding: 0.3rem;
+  }
+  
+  /* Total count item styling */
+  .count-item.total {
+    background-color: #353434;
+    margin-bottom: 0.75rem;
+    margin-left: 4.5rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+  }
+  
+  .count-item.total.Inward {
+    background-color: #52524f;
+  }
+  
+  .count-item.total.Outward {
+    background-color: #868686;
+  }
+  
+  .count-item.total .count-header {
+    margin-bottom: 0.3rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .count-name.total {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .count-value.total {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+  }
+  
+  /* Row styling */
+  .counts-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Individual count items in rows */
+  .counts-row .count-item {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Direction-specific items */
+  .count-item.inward {
+    background-color: #52524f;
+  }
+  
+  .count-item.outward {
+    background-color: #868686;
+  }
+  
+  /* Status-specific items */
+  .count-item.success {
+    background-color: #00d157;
+  }
+  
+  .count-item.fail {
+    background-color: #ff513d;
+  }
+  
+  /* Header within count items */
+  .count-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    width: 100%;
+  }
+  
+  
+  /* Text elements */
+  .count-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fcfcfc;
+  }
+  
+  .count-value {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: #fcfcfc;
+  }
+  
+  .count-percentage {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  /* Recent Activity Table */
+  .recent-activity-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem; /* 10px */
+  }
+  
+  .recent-activity-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.625rem; /* 10px */
+    border-bottom: 0.0625rem solid #8b8d90; /* 1px */
+    transition: background-color 0.3s ease;
+  }
+  
+  .recent-activity-row:hover {
+    background-color: #cdcfd1;
+  }
+  
+  .recent-activity-time,
+  .recent-activity-type,
+  .recent-activity-direction,
+  .recent-activity-amount,
+  .recent-activity-status {
+    font-size: 0.75rem; /* 12px */
+  }
+
+  .recent-activity-direction {
+    flex-shrink: 0;
+    width: 1.5rem; /* 24px */
+  }
+  
+  .recent-activity-status.successful {
+    color: #000000;
+    background-color: #00d157;
+    padding: 0.125rem 0.5rem; /* 2px 8px */
+    border-radius: 0.75rem; /* 12px */
+  }
+  
+  .recent-activity-status.failed {
+    color: #000000;
+    background-color: #ff513d;
+    padding: 0.125rem 1.3125rem; /* 2px 21px */
+    border-radius: 0.75rem; /* 12px */
+  }
+  
+  
+  .message-trend-content {
+    padding: 0.9375rem; /* 15px */
+    height: calc(100% - 3.75rem); /* 60px */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  /* Stat grid layout */
+  .message-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem; /* 12px */
+    margin-bottom: 1.25rem; /* 20px */
+  }
+  
+  .stat-card {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem; /* 8px */
+    padding: 0.9375rem; /* 15px */
+    text-align: center;
+  }
+  
+  .stat-card.total {
+    grid-column: 1 / 3;
+    background-color: #1f1f1f;
+    color: white;
+  }
+  
+  .stat-card.inward {
+    background-color: #757778;
+  }
+  
+  .stat-card.outward {
+    background-color: #f55302;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
+    margin-bottom: 0.3125rem; /* 5px */
+  }
+  
+  .stat-card.total .stat-value {
+    font-size: 2rem; /* 32px */
+  }
+  
+  .stat-label {
+    font-size: 0.875rem; /* 14px */
+    color: #000000;
+  }
+  
+  .stat-card.total .stat-label {
+    color: #e0e0e0;
+  }
+  
+  /* Trend insights */
+  .trend-insights {
+    margin-bottom: 1.25rem; /* 20px */
+  }
+
+/* Add styles for the info icon and tooltip */
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  
+  .info-icon {
+    font-size: 12px;
+    font-weight: bold;
+    font-style: italic;
+    color: #666;
+    line-height: 1;
+  }
+  
+  /* Basic tooltip using title attribute */
+  .chart-info-icon:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Replace your current chart-info-icon:hover::after rule with this improved version */
+
+.chart-info-icon:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 5px);
+    right: -10px;
+    width: max-content;
+    max-width: 250px;
+    min-width: 150px;
+    height: 5rem;
+    background-color: #333;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    line-height: 1.4;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .chart-info-icon.pie:hover::after, 
+  .chart-info-icon.failure:hover::after, 
+  .chart-info-icon.activity:hover::after {
+    height: 3rem;
+  }
+  
+  /* Optional: Add a little arrow to make it look nicer */
+  .chart-info-icon:hover::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 8px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+    z-index: 101;
+  }
+  
+  /* Make sure the info icon is properly visible */
+  .chart-info-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    margin-left: 8px;
+    z-index: 10;
+  }
+  
+  /* Fix for specific chart types */
+  .chart-info-icon.activity, .chart-info-icon.failure {
+    margin-bottom: 0.7rem;
+  }
+  
+  /* Make sure tooltips don't get cut off by parent containers */
+  .chart-header {
+    overflow: visible;
+    z-index: 20;
+  }
+  
+  /* Single-line legend style */
+.single-line-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.75rem;
+  }
+  
+  .single-line-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .single-line-legend .legend-color {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+  }
+  
+  .single-line-legend .legend-color.inner, .single-line-legend .legend-color.outer {
+    border: 1px dashed #ccc;
+  }
+  
+  .single-line-legend .legend-label {
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+//   /* Large Screen Styles (27-inch monitors) */
+// @media screen and (min-width: 2100px) {
+//     /* Dashboard layout adjustments for 27-inch */
+//     .dashboard-row {
+//       margin-bottom: 2rem;
+//       min-height: 24rem;
+//     }
+  
+//     .dashboard-column {
+//       padding: 0 1rem;
+//     }
+  
+//     .chart-component, .summary-component {
+//       padding: 1.5rem;
+//       border-radius: 1.5rem;
+//       box-shadow: 0 0.15rem 0.4rem rgba(0, 0, 0, 0.15);
+//     }
+  
+//     /* Chart headers for 27-inch */
+//     .chart-component h3, .summary-component h3 {
+//       font-size: 1.25rem;
+//       margin-bottom: 1rem;
+//     }
+  
+//     .chart-header {
+//       margin-bottom: 1.25rem;
+//     }
+  
+//     /* MessageCounts optimized for 27-inch monitor */
+//     .message-counts {
+//       margin: 0 0 0 1.5rem;
+//       padding: 0.75rem;
+//     }
+  
+//     /* Total count item styling optimized for 27-inch */
+//     .count-item.total {
+//       margin-bottom: 1.25rem;
+//       padding: 1rem;
+//       border-radius: 0.5rem;
+//     }
+  
+//     .count-item.total .count-header {
+//       margin-bottom: 0.75rem;
+//     }
+  
+//     .count-name.total {
+//       font-size: 1rem;
+//     }
+  
+//     .count-value.total {
+//       font-size: 1.5rem;
+//     }
+  
+//     /* Row styling for 27-inch */
+//     .counts-row {
+//       gap: 1rem;
+//       margin-bottom: 1rem;
+//     }
+  
+//     /* Individual count items in rows - 27-inch optimization */
+//     .counts-row .count-item {
+//       padding: 1rem;
+//       border-radius: 0.5rem;
+//     }
+  
+//     /* Header within count items */
+//     .count-header {
+//       margin-bottom: 0.75rem;
+//     }
+  
+//     /* Text elements for 27-inch monitor */
+//     .count-name {
+//       font-size: 1rem;
+//     }
+  
+//     .count-value {
+//       font-size: 1.25rem;
+//       margin-bottom: 0.35rem;
+//     }
+  
+//     .count-percentage {
+//       font-size: 1rem;
+//     }
+  
+//     /* Chart containers optimized for 27-inch */
+//     .chart-container {
+//       min-height: 900%;
+//     }
+  
+//     .chart-container.type-distribution {
+//       min-height: 500%;
+//     }
+  
+//     /* Info icon with better visibility for 27-inch */
+//     .chart-info-icon {
+//       width: 24px;
+//       height: 24px;
+//       margin-bottom: 0.25rem;
+//     }
+  
+//     .chart-info-icon.activity, .chart-info-icon.failure {
+//       margin-bottom: 1rem;
+//     }
+  
+//     .info-icon {
+//       font-size: 16px;
+//     }
+  
+//     /* Better tooltip for 27-inch high-resolution display */
+//     .chart-info-icon:hover::after {
+//       width: 220px;
+//       height: 16px;
+//       padding: 12px;
+//       border-radius: 8px;
+//       font-size: 14px;
+//     }
+  
+//     /* Recent activity optimized for 27-inch */
+//     .recent-activity-table {
+//       gap: 1rem;
+//     }
+  
+//     .recent-activity-row {
+//       padding: 1rem;
+//     }
+  
+//     .recent-activity-time,
+//     .recent-activity-type,
+//     .recent-activity-direction,
+//     .recent-activity-amount,
+//     .recent-activity-status {
+//       font-size: 1rem;
+//     }
+  
+//     .recent-activity-direction {
+//       width: 2rem;
+//     }
+  
+//     .recent-activity-status.successful {
+//       padding: 0.25rem 1rem;
+//       border-radius: 1.25rem;
+//     }
+  
+//     .recent-activity-status.failed {
+//       padding: 0.25rem 1.75rem;
+//       border-radius: 1.25rem;
+//     }
+  
+//     /* Improved legend display for 27-inch */
+//     .single-line-legend {
+//       gap: 1.5rem;
+//       margin-top: 1.5rem;
+//       padding: 0.75rem;
+//     }
+  
+//     .single-line-legend .legend-item {
+//       gap: 0.5rem;
+//     }
+  
+//     .single-line-legend .legend-color {
+//       width: 1rem;
+//       height: 1rem;
+//     }
+  
+//     .single-line-legend .legend-label {
+//       font-size: 0.9rem;
+//     }
+  
+//     /* Toggle bar optimized for 27-inch */
+//     .toggle-bar {
+//       border-radius: 0.625rem;
+//       height: 2rem;
+//     }
+  
+//     .toggle-button {
+//       padding: 0 1rem;
+//       font-size: 1rem;
+//     }
+  
+//     /* Trend insights improved for 27-inch */
+//     .message-trend-content {
+//       padding: 1.25rem;
+//       height: calc(100% - 5rem);
+//     }
+  
+//     /* Stat grid layout */
+//     .message-stat-grid {
+//       gap: 1rem;
+//       margin-bottom: 1.75rem;
+//     }
+  
+//     .stat-card {
+//       border-radius: 0.75rem;
+//       padding: 1.25rem;
+//     }
+  
+//     .stat-value {
+//       font-size: 1.75rem;
+//       margin-bottom: 0.5rem;
+//     }
+  
+//     .stat-card.total .stat-value {
+//       font-size: 2.25rem;
+//     }
+  
+//     .stat-label {
+//       font-size: 1.1rem;
+//     }
+  
+//     /* Other adjustments for 27-inch */
+//     .header {
+//       padding: 1.5rem;
+//     }
+  
+//     .header .logo {
+//       font-size: 1.75rem;
+//     }
+  
+//     .header nav a {
+//       margin-left: 2rem;
+//       font-size: 1.1rem;
+//     }
+  
+//     /* Toggle footer adjustments */
+//     .toggle-footer-pie, .toggle-footer-bar {
+//       gap: 1.25rem;
+//       min-height: 3rem;
+//     }
+  
+//     .toggle-footer-bar.type-distribution {
+//       padding-top: 1.5rem; 
+//     }
+  
+//     .toggle-footer-pie {
+//       padding-top: 1rem;
+//       margin-left: 1rem;
+//     }
+//   }
+
+//   /* Base styles remain the same */
+// /* ... your existing CSS ... */
+
+// /* Small Laptop Screens (13-14 inch) */
+// @media screen and (max-width: 1366px) {
+//     .dashboard-row {
+//       margin-bottom: 1rem;
+//       min-height: 16rem;
+//     }
+    
+//     .chart-component, .summary-component {
+//       padding: 0.75rem;
+//       border-radius: 0.75rem;
+//     }
+    
+//     .chart-component h3, .summary-component h3 {
+//       font-size: 0.875rem;
+//     }
+    
+//     .count-item.total {
+//       margin-bottom: 0.5rem;
+//       margin-left: 3rem;
+//       padding: 0.375rem;
+//       width: 35%;
+//     }
+    
+//     .count-name.total, .count-value.total {
+//       font-size: 0.7rem;
+//     }
+    
+//     .counts-row .count-item {
+//       padding: 0.375rem;
+//     }
+    
+//     .count-name, .count-value {
+//       font-size: 0.7rem;
+//     }
+    
+//     .count-percentage {
+//       font-size: 0.65rem;
+//     }
+    
+//     .chart-container {
+//       min-height: 600%;
+//     }
+    
+//     .chart-container.type-distribution {
+//       min-height: 300%;
+//     }
+    
+//     .chart-info-icon {
+//       width: 16px;
+//       height: 16px;
+//     }
+    
+//     .info-icon {
+//       font-size: 10px;
+//     }
+    
+//     .single-line-legend .legend-label {
+//       font-size: 0.65rem;
+//     }
+    
+//     .single-line-legend .legend-color {
+//       width: 0.65rem;
+//       height: 0.65rem;
+//     }
+    
+//     .toggle-bar {
+//       height: 1.25rem;
+//     }
+    
+//     .toggle-button {
+//       font-size: 0.7rem;
+//       padding: 0 0.5rem;
+//     }
+//   }
+  
+  
+//   /* Desktop Monitors (19-24 inch) */
+//   @media screen and (min-width: 1681px) and (max-width: 2099px) {
+//     .dashboard-row {
+//       margin-bottom: 1.5rem;
+//       min-height: 20rem;
+//     }
+    
+//     .chart-component, .summary-component {
+//       padding: 1.25rem;
+//       border-radius: 1.125rem;
+//     }
+    
+//     .chart-component h3, .summary-component h3 {
+//       font-size: 1.125rem;
+//     }
+    
+//     .count-item.total {
+//       margin-bottom: 1rem;
+//       margin-left: 5rem;
+//       padding: 0.75rem;
+//       width: 45%;
+//     }
+    
+//     .count-name.total {
+//       font-size: 0.875rem;
+//     }
+    
+//     .count-value.total {
+//       font-size: 1rem;
+//     }
+    
+//     .counts-row .count-item {
+//       padding: 0.675rem;
+//     }
+    
+//     .count-name, .count-value {
+//       font-size: 0.875rem;
+//     }
+    
+//     .count-percentage {
+//       font-size: 0.8rem;
+//     }
+    
+//     .chart-container {
+//       min-height: 700%;
+//     }
+    
+//     .chart-container.type-distribution {
+//       min-height: 450%;
+//     }
+    
+//     .chart-info-icon {
+//       width: 20px;
+//       height: 20px;
+//     }
+    
+//     .info-icon {
+//       font-size: 14px;
+//     }
+    
+//     .single-line-legend .legend-label {
+//       font-size: 0.8rem;
+//     }
+    
+//     .single-line-legend .legend-color {
+//       width: 0.875rem;
+//       height: 0.875rem;
+//     }
+    
+//     .toggle-bar {
+//       height: 1.75rem;
+//     }
+    
+//     .toggle-button {
+//       font-size: 0.875rem;
+//       padding: 0 0.875rem;
+//     }
+//   }
+  
+//   /* Ultra-Wide & 4K Displays (34+ inch) */
+//   @media screen and (min-width: 3440px) {
+//     .dashboard-row {
+//       margin-bottom: 2.5rem;
+//       min-height: 28rem;
+//     }
+    
+//     .dashboard-column {
+//       padding: 0 1.5rem;
+//     }
+    
+//     .chart-component, .summary-component {
+//       padding: 2rem;
+//       border-radius: 2rem;
+//       box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+//     }
+    
+//     .chart-component h3, .summary-component h3 {
+//       font-size: 1.5rem;
+//       margin-bottom: 1.5rem;
+//     }
+    
+//     .chart-header {
+//       margin-bottom: 1.75rem;
+//     }
+    
+//     .message-counts {
+//       margin: 0 0 0 2rem;
+//       padding: 1rem;
+//     }
+    
+//     .count-item.total {
+//       margin-bottom: 1.5rem;
+//       margin-left: 7rem;
+//       padding: 1.25rem;
+//       border-radius: 0.75rem;
+//       width: 50%;
+//     }
+    
+//     .count-item.total .count-header {
+//       margin-bottom: 1rem;
+//     }
+    
+//     .count-name.total {
+//       font-size: 1.25rem;
+//     }
+    
+//     .count-value.total {
+//       font-size: 1.75rem;
+//     }
+    
+//     .counts-row {
+//       gap: 1.5rem;
+//       margin-bottom: 1.5rem;
+//     }
+    
+//     .counts-row .count-item {
+//       padding: 1.25rem;
+//       border-radius: 0.75rem;
+//     }
+    
+//     .count-header {
+//       margin-bottom: 1rem;
+//     }
+    
+//     .count-indicator {
+//       width: 1rem;
+//       height: 1rem;
+//       margin-right: 1rem;
+//     }
+    
+//     .count-name {
+//       font-size: 1.25rem;
+//     }
+    
+//     .count-value {
+//       font-size: 1.5rem;
+//       margin-bottom: 0.5rem;
+//     }
+    
+//     .count-percentage {
+//       font-size: 1.2rem;
+//     }
+    
+//     .chart-container {
+//       min-height: 1200%;
+//     }
+    
+//     .chart-container.type-distribution {
+//       min-height: 650%;
+//     }
+    
+//     .chart-info-icon {
+//       width: 32px;
+//       height: 32px;
+//       margin-bottom: 0.5rem;
+//     }
+    
+//     .chart-info-icon.activity, .chart-info-icon.failure {
+//       margin-bottom: 1.5rem;
+//     }
+    
+//     .info-icon {
+//       font-size: 20px;
+//     }
+    
+//     .chart-info-icon:hover::after {
+//       width: 300px;
+//       height: 24px;
+//       padding: 16px;
+//       border-radius: 12px;
+//       font-size: 18px;
+//     }
+    
+//     .recent-activity-table {
+//       gap: 1.5rem;
+//     }
+    
+//     .recent-activity-row {
+//       padding: 1.5rem;
+//     }
+    
+//     .recent-activity-time,
+//     .recent-activity-type,
+//     .recent-activity-direction,
+//     .recent-activity-amount,
+//     .recent-activity-status {
+//       font-size: 1.25rem;
+//     }
+    
+//     .recent-activity-direction {
+//       width: 3rem;
+//     }
+    
+//     .recent-activity-status.successful {
+//       padding: 0.35rem 1.5rem;
+//       border-radius: 1.5rem;
+//     }
+    
+//     .recent-activity-status.failed {
+//       padding: 0.35rem 2.5rem;
+//       border-radius: 1.5rem;
+//     }
+    
+//     .single-line-legend {
+//       gap: 2rem;
+//       margin-top: 2rem;
+//       padding: 1rem;
+//     }
+    
+//     .single-line-legend .legend-item {
+//       gap: 0.75rem;
+//     }
+    
+//     .single-line-legend .legend-color {
+//       width: 1.25rem;
+//       height: 1.25rem;
+//     }
+    
+//     .single-line-legend .legend-label {
+//       font-size: 1.1rem;
+//     }
+    
+//     .toggle-bar {
+//       border-radius: 0.75rem;
+//       height: 2.5rem;
+//     }
+    
+//     .toggle-button {
+//       padding: 0 1.5rem;
+//       font-size: 1.25rem;
+//     }
+    
+//     .message-trend-content {
+//       padding: 1.75rem;
+//       height: calc(100% - 6rem);
+//     }
+    
+//     .message-stat-grid {
+//       gap: 1.5rem;
+//       margin-bottom: 2.5rem;
+//     }
+    
+//     .stat-card {
+//       border-radius: 1rem;
+//       padding: 1.75rem;
+//     }
+    
+//     .stat-value {
+//       font-size: 2.25rem;
+//       margin-bottom: 0.75rem;
+//     }
+    
+//     .stat-card.total .stat-value {
+//       font-size: 3rem;
+//     }
+    
+//     .stat-label {
+//       font-size: 1.5rem;
+//     }
+    
+//     .header {
+//       padding: 2rem;
+//     }
+    
+//     .header .logo {
+//       font-size: 2.25rem;
+//     }
+    
+//     .header nav a {
+//       margin-left: 2.5rem;
+//       font-size: 1.5rem;
+//     }
+    
+//     .toggle-footer-pie, .toggle-footer-bar {
+//       gap: 1.75rem;
+//       min-height: 4rem;
+//     }
+    
+//     .toggle-footer-bar.type-distribution {
+//       padding-top: 2rem; 
+//     }
+    
+//     .toggle-footer-pie {
+//       padding-top: 1.5rem;
+//       margin-left: 1.5rem;
+//     }
+//   }
+  
+//   /* Mobile Devices - Fallback for responsive design */
+//   @media screen and (max-width: 768px) {
+//     .dashboard-row {
+//       flex-direction: column;
+//       margin-bottom: 1rem;
+//       min-height: auto;
+//     }
+    
+//     .dashboard-column {
+//       padding: 0;
+//       margin-bottom: 1rem;
+//     }
+    
+//     .chart-component, .summary-component {
+//       padding: 1rem;
+//       border-radius: 0.75rem;
+//     }
+    
+//     .count-item.total {
+//       width: 70%;
+//       margin-left: auto;
+//       margin-right: auto;
+//     }
+    
+//     .counts-row {
+//       flex-direction: column;
+//       gap: 0.5rem;
+//     }
+    
+//     .toggle-container {
+//       justify-content: center;
+//     }
+    
+//     .single-line-legend {
+//       flex-direction: column;
+//       align-items: center;
+//       gap: 0.5rem;
+//     }
+    
+//     .chart-container, .chart-container.type-distribution {
+//       min-height: 300px;
+//       height: 300px;
+//     }
+    
+//     .chart-container canvas {
+//       height: 100% !important; 
+//     }
+    
+//     .donut-chart-layout {
+//       flex-direction: column;
+//     }
+    
+//     .message-counts {
+//       margin: 0;
+//       width: 100%;
+//     }
+    
+//     .header {
+//       flex-direction: column;
+//       gap: 1rem;
+//     }
+    
+//     .header nav {
+//       display: flex;
+//       flex-wrap: wrap;
+//       justify-content: center;
+//     }
+    
+//     .header nav a {
+//       margin: 0 0.5rem;
+//     }
+//   }
+  
+//   /* Tablet Devices */
+//   @media screen and (min-width: 769px) and (max-width: 1024px) {
+//     .dashboard-row {
+//       flex-wrap: wrap;
+//     }
+    
+//     .dashboard-column {
+//       flex: 1 1 100%;
+//       margin-bottom: 1rem;
+//     }
+    
+//     .count-item.total {
+//       width: 50%;
+//       margin-left: auto;
+//       margin-right: auto;
+//     }
+    
+//     .chart-container, .chart-container.type-distribution {
+//       min-height: 400px;
+//       height: 400px;
+//     }
+//   }
+  
+//   /* Print styles for reports */
+//   @media print {
+//     body {
+//       background-color: white;
+//     }
+    
+//     .header, .toggle-container, .toggle-footer-pie, .toggle-footer-bar {
+//       display: none;
+//     }
+    
+//     .dashboard-row {
+//       display: block;
+//       page-break-inside: avoid;
+//       margin-bottom: 0.5in;
+//     }
+    
+//     .dashboard-column {
+//       display: block;
+//       width: 100%;
+//       padding: 0;
+//       margin-bottom: 0.5in;
+//     }
+    
+//     .chart-component, .summary-component {
+//       box-shadow: none;
+//       border: 1px solid #ddd;
+//       padding: 0.25in;
+//     }
+    
+//     .chart-container {
+//       height: 3in;
+//       min-height: auto;
+//     }
+    
+//     .chart-info-icon {
+//       display: none;
+//     }
+    
+//     /* Ensure charts print correctly */
+//     .chart-container canvas {
+//       max-width: 100% !important;
+//       height: auto !important;
+//     }
+    
+//     /* Adjust colors for print */
+//     .count-item.success, .recent-activity-status.successful {
+//       background-color: #e0e0e0 !important;
+//       color: black !important;
+//     }
+    
+//     .count-item.fail, .recent-activity-status.failed {
+//       background-color: #f0f0f0 !important;
+//       color: black !important;
+//     }
+//   }
+
+  
+  

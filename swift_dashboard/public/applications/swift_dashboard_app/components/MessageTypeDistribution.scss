@@ -1,0 +1,58 @@
+  .loading-indicator-distribution,
+  .error-message-distribution,
+  .no-data-message-distribution {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .spinner-distribution {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #1e1f20;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .description {
+    font-size: 10px;
+    color: #555;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .error-message-distribution {
+    color: #e74c3c;
+    text-align: center;
+  }
+  
+  .error-message-distribution button {
+    background: #040404;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .error-message-distribution button:hover {
+    background: #3f4041;
+  }
+  
+  .no-data-message-distribution {
+    color: #7f8c8d;
+    font-style: italic;
+  }
