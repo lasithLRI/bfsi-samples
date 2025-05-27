@@ -111,7 +111,7 @@ h2::after {
   
   .filterButtons {
     display: flex;
-    gap: 8px;
+    gap: 0.5rem;
     justify-content: flex-end;
     margin-right: 0.3rem;
   }
@@ -189,4 +189,3 @@ h2::after {
     background-color: #ffebee;
     border: 1px solid #ffcdd2;
   }
-  

@@ -14,10 +14,9 @@
   "keywords": [
     "opensearch",
     "dashboard",
-    "plugin"
+    "plugin",
+    "swift"
   ],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^34.0.0",
@@ -44,6 +43,8 @@
   },
   "opensearchDashboards": {
     "version": "2.19.0",
-    "templateVersion": "1.0.0"
+    "templateVersion": "1.0.0",
+    "node-version": "18.18.2",
+    "npm-version": "9.8.1"
   }
 }

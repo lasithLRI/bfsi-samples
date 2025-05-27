@@ -1,11 +1,11 @@
-  .dashboard-row {
+.dashboard-row {
     display: flex;
-    // margin-bottom: 1.25rem; /* 20px */
-    // min-height: 18.75rem; /* 300px */
+    margin-bottom: 1.25rem; /* 20px */
+    min-height: 16.75rem; /* 300px */
   }
   
   .dashboard-column {
-    flex: 1rem 1rem 18.75rem;
+    flex: 1 1 18.75rem;
     padding: 0 0.625rem; /* 10px */
     display: flex; /* Enable flex for children */
   }
@@ -29,4 +29,3 @@
   .dashboard-column.trend {
     flex: 0.8; /* Increase trend chart to 80% */
   }
-  

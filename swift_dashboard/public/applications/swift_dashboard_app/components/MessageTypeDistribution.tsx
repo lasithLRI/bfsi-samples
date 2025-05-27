@@ -9,13 +9,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 interface MessageTypeDistributionProps {
   title: string;
-  period: PeriodType;
-  direction: DirectionType;
+  period: string;
+  direction: string;
 }
-
-// Define proper types for your filter options
-type PeriodType = 'Daily' | 'Weekly' | 'Monthly';
-type DirectionType = 'All' | 'Inward' | 'Outward';
 
 // Interface for message type data returned from API
 interface MessageTypeData {
@@ -45,7 +41,7 @@ const MessageTypeDistribution: React.FC<MessageTypeDistributionProps> = ({ title
   const [responseData, setResponseData] = useState<ApiResponse | null>(null);
 
   // Function to map our UI filter to API parameter
-  const getApiTimefilter = (periodType: PeriodType): 'daily' | 'weekly' | 'monthly' => {
+  const getApiTimefilter = (periodType: string): 'daily' | 'weekly' | 'monthly' => {
     switch (periodType.toLowerCase()) {
       case 'daily': return 'daily';
       case 'weekly': return 'weekly';
@@ -54,7 +50,7 @@ const MessageTypeDistribution: React.FC<MessageTypeDistributionProps> = ({ title
   };
 
   // Function to map our UI direction to API parameter
-  const getApiDirection = (directionType: DirectionType): 'inward' | 'outward' | undefined => {
+  const getApiDirection = (directionType: string): 'inward' | 'outward' | undefined => {
     if (directionType.toLowerCase() === 'inward') return 'inward';
     if (directionType.toLowerCase() === 'outward') return 'outward';
     return undefined; // For 'All'

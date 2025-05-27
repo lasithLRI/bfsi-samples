@@ -1,11 +1,60 @@
+ /* Single-line legend style */
+  .single-line-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border-top: 1px solid #e0e0e0;
+    font-size: 0.75rem;
+  }
+  
+  .single-line-legend .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .single-line-legend .legend-color {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+  }
+  
+  .single-line-legend .legend-color.inner, .single-line-legend .legend-color.outer {
+    border: 1px dashed #ccc;
+  }
+  
+  .single-line-legend .legend-label {
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .legend-color.outer.inward {
+    background-color: '#52524f';
+  }
+
+  .legend-color.outer.outward {
+    background-color: '#868686';
+  }
+
+  .legend-color.inner.success {
+    background-color: '#00d157';
+  }
+
+  .legend-color.inner.failure {
+    background-color: '#ff513d';
+  }
+
 .spinner-chart {
-    width: 30px;
-    height: 30px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
+    width: 1.875rem;  // 30px
+    height: 1.875rem; // 30px
+    border: 0.1875rem solid rgba(0, 0, 0, 0.1); // 3px
     border-top-color: #060707;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem; // 10px
   }
   
   @keyframes spin {
@@ -21,7 +70,7 @@
     justify-content: center;
     padding: 1.5rem;
     margin-top: 2rem;
-    height: 150px;
+    height: 9.375rem; // 150px
   }
 
   .error-message-chart {
@@ -34,10 +83,10 @@
     background: #050505;
     color: white;
     border: none;
-    padding: 5px 15px;
-    border-radius: 4px;
+    padding: 0.3125rem 0.9375rem; // 5px 15px
+    border-radius: 0.25rem; // 4px
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 0.625rem; // 10px
   }
   
   .error-message-chart button:hover {

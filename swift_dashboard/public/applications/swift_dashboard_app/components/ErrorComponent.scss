@@ -74,23 +74,23 @@
 
   /* Add these styles to your existing CSS */
 
-.loading-container {
+  .loading-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 200px;
+    height: 12.5rem;  
     font-size: 1rem;
   }
   
   .loading-spinner {
-    width: 30px;
-    height: 30px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
+    width: 1.875rem; 
+    height: 1.875rem;  
+    border: 0.1875rem solid rgba(0, 0, 0, 0.1);  
     border-radius: 50%;
     border-top-color: #101011;
     animation: spin 1s ease-in-out infinite;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;  
   }
   
   @keyframes spin {
@@ -102,30 +102,30 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 150px;
+    height: 9.375rem;  
     color: #e53e3e;
   }
   
   .error-message button {
-    margin-top: 10px;
-    padding: 6px 12px;
+    margin-top: 0.625rem;  
+    padding: 0.375rem 0.75rem;  
     background-color: #000000;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem; 
     cursor: pointer;
   }
   
   .filter-badges {
     display: flex;
-    gap: 8px;
-    margin-left: 12px;
+    gap: 0.5rem;  
+    margin-left: 0.75rem;  
   }
   
   .filter-badge {
     font-size: 0.7rem;
-    padding: 3px 8px;
-    border-radius: 12px;
+    padding: 0.1875rem 0.5rem;  
+    border-radius: 0.75rem;  
     font-weight: 500;
   }
   
@@ -143,7 +143,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 200px;
+    height: 12.5rem;  
     color: #718096;
     font-style: italic;
     font-size: 0.9rem;
@@ -154,20 +154,20 @@
     min-width: 5%;
     transition: width 0.3s ease;
   }
-
+  
   /* Add to SummaryComponent.css */
-
-/* Make error items show as clickable */
-.error-item {
+  
+  /* Make error items show as clickable */
+  .error-item {
     cursor: pointer;
     transition: transform 0.2s ease;
-    border-radius: 6px;
-    padding: 5px;
+    border-radius: 0.375rem;  
+    padding: 0.3125rem;  
   }
   
   .error-item:hover {
     background-color: rgba(0, 0, 0, 0.05);
-    transform: translateY(-1px);
+    transform: translateY(-0.0625rem);  
   }
   
   .error-item:hover .error-bar {
@@ -178,13 +178,13 @@
   .total-errors {
     cursor: pointer;
     transition: transform 0.2s ease;
-    border-radius: 6px;
-    padding: 5px;
+    border-radius: 0.375rem;  
+    padding: 0.3125rem;  
   }
   
   .total-errors:hover {
     background-color: rgba(0, 0, 0, 0.05);
-    transform: translateY(-1px);
+    transform: translateY(-0.0625rem);  
   }
   
   .total-errors:hover .total-count {
@@ -194,13 +194,13 @@
   /* Add cursor style for bars */
   .error-bar {
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 0.25rem;  
     transition: all 0.2s ease;
   }
   
   .error-bar:hover {
     opacity: 0.8;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);  
   }
   
   /* Add tooltip styling */
@@ -214,11 +214,11 @@
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    padding: 6px 10px;
+    padding: 0.375rem 0.625rem;  
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    font-size: 12px;
-    border-radius: 4px;
+    font-size: 0.75rem;  
+    border-radius: 0.25rem; 
     white-space: nowrap;
     z-index: 10;
     opacity: 0;

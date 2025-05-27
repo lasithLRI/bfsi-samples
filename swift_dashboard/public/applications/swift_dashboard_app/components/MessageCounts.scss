@@ -1,0 +1,113 @@
+.message-counts {
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 0 1rem;  
+    padding: 0.3rem;
+  }
+  
+  /* Total count item styling */
+  .count-item.total {
+    background-color: #353434;
+    margin-bottom: 0.75rem;
+    margin-left: 3.6rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+  }
+  
+  .count-item.total.Inward {
+    background-color: #52524f;
+  }
+  
+  .count-item.total.Outward {
+    background-color: #868686;
+  }
+  
+  .count-item.total .count-header {
+    margin-bottom: 0.3rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .count-name.total {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .count-value.total {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+  }
+  
+  /* Row styling */
+  .counts-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Individual count items in rows */
+  .counts-row .count-item {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Direction-specific items */
+  .count-item.inward {
+    background-color: #52524f;
+  }
+  
+  .count-item.outward {
+    background-color: #868686;
+  }
+  
+  /* Status-specific items */
+  .count-item.success {
+    background-color: #00d157;
+  }
+  
+  .count-item.fail {
+    background-color: #ff513d;
+  }
+  
+  /* Header within count items */
+  .count-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    width: 100%;
+  }
+  
+  
+  /* Text elements */
+  .count-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fcfcfc;
+  }
+  
+  .count-value {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: #fcfcfc;
+  }
+  
+  .count-percentage {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.85);
+  }

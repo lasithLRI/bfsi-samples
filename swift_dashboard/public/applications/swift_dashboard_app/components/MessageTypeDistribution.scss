@@ -1,4 +1,4 @@
-  .loading-indicator-distribution,
+.loading-indicator-distribution,
   .error-message-distribution,
   .no-data-message-distribution {
     position: absolute;
@@ -10,20 +10,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 0.625rem;
   }
   
   .spinner-distribution {
-    width: 30px;
-    height: 30px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
+    width: 1.875rem;
+    height: 1.875rem;
+    border: 0.1875rem solid rgba(0, 0, 0, 0.1);
     border-top-color: #1e1f20;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
 
   .description {
-    font-size: 10px;
+    font-size: 0.625rem;
     color: #555;
   }
   
@@ -42,10 +42,10 @@
     background: #040404;
     color: white;
     border: none;
-    padding: 5px 15px;
-    border-radius: 4px;
+    padding: 0.3125rem 0.9375rem;
+    border-radius: 0.25rem;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 0.625rem;
   }
   
   .error-message-distribution button:hover {
@@ -56,4 +56,3 @@
     color: #7f8c8d;
     font-style: italic;
   }
-  

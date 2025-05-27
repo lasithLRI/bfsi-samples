@@ -8,25 +8,25 @@ import {
 
 // Setup is when the plugin is initialized
 export interface SwiftDashboardServerPluginSetup {
-  // Define setup contracts your plugin provides to others
+  // Define setup contracts the plugin provides to others
 }
 
 // Start is when all plugins are ready and the server is running
 export interface SwiftDashboardServerPluginStart {
-  // Define start contracts your plugin provides to others
+  // Define start contracts the plugin provides to others
 }
 
-// Dependencies from other plugins that your server-side plugin needs during setup
+// Dependencies from other plugins that the server-side plugin needs during setup
 export interface SwiftDashboardServerPluginSetupDependencies {
   // Add any plugin dependencies needed during setup phase
 }
 
-// Dependencies from other plugins that your server-side plugin needs during start
+// Dependencies from other plugins that the server-side plugin needs during start
 export interface SwiftDashboardServerPluginStartDependencies {
   // Add any plugin dependencies needed during start phase
 }
 
-// Common context that can be used throughout your plugin
+// Common context that can be used throughout the plugin
 export interface PluginContext {
   logger: Logger;
   config?: {

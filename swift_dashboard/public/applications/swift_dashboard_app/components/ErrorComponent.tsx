@@ -56,8 +56,6 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
         setLoading(true);
         
         const response = await apiService.getErrorStatistics(timeFilter, direction);
-
-        console.log('API response:', response);
         
         const { fieldErrors, notSupportedErrors, invalidErrors, otherErrors, totalErrors } = response;
         

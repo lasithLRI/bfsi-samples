@@ -9,91 +9,10 @@ html, body {
     width: auto;
   }
   
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: linear-gradient(to left, #595858, #000000);
-    color: white;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1); /* 2px 4px */
-  }
-  
-  .header .logo {
-    font-size: 1.5rem;
-    font-weight: 600;
-    background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.9) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.1); /* 1px 2px */
-  }
-  
-  .header nav a {
-    color: white;
-    margin-left: 1.5rem;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.5rem 0;
-    position: relative;
-    transition: all 0.2s ease;
-  }
-  
-  .header nav a:hover {
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .header nav a:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0.125rem; /* 2px */
-    bottom: 0;
-    left: 0;
-    background-color: white;
-    transition: width 0.3s ease;
-  }
-  
-  .header nav a:hover:after {
-    width: 100%;
-  }
-  
   .overview-page, .messages-page {
     padding: 1rem;
     max-width: 100%;
     margin: 0 auto;
-  }
-  
-  .dashboard-row {
-    display: flex;
-    margin-bottom: 1.25rem; /* 20px */
-    min-height: 16.75rem; /* 300px */
-  }
-  
-  .dashboard-column {
-    flex: 1 1 18.75rem;
-    padding: 0 0.625rem; /* 10px */
-    display: flex; /* Enable flex for children */
-  }
-  
-  .dashboard-column.completion {
-    flex: 0.5; /* Reduce the width to 30% of row */
-  }
-
-  .dashboard-column.errors {
-    flex: 0.4; /* Reduce the width to 30% of row */
-  }
-
-  .dashboard-column.activity {
-    flex: 0.9; /* Reduce the width to 30% of row */
-  }
-
-  .dashboard-column.distribution {
-    flex: 0.6; /* Reduce the width to 30% of row */
-  }
-
-  .dashboard-column.trend {
-    flex: 0.8; /* Increase trend chart to 80% */
   }
   
   .chart-component, .summary-component {
@@ -109,7 +28,7 @@ html, body {
   /* Reduced title size */
   .chart-component h3, .summary-component h3 {
     margin: 0;
-    font-size: 0.9rem; /* 16px */
+    font-size: 0.9rem; /* 14.4px */
     font-weight: 600;
     color: #333;
   }
@@ -165,7 +84,7 @@ html, body {
   .toggle-footer-bar {
     height: 2rem;
     margin-top: 0;
-    justify-content: right; /* 13px */
+    justify-content: right; 
   }
 
   /* Styles for the weeks input */
@@ -266,225 +185,12 @@ html, body {
     margin-left: 0;
   }
   
-  /* Message counts styling */
-  /* Updated MessageCounts.css */
-/* Updated MessageCounts.css - Reduced sizes */
-.message-counts {
-    width: 100%; 
-    display: flex;
-    flex-direction: column;
-    margin: 0 0 0 1rem;  
-    padding: 0.3rem;
-  }
-  
-  /* Total count item styling */
-  .count-item.total {
-    background-color: #353434;
-    margin-bottom: 0.75rem;
-    margin-left: 3.6rem;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 50%;
-  }
-  
-  .count-item.total.Inward {
-    background-color: #52524f;
-  }
-  
-  .count-item.total.Outward {
-    background-color: #868686;
-  }
-  
-  .count-item.total .count-header {
-    margin-bottom: 0.3rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .count-name.total {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: center;
-  }
-  
-  .count-value.total {
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-align: center;
-    margin: 0;
-  }
-  
-  /* Row styling */
-  .counts-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-  
-  /* Individual count items in rows */
-  .counts-row .count-item {
-    flex: 1;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Direction-specific items */
-  .count-item.inward {
-    background-color: #52524f;
-  }
-  
-  .count-item.outward {
-    background-color: #868686;
-  }
-  
-  /* Status-specific items */
-  .count-item.success {
-    background-color: #00d157;
-  }
-  
-  .count-item.fail {
-    background-color: #ff513d;
-  }
-  
-  /* Header within count items */
-  .count-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.3rem;
-    width: 100%;
-  }
-  
-  
-  /* Text elements */
-  .count-name {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #fcfcfc;
-  }
-  
-  .count-value {
-    font-size: 0.75rem;
-    font-weight: 600;
-    margin-bottom: 0.2rem;
-    color: #fcfcfc;
-  }
-  
-  .count-percentage {
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.85);
-  }
-  
-  /* Recent Activity Table */
-  .recent-activity-table {
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem; /* 10px */
-  }
-  
-  .recent-activity-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.625rem; /* 10px */
-    border-bottom: 0.0625rem solid #8b8d90; /* 1px */
-    transition: background-color 0.3s ease;
-  }
-  
-  .recent-activity-row:hover {
-    background-color: #cdcfd1;
-  }
-  
-  .recent-activity-time,
-  .recent-activity-type,
-  .recent-activity-direction,
-  .recent-activity-amount,
-  .recent-activity-status {
-    font-size: 0.75rem; /* 12px */
-  }
-
-  .recent-activity-direction {
-    flex-shrink: 0;
-    width: 1.5rem; /* 24px */
-  }
-  
-  .recent-activity-status.successful {
-    color: #000000;
-    background-color: #00d157;
-    padding: 0.125rem 0.5rem; /* 2px 8px */
-    border-radius: 0.75rem; /* 12px */
-  }
-  
-  .recent-activity-status.failed {
-    color: #000000;
-    background-color: #ff513d;
-    padding: 0.125rem 1.3125rem; /* 2px 21px */
-    border-radius: 0.75rem; /* 12px */
-  }
-  
-  
   .message-trend-content {
     padding: 0.9375rem; /* 15px */
     height: calc(100% - 3.75rem); /* 60px */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-  }
-  
-  /* Stat grid layout */
-  .message-stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem; /* 12px */
-    margin-bottom: 1.25rem; /* 20px */
-  }
-  
-  .stat-card {
-    background-color: #f8f9fa;
-    border-radius: 0.5rem; /* 8px */
-    padding: 0.9375rem; /* 15px */
-    text-align: center;
-  }
-  
-  .stat-card.total {
-    grid-column: 1 / 3;
-    background-color: #1f1f1f;
-    color: white;
-  }
-  
-  .stat-card.inward {
-    background-color: #757778;
-  }
-  
-  .stat-card.outward {
-    background-color: #f55302;
-  }
-  
-  .stat-value {
-    font-size: 1.5rem; /* 24px */
-    font-weight: 600;
-    margin-bottom: 0.3125rem; /* 5px */
-  }
-  
-  .stat-card.total .stat-value {
-    font-size: 2rem; /* 32px */
-  }
-  
-  .stat-label {
-    font-size: 0.875rem; /* 14px */
-    color: #000000;
-  }
-  
-  .stat-card.total .stat-label {
-    color: #e0e0e0;
   }
   
   /* Trend insights */
@@ -502,14 +208,15 @@ html, body {
     position: relative;
   }
   
-  .info-icon {
-    font-size: 12px;
+  /* Info icon and tooltip styles */
+.info-icon {
+    font-size: 0.75rem;            
     font-weight: bold;
     font-style: italic;
     color: #666;
     line-height: 1;
-    margin-right: 7px;
-    margin-bottom: 4px;
+    margin-right: 0.4375rem;        
+    margin-bottom: 0.25rem;         
   }
   
   /* Basic tooltip using title attribute */
@@ -517,106 +224,72 @@ html, body {
     background-color: #e0e0e0;
   }
   
-  /* Replace your current chart-info-icon:hover::after rule with this improved version */
-
-.chart-info-icon:hover::after {
+  /* Improved tooltip implementation */
+  .chart-info-icon:hover::after {
     content: attr(data-tooltip);
     position: absolute;
-    top: calc(100% + 5px);
-    right: -10px;
+    top: calc(100% + 0.3125rem);    
+    right: -0.625rem;               
     width: max-content;
-    max-width: 250px;
-    min-width: 150px;
+    max-width: 15.625rem;           
+    min-width: 9.375rem;            
     height: 5rem;
     background-color: #333;
     color: #fff;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 11px;
+    padding: 0.5rem 0.75rem;        
+    border-radius: 0.25rem;         
+    font-size: 0.6875rem;           
     line-height: 1.4;
     z-index: 100;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2);  /* 2px / 16px = 0.125rem, 5px / 16px = 0.3125rem */
     pointer-events: none;
     text-align: left;
     white-space: normal;
   }
-
+  
   .chart-info-icon.pie:hover::after, 
   .chart-info-icon.failure:hover::after, 
   .chart-info-icon.activity:hover::after {
     height: 3rem;
   }
   
-  /* Optional: Add a little arrow to make it look nicer */
+  /* Arrow for tooltip */
   .chart-info-icon:hover::before {
     content: '';
     position: absolute;
     top: 100%;
-    right: 8px;
-    border-width: 5px;
+    right: 0.5rem;                  /* 8px / 16px = 0.5rem */
+    border-width: 0.3125rem;        /* 5px / 16px = 0.3125rem */
     border-style: solid;
     border-color: transparent transparent #333 transparent;
     z-index: 101;
   }
   
-  /* Make sure the info icon is properly visible */
+  /* Info icon styling */
   .chart-info-icon {
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;                /* 18px / 16px = 1.125rem */
+    height: 1.125rem;               /* 18px / 16px = 1.125rem */
     border-radius: 50%;
     background-color: #f4f4f4;
-    border: 1px solid #ccc;
+    border: 0.0625rem solid #ccc;    /* 1px / 16px = 0.0625rem */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
-    margin-left: 8px;
+    margin-left: 0.5rem;            /* 8px / 16px = 0.5rem */
     z-index: 10;
   }
   
-  /* Fix for specific chart types */
+  /* Chart type specific adjustments */
   .chart-info-icon.activity, .chart-info-icon.failure {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.7rem;          /* 11.2px / 16px = 0.7rem */
   }
   
-  /* Make sure tooltips don't get cut off by parent containers */
+  /* Ensure tooltips aren't cut off */
   .chart-header {
     overflow: visible;
     z-index: 20;
-  }
-  
-  /* Single-line legend style */
-.single-line-legend {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
-    padding: 0.5rem;
-    border-top: 1px solid #e0e0e0;
-    font-size: 0.75rem;
-  }
-  
-  .single-line-legend .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  
-  .single-line-legend .legend-color {
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 50%;
-  }
-  
-  .single-line-legend .legend-color.inner, .single-line-legend .legend-color.outer {
-    border: 1px dashed #ccc;
-  }
-  
-  .single-line-legend .legend-label {
-    font-size: 0.7rem;
-    white-space: nowrap;
   }
 
   /* Large Screen Styles (27-inch monitors) */

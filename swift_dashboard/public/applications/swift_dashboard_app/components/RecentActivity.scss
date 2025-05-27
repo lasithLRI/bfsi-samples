@@ -1,13 +1,57 @@
-/* Add to your CSS */
+.recent-activity-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  
+  .recent-activity-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.625rem;
+    border-bottom: 0.0625rem solid #8b8d90;
+    transition: background-color 0.3s ease;
+  }
+  
+  .recent-activity-row:hover {
+    background-color: #cdcfd1;
+  }
+  
+  .recent-activity-time,
+  .recent-activity-type,
+  .recent-activity-direction,
+  .recent-activity-amount,
+  .recent-activity-status {
+    font-size: 0.75rem;
+  }
 
-.no-data-message-activity {
+  .recent-activity-direction {
+    flex-shrink: 0;
+    width: 1.5rem;
+  }
+  
+  .recent-activity-status.successful {
+    color: #000000;
+    background-color: #00d157;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+  }
+  
+  .recent-activity-status.failed {
+    color: #000000;
+    background-color: #ff513d;
+    padding: 0.125rem 1.3125rem;
+    border-radius: 0.75rem;
+  }
+
+  .no-data-message-activity {
     color: #7f8c8d;
     font-style: italic;
     padding: 6rem 0 0 8.5rem;
     font-size: 1rem;
   }
 
-.viewAllButtonContainer {
+  .viewAllButtonContainer {
     margin-left: auto;
     margin-right: 1rem;
     margin-bottom: 0.6rem;
@@ -17,7 +61,7 @@
     background-color: #090909;
     color: white;
     border: none;
-    padding: 4px 9px;
+    padding: 0.25rem 0.5625rem;
     border-radius: 5rem;
     font-size: 0.5rem;
     cursor: pointer;
@@ -44,9 +88,9 @@
   }
   
   .spinner-activity {
-    width: 30px;
-    height: 30px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
+    width: 1.875rem;
+    height: 1.875rem;
+    border: 0.1875rem solid rgba(0, 0, 0, 0.1);
     border-top-color: #1e1f20;
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -73,10 +117,10 @@
     background: #070707;
     color: white;
     border: none;
-    padding: 5px 15px;
-    border-radius: 4px;
+    padding: 0.3125rem 0.9375rem;
+    border-radius: 0.25rem;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 0.625rem;
   }
   
   .error-message-activity button:hover {

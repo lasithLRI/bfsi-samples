@@ -14,9 +14,9 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Le
 
 // Types
 interface ChartComponentProps {
-  type: 'pie' | 'bar' | 'summary';
-  direction: 'All' | 'Inward' | 'Outward';
-  period: 'Daily' | 'Weekly' | 'Monthly';
+  type: string;
+  direction: string;
+  period: string;
 }
 
 /**
@@ -372,29 +372,29 @@ const ChartComponent = ({ type, period, direction }: ChartComponentProps): React
           {direction === 'All' ? (
           <div className="single-line-legend">
             <div className="legend-item">
-              <div className="legend-color outer" style={{ backgroundColor: '#52524f' }}></div>
+              <div className="legend-color outer inward"></div>
               <div className="legend-label">Inward</div>
             </div>
             <div className="legend-item">
-              <div className="legend-color outer" style={{ backgroundColor: '#868686' }}></div>
+              <div className="legend-color outer outward"></div>
               <div className="legend-label">Outward</div>
             </div>
             <div className="legend-item">
-              <div className="legend-color inner" style={{ backgroundColor: '#00d157' }}></div>
+              <div className="legend-color inner success"></div>
               <div className="legend-label">Successful</div>
             </div>
             <div className="legend-item">
-              <div className="legend-color inner" style={{ backgroundColor: '#ff513d' }}></div>
+              <div className="legend-color inner failure"></div>
               <div className="legend-label">Failure</div>
             </div>
           </div>) : (
             <div className="single-line-legend">
             <div className="legend-item">
-              <div className="legend-color inner" style={{ backgroundColor: '#00d157' }}></div>
+              <div className="legend-color inner success"></div>
               <div className="legend-label">Successful</div>
             </div>
             <div className="legend-item">
-              <div className="legend-color inner" style={{ backgroundColor: '#ff513d' }}></div>
+              <div className="legend-color inner failure"></div>
               <div className="legend-label">Failure</div>
             </div>
           </div>

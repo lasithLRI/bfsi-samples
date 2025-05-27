@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { CoreStart } from '../../../../../../src/core/public'; // Fix incorrect path (remove leading dot)
-import { AppPluginStartDependencies } from '../../../types'; // Fix incorrect path
+import { CoreStart } from '../../../../../../src/core/public'; 
+import { AppPluginStartDependencies } from '../../../types'; 
 import Header from './Header';
 import OverviewPage from './OverviewPage';
 import MessagesPage from './MessagesPage';

@@ -5,6 +5,7 @@ import MessageTypeDistribution from './MessageTypeDistribution';
 import RecentActivity from './RecentActivity';
 import useWindowSize from './hooks/useWindowSize';
 import ToggleBar from './ToggleBar';
+import './OverviewPage.scss';
 import './commonStyles.scss';
 
 // Define proper types for your filter options
@@ -12,7 +13,6 @@ type PeriodType = 'Daily' | 'Weekly' | 'Monthly';
 type DirectionType = 'All' | 'Inward' | 'Outward';
 
 const OverviewPage: React.FC = () => {
-  const { width, height } = useWindowSize();
   const [timeFilter, setTimeFilter] = useState<PeriodType>('Monthly');
   const [directionFilter, setDirectionFilter] = useState<DirectionType>('All');
 
