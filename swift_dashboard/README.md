@@ -7,7 +7,7 @@ This README provides instructions to download, install, and configure OpenSearch
 ## Prerequisites
 
 * Java 17 or later
-* Node.js (for OpenSearch Dashboards : version 18)
+* Node.js (for OpenSearch Dashboards : version 20)
 * Minimum 4GB RAM for stable operation
 
 ---
