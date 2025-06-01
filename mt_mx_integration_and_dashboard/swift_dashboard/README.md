@@ -355,3 +355,233 @@ Once installed, launch OpenSearch Dashboards. Your plugin should appear on the l
 
 > For production setup, refer to OpenSearch's security and performance tuning guides. [https://docs.opensearch.org/docs/latest/security/] (https://docs.opensearch.org/docs/latest/security/)
 
+
+# Federated Login Setup for OpenSearch Plugin using Asgardeo (OIDC)
+
+This guide walks you through configuring federated login for OpenSearch using OpenID Connect (OIDC) with [Asgardeo](https://wso2.com/asgardeo/). You'll learn how to:
+
+* Register an application in Asgardeo
+* Enable required protocol settings (including hybrid flow)
+* Configure scopes and user attributes
+* Create users and roles
+* Assign roles to users
+
+---
+
+## Prerequisites
+
+* A working OpenSearch instance.
+* An Asgardeo account ([https://console.asgardeo.io/](https://console.asgardeo.io/)).
+* Administrator access to both Asgardeo and OpenSearch.
+
+---
+
+## 1. Create an Application in Asgardeo
+
+1. Log in to the Asgardeo Console.
+2. Navigate to **"Applications"** in the left menu.
+3. Click **"New Application"**.
+4. Choose **"Traditional Web Application"**.
+5. Enter a name for your application (e.g., `OpenSearch Federation`).
+6. Choose OpenId Connect
+7. Enter the Redirect URL (http://localhost:5601/auth/openid/login) 
+7. Click **"Create"**.
+
+![App Creation Screenshot](../images/app_creation.png)
+
+---
+
+## 2. Configure Protocol Settings
+
+Once the app is created, configure OIDC protocol settings.
+
+### Under **Protocol** tab:
+
+1. In the allowed origins section add the HTTP origins that host your OpenSearch application. (http://localhost:5601)
+2. Enable the Hybrid Flow and select `code id_token` option under it.
+3. Choose JWT as the token type under Access Token section
+4. Add the Back channel logout URL in the Logout URLs section
+
+![Allow Cors Screenshot](../images/allow_cors.png)
+
+![Hybrid_Flow Screenshot](../images/hybrid_flow.png)
+
+---
+
+## 3. Configure User Attributes (Scopes)
+
+Navigate to the **"User Attributes"** tab:
+
+1. Under **Scopes**:
+
+   * Enable the **"role"** scope – this will expose the roles assigned to the user, allowing OpenSearch to map them.
+
+![Enable Scopee Screenshot](../images/user_attribute.png)
+
+2. Under **Subject Attribute**:
+
+   * Set it to **"username"** – this will be used as the authenticated user's identity.
+
+![Subject Screenshot](../images/subject.png)
+
+---
+
+## 4. Create Roles in Asgardeo
+
+1. Go to the **"Roles"** in the User Management section in the left panel.
+2. Click **"New Role"**.
+3. Enter a role name (e.g., `os-admin`, `os-analyst`, etc.).
+4. Choose role audience.
+5. Choose the application to which the role should be assigned.
+6. Select API Resource as Application Management API
+7. Click **"Finish"**.
+
+---
+
+## 5. Create Users in Asgardeo
+
+1. Go to **"Users"** in the User Management section in the left panel.
+2. Click **"Add User"**.
+3. Fill in user details.
+4. Click **"Finish"**.
+
+---
+
+## 6. Assign Roles to Users in Asgardeo
+
+1. Go to **"Roles"** in the User Management section in the left panel.
+2. Select the role to be assigned.
+3. Navigate to the **"Users"** section.
+4. Click **"Assign User"**
+5. Select the user to be assigned.
+4. Click **"Save"**.
+
+---
+
+## 7. Update OpenSearch Configuration
+
+In OpenSearch navigate to the opensearch-security folder inside the config folder:
+
+* Navigate to config.yml and set the following OIDC parameters:
+
+```yaml
+_meta:
+  type: "config"
+  config_version: 2
+
+config:
+  dynamic:
+    http:
+      anonymous_auth_enabled: false
+    authc:
+      basic_internal_auth_domain:
+        http_enabled: true
+        transport_enabled: true
+        order: 0
+        http_authenticator:
+          type: basic
+          challenge: false
+        authentication_backend:
+          type: internal
+      openid_auth_domain:
+        http_enabled: true
+        transport_enabled: false
+        order: 1
+        http_authenticator:
+          type: openid
+          challenge: false
+          config:
+            subject_key: sub
+            roles_key: roles
+            openid_connect_url: https://api.asgardeo.io/t/<org-name>/oauth2/token/.well-known/openid-configuration
+            jwt_header: Authorization
+        authentication_backend:
+          type: noop
+```
+
+> Note: It is required to have `basic_internal_auth_domain` to connect OpenSearch Dashboards to OpenSearch.
+
+* Navigate to the roles_mapping.yml and define roles based on use case:
+
+```yaml
+Admin:
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "Admin"
+  users: []
+  hosts: []
+  and_backend_roles: []
+  description: "Maps admin to all_access"
+```
+
+> Note: The name **"Admin"** at the top is the role that will be assigned in OpenSearch and the name **"Admin"** under backend_roles is the role from the openid(Asgardeo App) 
+
+* Navigate to the roles.yml and define permissions given to each roles based on use case:
+
+```yaml
+Admin:
+  reserved: false
+  hidden: false
+  cluster_permissions:
+  - "cluster_monitor"
+  - "read"
+  - "indices:monitor/settings/get"
+  index_permissions:
+  - index_patterns: [
+     "*"]
+    allowed_actions: [
+      "read",
+      "indices_monitor",
+      "indices:monitor/*",
+      "index",
+      "search"]
+  tenant_permissions:
+  - tenant_patterns: [
+     "global tenant" ]
+    allowed_actions: [
+      "kibana_all_read"]
+  static: false
+```
+> Note: In order for OpenSearch to pick the changes made in these files the below command has to run while the OpenSearch instance is running.
+
+```bash
+cd plugins\opensearch-security\tools
+
+securityadmin.bat -cacert ../../../config/root-ca.pem -cert ../../../config/kirk.pem -key ../../../config/kirk-key.pem -cd ../../../config/opensearch-security
+```
+---
+
+## 8. Update OpenSearch Dashboards Configuration
+
+* Navigate to opensearch_dashboards.yml and set the following configurations:
+
+```yaml
+opensearch_security.auth.type: "openid"
+opensearch_security.openid.header: "Authorization"
+opensearch_security.openid.connect_url: "https://api.asgardeo.io/t/<org-name>/oauth2/token/.well-known/openid-configuration"
+opensearch_security.openid.client_id: "client_id"
+opensearch_security.openid.client_secret: "client_secret"
+opensearch_security.openid.scope: "openid profile roles"
+opensearch_security.openid.base_redirect_url: "http://localhost:5601"
+opensearch_security.openid.logout_url: "https://api.asgardeo.io/t/<org-name>/oidc/logout"
+```
+
+Make sure to replace placeholders with actual values from your Asgardeo app.
+
+## 9. Test the Integration
+
+1. Restart OpenSearch Dashboards if needed.
+2. Open OpenSearch Dashboards in a browser.
+3. You should be redirected to Asgardeo for login.
+4. Log in with a test user.
+5. Verify that roles are passed and that access is granted accordingly. This can be done by clicking the profile and then clicking the **"View roles and identities"** where you will be able to see the role assigned for the logged in user.
+
+![Role Check Screenshot](../images/role_check.png)
+
+---
+
+## Resources
+
+* [Asgardeo Documentation](https://wso2.com/asgardeo/docs/)
+* [OpenSearch Security Plugin](https://opensearch.org/docs/latest/security-plugin/)
