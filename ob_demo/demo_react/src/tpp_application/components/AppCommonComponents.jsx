@@ -43,3 +43,4 @@ export const QuickActionButton = ({icon, name, onClick}) => {
         </>
     );
 }
+
