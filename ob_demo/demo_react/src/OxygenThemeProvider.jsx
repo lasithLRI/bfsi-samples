@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,26 +16,30 @@
  * under the License.
  */
 
-import React from 'react';
+import React, {useContext} from 'react';
 import { ThemeProvider, extendTheme } from '@oxygen-ui/react';
+import ConfigContext from "./context/ConfigContext.jsx";
 
-const MyThemeProvider = ({ children }) => {
+const OxygenThemeProvider = ({ children }) => {
+
+
+    const {configs} = useContext(ConfigContext);
     const theme = extendTheme({
         typography:{
-            fontFamily:"Inter",
+            fontFamily:configs.theme_font,
         },
         colorSchemes: {
             light: {
                 palette: {
                     primary: {
-                        main: '#FF5499',
+                        main: configs.theme_primary_color,
                     },
                 },
             },
             dark: {
                 palette: {
                     primary: {
-                        main: '#FF5456',
+                        main: configs.theme_secondary_color,
                     },
                 },
             },
@@ -45,5 +49,5 @@ const MyThemeProvider = ({ children }) => {
     return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };
 
-export default MyThemeProvider;
+export default OxygenThemeProvider;
 

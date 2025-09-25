@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -17,21 +17,21 @@
  */
 
 import {Route, Routes} from "react-router-dom";
-import HomePage from "./home_page/HomePage.jsx";
-import {HeaderIconButton} from "./components/AppCommonComponents.jsx";
+import {UserLoginIconButton} from "./components/AppCommonComponents.jsx";
 import "./AccountsCentralApplication.css";
+import ProductHomePage from "./home_page/ProductHomePage.jsx";
 
 const AccountsCentralApplication = ()=>{
     return (
         <>
-            <div className="header-outer">
+            <div className="product-header-outer">
                 <p>Accounts Central</p>
-                <HeaderIconButton/>
+                <UserLoginIconButton/>
             </div>
 
-            <div className="content-outer">
+            <div className="product-content-outer">
                 <Routes>
-                    <Route path="/home" element={<HomePage/>}/>
+                    <Route path="/home" element={<ProductHomePage />}/>
                 </Routes>
             </div>
 

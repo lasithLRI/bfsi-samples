@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,15 +16,15 @@
  * under the License.
  */
 
-.actions-outer{
+.product-home-header-outer{
     width: 100%;
     height: 14rem;
-    background: url("/resources/assets/images/background/background.jpg") lightgray -18.644px -372.574px / 145.345% 527.151% no-repeat;
+    background: url("/resources/assets/images/background/bg_image.webp") lightgray -18.644px -372.574px / 145.345% 527.151% no-repeat;
     padding: 2rem 8rem;
     display: flex;
 }
 
-.profile-section{
+.user-name-image-container{
     width: 50%;
     height: 100%;
     display: flex;
@@ -33,33 +33,34 @@
     gap: 1rem;
 }
 
-.profile-image{
-    width: 8rem;
-    height: 8rem;
+.user-image-container{
+    width: 6rem;
+    height: 6rem;
     background: no-repeat center;
     border-radius: 50%;
     background-size: cover;
 }
 
-.greeting-and-name{
+.product-user-name-greeting-container{
     height: 100%;
     width: fit-content;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: var(--color-font-color1);
+    color: var(--color-fonts-white);
     gap: 0;
-}
-
-.greeting-and-name > p {
     font-size: 2rem;
 }
 
-.greeting-and-name .greeting-second-para{
+.product-quick-actions-container > p {
+    font-size: 2rem;
+}
+
+.product-user-name-greeting-container > .product-user-name-greeting-information-para{
     font-weight: bold;
 }
 
-.quick-action-area{
+.product-quick-actions-container{
     width: 50%;
     height: 100%;
     display: flex;

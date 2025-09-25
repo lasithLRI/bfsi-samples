@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,17 +16,24 @@
  * under the License.
  */
 
-import './App.css'
 import {Route, Routes} from "react-router-dom";
 
 import AccountsCentralApplication from "./tpp_application/AccountsCentralApplication.jsx";
+import {ConfigProvider} from "./context/ConfigContext.jsx";
+import OxygenThemeProvider from "./OxygenThemeProvider.jsx";
 
 function App() {
 
   return (
     <>
       <Routes>
-          <Route path="/accounts-central/*" element={<AccountsCentralApplication/>} />
+          <Route path="/accounts-central/*" element={
+              <ConfigProvider>
+                  <OxygenThemeProvider>
+                      <AccountsCentralApplication/>
+                  </OxygenThemeProvider>
+              </ConfigProvider>
+          } />
       </Routes>
 
     </>
@@ -34,3 +41,4 @@ function App() {
 }
 
 export default App
+

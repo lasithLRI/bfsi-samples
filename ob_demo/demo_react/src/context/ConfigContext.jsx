@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -18,31 +18,27 @@
 
 import {createContext, useEffect, useState} from "react";
 
-const ConfigContext = createContext({});
+const ConfigContext = createContext();
 
-export const ConfigProvider = ({children}) => {
-
-    const [userinfo, setUserInfo] = useState({name: "", image:"/"});
-
+export const ConfigProvider = ({ children }) => {
+    const [configs, setConfig] = useState({});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const loadConfigs = async () => {
-            try{
+        const getConfig = async () => {
+            try {
                 const response = await fetch("/configurations/config.json");
                 const data = await response.json();
-
-                setUserInfo(data.user);
-
-            }catch (error) {
-                console.error(error);
+                setConfig(data.configurations);
+            }catch (e) {
+                console.log(e.message);
+            }finally {
+                setLoading(false);
             }
         }
-        loadConfigs();
-
-    },[])
-
-    return (<ConfigContext.Provider value = {{userinfo}} >{children}</ConfigContext.Provider>);
+        getConfig();
+    }, []);
+    return (<ConfigContext.Provider value={{configs,loading}}>{children}</ConfigContext.Provider>);
 }
 
 export default ConfigContext;
-

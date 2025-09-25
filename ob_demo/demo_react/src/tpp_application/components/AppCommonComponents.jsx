@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -19,11 +19,11 @@
 import "./AppCommonComponents.css"
 import  LoginIcon from "/public/resources/assets/images/icons/logout_icon.svg?react";
 
-export const HeaderIconButton = () => {
+export const UserLoginIconButton = () => {
     return (
         <>
-            <div className="header-icon-button-outer">
-                <button className="icon-button-content">
+            <div className="product-header-user-icon-button-outer">
+                <button className="product-header-user-icon-button-content">
                     <LoginIcon/>
                 </button>
             </div>

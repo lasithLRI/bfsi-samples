@@ -1,6 +1,12 @@
 {
   "user": {
     "name": "James Smith",
-    "image": "/resources/assets/images/profile/profile_pic.png"
+    "image": "/resources/assets/images/profile/dp_image.webp"
+  },
+  "configurations": {
+    "theme_primary_color": "#FF5499",
+    "theme_secondary_color": "#FF5456",
+    "theme_font": "Inter"
   }
 }
+

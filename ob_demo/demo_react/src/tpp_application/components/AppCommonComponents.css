@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -15,13 +15,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-.header-icon-button-outer{
+.product-header-user-icon-button-outer{
     width: 2rem;
     height: 2rem;
 }
 
-.icon-button-content{
+.product-header-user-icon-button-content{
     width: 100%;
     height: 100%;
     cursor: pointer;
@@ -45,8 +44,8 @@
     height: 100%;
     border-radius: 10%;
     border: none;
-    background: var(--color-font-color1);
-    box-shadow: 4.5px 4.5px 5.625px -2.25px var(--color-orange);
+    background: var(--color-fonts-white);
+    box-shadow: 4.5px 4.5px 5.625px -2.25px var(--color-primary);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,7 +54,7 @@
     gap: 0.5rem;
     font-size: 1rem;
     font-weight: bold;
-    color: var(--color-orange);
+    color: var(--color-primary);
     cursor: pointer;
 }
 
