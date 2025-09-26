@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import QuickActions from "./QuickActions/QuickActions.jsx";
-import useAuthContext from "../../hooks/useAuthContext.js";
+import QuickActions from "./quick-actions/quick-actions.jsx";
+import useAuthContext from "../../hooks/use-auth-context.js";
 
 /**
  * The main component for the product's home page.

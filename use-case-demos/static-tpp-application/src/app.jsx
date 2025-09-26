@@ -17,10 +17,10 @@
  */
 
 import {Route, Routes} from "react-router-dom";
-import {ConfigProvider} from "./context/ConfigContext.jsx";
-import OxygenThemeProvider from "./OxygenThemeProvider.jsx";
-import Home from "./TppApplication/HomePage/Home.jsx";
-import AccountsCentral from "./lauyouts/AccountsCentral.jsx";
+import {ConfigProvider} from "./context/config-context.jsx";
+import OxygenThemeProvider from "./providers/oxygen-theme-provider.jsx";
+import Home from "./pages/home-page/home.jsx";
+import AccountsCentral from "./layouts/accounts-central.jsx";
 
 /**
  * The main application component that sets up the core routing and

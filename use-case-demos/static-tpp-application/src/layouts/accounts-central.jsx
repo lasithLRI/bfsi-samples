@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import "./AccountsCentral.css"
-import {Button} from "../TppApplication/Components/Button.jsx";
+import "./accounts-central.css"
+import {Button} from "../components/button.jsx";
 import Logout from "/public/resources/assets/images/icons/logout_icon.svg?react"
 
 /**
