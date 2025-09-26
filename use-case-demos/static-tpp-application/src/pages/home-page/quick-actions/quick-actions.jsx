@@ -17,7 +17,7 @@
  */
 
 import "./quick-actions.css"
-import {Button} from "../../../components/button.jsx";
+import {Button} from "../../../components/forms/button.jsx";
 import PayBillsIcon from "/public/resources/assets/images/icons/pay_icon.svg?react"
 import TransferFundsIcon from "/public/resources/assets/images/icons/transfer_icon.svg?react"
 import ScheduleIcon from "/public/resources/assets/images/icons/schedule_icon.svg?react"

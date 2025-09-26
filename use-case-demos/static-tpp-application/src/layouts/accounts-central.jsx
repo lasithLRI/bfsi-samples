@@ -17,7 +17,7 @@
  */
 
 import "./accounts-central.css"
-import {Button} from "../components/button.jsx";
+import {Button} from "../components/forms/button.jsx";
 import Logout from "/public/resources/assets/images/icons/logout_icon.svg?react"
 
 /**
@@ -30,7 +30,7 @@ import Logout from "/public/resources/assets/images/icons/logout_icon.svg?react"
  * @param {object} props - The component props.
  * @param {React.ReactNode} props.children - The content (usually nested routes or components) to be rendered in the main product content area.
  */
-const AccountsCentral = ({children}) => {
+export const AccountsCentral = ({children}) => {
     return (
         <>
             <div className="product-header-outer">

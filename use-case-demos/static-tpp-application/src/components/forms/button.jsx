@@ -35,12 +35,11 @@ export const Button = ({icon, children, onClick, isQuickActionButton}) => {
     const quickActionClasses = 'quick-action-button-outer';
     const iconButtonClasses = 'product-header-user-icon-button-outer product-header-user-icon-button-content';
 
-
     return (
         <div className={`${isQuickActionButton ? quickActionClasses : iconButtonClasses}`}>
             <button onClick={onClick}>
                 {icon}
-                {isQuickActionButton && <p>{children}</p>}
+                <p>{children}</p>
             </button>
         </div>
     );

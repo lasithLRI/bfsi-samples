@@ -30,23 +30,17 @@ import AccountsCentral from "./layouts/accounts-central.jsx";
  */
 function App() {
 
-    return (
-        <>
+    return (<>
             <Routes>
-                <Route path="/accounts-central/*" element={
-                    <ConfigProvider>
-                        <OxygenThemeProvider>
-                            <AccountsCentral>
-                                <Routes>
-                                    <Route path="/home" element={<Home/>}/>
-                                </Routes>
-                            </AccountsCentral>
-                        </OxygenThemeProvider>
-                    </ConfigProvider>
-                }/>
+                <Route path="/accounts-central/*" element={<ConfigProvider>
+                    <OxygenThemeProvider>
+                        <Routes>
+                            <Route path="/home" element={<Home/>}/>
+                        </Routes>
+                    </OxygenThemeProvider>
+                </ConfigProvider>}/>
             </Routes>
-        </>
-    )
+        </>)
 }
 
 export default App

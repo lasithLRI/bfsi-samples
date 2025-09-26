@@ -25,6 +25,7 @@ import {useEffect, useRef, useState} from "react";
  * from the response.
  * @returns {object|null} The user information object, or `null` while loading.
  */
+//TODO: this hook will remove after installing Asgardeo SDK for authentication in future development
 const useAuthContext = () => {
 
     const [user, setUser] = useState({});

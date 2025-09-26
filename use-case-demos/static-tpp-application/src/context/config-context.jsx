@@ -28,6 +28,7 @@ const ConfigContext = createContext();
  * * @param {object} props - The component props.
  * @param {React.ReactNode} props.children - The child components to be rendered within the provider's scope.
  */
+//TODO:this file will be remove and move this context to custom hook in next PR
 export const ConfigProvider = ({children}) => {
     const [configs, setConfig] = useState({});
     const [loading, setLoading] = useState(true);

@@ -18,6 +18,7 @@
 
 import QuickActions from "./quick-actions/quick-actions.jsx";
 import useAuthContext from "../../hooks/use-auth-context.js";
+import AccountsCentral from "../../layouts/accounts-central.jsx";
 
 /**
  * The main component for the product's home page.
@@ -28,7 +29,9 @@ const Home = () => {
     const userInfo = useAuthContext();
     return (
         <>
-            <QuickActions userInfo={userInfo}/>
+            <AccountsCentral>
+                <QuickActions userInfo={userInfo}/>
+            </AccountsCentral>
         </>
     )
 }
