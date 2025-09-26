@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 /**
  * A custom React hook that fetches and manages user information.
@@ -25,20 +25,29 @@ import {useEffect, useState} from "react";
  * from the response.
  * @returns {object|null} The user information object, or `null` while loading.
  */
-const useUserInfo = () => {
+const useAuthContext = () => {
 
-    const [userInfo, setUserInfo] = useState(null);
+    const [user, setUser] = useState({});
+    const fetchedRef = useRef(false);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch("/configurations/config.json");
-            const data = await response.json();
-            setUserInfo(data.user);
-        }
-        fetchData();
-    })
-    return userInfo;
-}
 
-export default useUserInfo;
+        if (fetchedRef.current) {
+            return;
+        }
+            const fetchData = async () => {
+
+                const response = await fetch("/configurations/config.json");
+                const data = await response.json();
+                setUser(data.user);
+                fetchedRef.current = true;
+            }
+            fetchData()
+
+    }, [])
+
+    return user
+};
+
+export default useAuthContext;
 

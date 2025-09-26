@@ -17,15 +17,15 @@
  */
 
 import HomeHeaderContent from "./HomeHeader/HomeHeaderContent.jsx";
-import useUserInfo from "../../hooks/useUserInfo.js";
+import useAuthContext from "../../hooks/useAuthContext.js";
 
 /**
  * The main component for the product's home page.
- * It fetches user information using the `useUserInfo` custom hook and
+ * It fetches user information using the `useAuthContext` custom hook and
  * passes this data to the `HomeHeaderContent` component to display user-specific content.
  */
 const ProductHomePage = () => {
-    const userInfo = useUserInfo();
+    const userInfo = useAuthContext();
     return (
         <>
             <HomeHeaderContent userInfo={userInfo}/>

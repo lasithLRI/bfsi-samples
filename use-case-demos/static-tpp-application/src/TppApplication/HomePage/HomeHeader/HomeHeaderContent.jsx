@@ -43,6 +43,8 @@ const quickActions = [
  */
 const HomeHeaderContent = ({userInfo}) => {
 
+    console.log(userInfo);
+
     if (!userInfo) {
         return <div>Loading....</div>
     }
