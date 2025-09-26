@@ -17,16 +17,21 @@
  */
 
 import React, {useContext} from 'react';
-import { ThemeProvider, extendTheme } from '@oxygen-ui/react';
+import {ThemeProvider, extendTheme} from '@oxygen-ui/react';
 import ConfigContext from "./context/ConfigContext.jsx";
 
-const OxygenThemeProvider = ({ children }) => {
-
+/**
+ * A theme provider component that wraps the Material UI ThemeProvider to apply
+ * a dynamic theme based on the `ConfigContext`.
+ * @param {React.ReactNode} children - The child components to be rendered within the theme provider.
+ * @returns {JSX.Element} The ThemeProvider component with a dynamically created theme.
+ */
+const OxygenThemeProvider = ({children}) => {
 
     const {configs} = useContext(ConfigContext);
     const theme = extendTheme({
-        typography:{
-            fontFamily:configs.theme_font,
+        typography: {
+            fontFamily: configs.theme_font,
         },
         colorSchemes: {
             light: {

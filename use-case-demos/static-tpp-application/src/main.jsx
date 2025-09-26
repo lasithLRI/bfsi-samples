@@ -22,12 +22,17 @@ import './index.css'
 import App from './App.jsx'
 import {BrowserRouter} from "react-router-dom";
 
+/**
+ * The entry point of the React application.
+ * It creates a new React root for the DOM element with the ID 'root',
+ * and renders the main App component wrapped in StrictMode and BrowserRouter
+ * for development checks and client-side routing.
+ */
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-
-            <BrowserRouter>
-                    <App/>
-            </BrowserRouter>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
     </StrictMode>,
 )
 

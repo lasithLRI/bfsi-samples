@@ -20,7 +20,15 @@ import {createContext, useEffect, useState} from "react";
 
 const ConfigContext = createContext();
 
-export const ConfigProvider = ({ children }) => {
+/**
+ * A React provider component that fetches application configurations and makes them
+ * available to all child components via the Context API.
+ * * It manages a loading state and fetches data from '/configurations/config.json'
+ * only once when the component mounts. While loading, it displays a "Loading..." message.
+ * * @param {object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components to be rendered within the provider's scope.
+ */
+export const ConfigProvider = ({children}) => {
     const [configs, setConfig] = useState({});
     const [loading, setLoading] = useState(true);
 
@@ -30,15 +38,20 @@ export const ConfigProvider = ({ children }) => {
                 const response = await fetch("/configurations/config.json");
                 const data = await response.json();
                 setConfig(data.configurations);
-            }catch (e) {
+            } catch (e) {
                 console.log(e.message);
-            }finally {
+            } finally {
                 setLoading(false);
             }
         }
         getConfig();
     }, []);
-    return (<ConfigContext.Provider value={{configs,loading}}>{children}</ConfigContext.Provider>);
+
+    if (loading) {
+        return <div>Loading...</div>; // Or return null, or a spinner component.
+    }
+    return (<ConfigContext.Provider value={{configs, loading}}>{children}</ConfigContext.Provider>);
 }
 
 export default ConfigContext;
+

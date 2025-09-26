@@ -17,12 +17,11 @@
  */
 
 import "./HomeHeaderContent.css"
-import {QuickActionButton} from "../../components/AppCommonComponents.jsx";
+import {CommonButton} from "../../Components/AppCommonComponents.jsx";
 import PayBillsIcon from "/public/resources/assets/images/icons/pay_icon.svg?react"
 import TransferFundsIcon from "/public/resources/assets/images/icons/transfer_icon.svg?react"
 import ScheduleIcon from "/public/resources/assets/images/icons/schedule_icon.svg?react"
 import ManagePayeeIcon from "/public/resources/assets/images/icons/payees_icon.svg?react"
-import useUserInfo from "../../../hooks/useUserInfo.js";
 
 const onclickAction = () => {
     console.log("Quick action Button clicked");
@@ -35,9 +34,14 @@ const quickActions = [
     {icon: ManagePayeeIcon, name: "Payees", onClick: onclickAction}
 ];
 
-const HomeHeaderContent = () => {
-
-    const userInfo = useUserInfo();
+/**
+ * A component that renders the dynamic header content for the home page.
+ * It displays a personalized greeting based on the time of day, shows the user's
+ * name and image, and provides a set of interactive quick action buttons.
+ * @param {Object} props - The component props.
+ * @param {Object} props.userInfo - The user information object, including their name and image URL.
+ */
+const HomeHeaderContent = ({userInfo}) => {
 
     if (!userInfo) {
         return <div>Loading....</div>
@@ -66,8 +70,8 @@ const HomeHeaderContent = () => {
                 <div className="product-quick-actions-container">
 
                     {quickActions.map((action, index) => (
-                        <QuickActionButton key={index} icon={< action.icon/>} name={action.name}
-                                           onClick={action.onClick}/>
+                        <CommonButton key={index} icon={< action.icon/>} onClick={action.onClick}
+                                      isQuickActionButton={true}>{action.name}</CommonButton>
                     ))}
 
                 </div>
