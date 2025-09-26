@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import QuickActions from "./quick-actions/quick-actions.jsx";
+import QuickActions from "./quick-actions.jsx";
 import useAuthContext from "../../hooks/use-auth-context.js";
 import AccountsCentral from "../../layouts/accounts-central.jsx";
 

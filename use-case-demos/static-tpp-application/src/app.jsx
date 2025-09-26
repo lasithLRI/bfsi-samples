@@ -17,7 +17,7 @@
  */
 
 import {Route, Routes} from "react-router-dom";
-import {ConfigProvider} from "./context/config-context.jsx";
+import {ConfigProvider} from "./providers/config-context.jsx";
 import OxygenThemeProvider from "./providers/oxygen-theme-provider.jsx";
 import Home from "./pages/home-page/home.jsx";
 import AccountsCentral from "./layouts/accounts-central.jsx";

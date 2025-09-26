@@ -18,7 +18,7 @@
 
 import React, {useContext} from 'react';
 import {ThemeProvider, extendTheme} from '@oxygen-ui/react';
-import ConfigContext from "../context/config-context.jsx";
+import ConfigContext from "./config-context.jsx";
 
 /**
  * A theme provider component that wraps the Material UI ThemeProvider to apply
