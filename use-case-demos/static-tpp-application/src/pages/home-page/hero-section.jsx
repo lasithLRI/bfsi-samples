@@ -22,6 +22,7 @@ import PayBillsIcon from "/public/resources/assets/images/icons/pay_icon.svg?rea
 import TransferFundsIcon from "/public/resources/assets/images/icons/transfer_icon.svg?react"
 import ScheduleIcon from "/public/resources/assets/images/icons/schedule_icon.svg?react"
 import ManagePayeeIcon from "/public/resources/assets/images/icons/payees_icon.svg?react"
+import {ArrowLeftArrowRightIcon, UserGroupIcon} from '@oxygen-ui/react-icons'
 
 const onclickAction = () => {
     console.log("Quick action QuickActionButton clicked");
@@ -29,21 +30,25 @@ const onclickAction = () => {
 
 const quickActionsButtons = [
     {icon: PayBillsIcon, name: "Pay Bills", onClick: onclickAction},
-    {icon: TransferFundsIcon, name: "Transfer", onClick: onclickAction},
+    {icon: ArrowLeftArrowRightIcon, name: "Transfer", onClick: onclickAction, size: "48"},
     {icon: ScheduleIcon, name: "Schedule", onClick: onclickAction},
-    {icon: ManagePayeeIcon, name: "Payees", onClick: onclickAction}
+    {icon: UserGroupIcon, name: "Payees", onClick: onclickAction, size: "48"}
 ];
 
 /**
  * Renders the primary header or "hero" content for a product page.
- * * This component:
- * 1. Displays a **personalized greeting** based on the current time of day (Morning, Afternoon, or Evening).
+ *
+ * This component:
+ * 1. Displays a **personalized greeting** calculated based on the current time of day.
  * 2. Shows the user's **name and profile image**.
- * 3. Renders a static set of **quick action buttons** (Pay Bills, Transfer, Schedule, Payees)
- * by mapping over the `quickActionsButtons` array and using the reusable `QuickActionButton` component.
- * 4. Displays a "Loading...." message while the `userInfo` prop is not yet available.
- * * @param {Object} props - The component props.
+ * 3. Renders a static set of **quick action buttons** defined in `quickActionsButtons`.
+ * The component dynamically renders the icon for each action, correctly passing
+ * any extra properties like `size` or `color` defined in the action object to the IconComponent.
+ * 4. Displays a "Loading...." message while the `userInfo` prop is falsy.
+ *
+ * @param {Object} props - The component props.
  * @param {Object} props.userInfo - The user information object, expected to contain `name` and `image` URL.
+ * @returns {JSX.Element} The rendered hero section or a loading state.
  */
 const HeroSection = ({userInfo}) => {
 
@@ -73,11 +78,19 @@ const HeroSection = ({userInfo}) => {
                 </div>
                 <div className="product-quick-actions-container">
 
-                    {quickActionsButtons.map((action, index) => (
-                        <QuickActionButton key={index} icon={< action.icon/>} onClick={action.onClick}>
-                            {action.name}
-                        </QuickActionButton>
-                    ))}
+                    {quickActionsButtons.map((action, index) => {
+                        const IconComponent = action.icon;
+                        const iconProps = {
+                            ...(action.size && {size: action.size}),
+                            ...(action.color && {color: action.color})
+                        };
+                        return (
+                            <QuickActionButton ey={index} onClick={action.onClick}>
+                                <IconComponent {...iconProps} />
+                                {action.name}
+                            </QuickActionButton>
+                        )
+                    })}
 
                 </div>
             </div>
