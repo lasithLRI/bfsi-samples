@@ -37,7 +37,7 @@ const Header = ({context}) => {
         <div className="product-header-outer">
             <p>{context.routerName.applicationName}</p>
             <IconButton style={{color:'white'}}>
-                <ArrowRightFromBracketIcon size={'1.5rem'}/>
+                <ArrowRightFromBracketIcon size={24}/>
             </IconButton>
         </div>
     );
