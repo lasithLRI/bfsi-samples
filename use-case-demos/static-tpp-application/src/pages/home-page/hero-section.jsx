@@ -19,9 +19,7 @@
 import "./hero-section.css"
 import {QuickActionButton} from "../../components/forms/quick-action-button.jsx";
 import PayBillsIcon from "/public/resources/assets/images/icons/pay_icon.svg?react"
-import TransferFundsIcon from "/public/resources/assets/images/icons/transfer_icon.svg?react"
 import ScheduleIcon from "/public/resources/assets/images/icons/schedule_icon.svg?react"
-import ManagePayeeIcon from "/public/resources/assets/images/icons/payees_icon.svg?react"
 import {ArrowLeftArrowRightIcon, UserGroupIcon} from '@oxygen-ui/react-icons'
 
 const onclickAction = () => {
