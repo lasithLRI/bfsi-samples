@@ -17,7 +17,7 @@
  */
 
 import "./quick-action-button.css"
-import {Grid} from "@oxygen-ui/react";
+import {Box,IconButton} from "@oxygen-ui/react";
 
 /**
  * A highly reusable and responsive button component specifically designed for a quick action list.
@@ -33,35 +33,17 @@ import {Grid} from "@oxygen-ui/react";
  * @param {Array<React.ReactNode>} props.children - An array where the first element is the icon component and the second is the name text/label.
  * @param {function} props.onClick - The function to be executed when the button's surrounding `div` is clicked.
  */
-export const QuickActionButton = ({children, onClick}) => {
+export const QuickActionButton = ({children}) => {
 
-    const [iconElement, nameText] = children;
+     const [iconElement, nameText] = children;
 
     return (
-        <Grid
-            item={true}
-            xs={2} sm={1.5} md={1.2} lg={1.6}
-            sx={{height:{xs:"90%",sm:"100%",md:"90%",lg:"65%"},borderRadius:"10%", padding:"0.5rem"}}
-            className="action-button">
-            <div style={{ width: '100%', height: '100%',
-                cursor: 'pointer', border: 'none', background: 'transparent' }} >
-                <Grid
-                    container direction="column" alignItems="center" justifyContent="center"
-                    sx={{width:"100%", height:"100%"}} spacing={0}>
-                    <Grid item={true} lg={12} md={12} sm={12} xs={12}
-                          sx={{height:"75%", display: 'flex', alignItems: 'center',
-                              justifyContent: 'center', color: "secondary.main"}}>
-                        {iconElement}
-                    </Grid>
-                    <Grid
-                        item={true} md={12} lg={12} sm={12} xs={12}
-                        sx={{height:"25%",color: "secondary.main", display:"flex",
-                            justifyContent:"center",alignItems:"center", fontSize:{lg:"1rem",md:"1rem",sm:"0.8rem",xs:"0.7rem"}}}>
-                        {nameText}
-                    </Grid>
-                </Grid>
-            </div>
-        </Grid>
+        <IconButton >
+            <Box display="flex" flexDirection="column" width={{md:'2rem',sm:'2rem',xs:'2rem'}} sx={{fontSize: {md:'1rem',sm:'0.8rem',xs:'0.8rem'}, gap:'0.5rem', background:'white', padding:{md:'1rem 3rem',sm:'1rem 3rem',xs:'0.8rem 2rem'}, justifyContent:'center', alignItems: 'center', color:'red', borderRadius:'5%', boxShadow:'4.5px 4.5px 5.625px -2.25px var(--color-primary)'}}>
+                {iconElement}
+                {nameText}
+            </Box>
+        </IconButton>
     );
 };
 
