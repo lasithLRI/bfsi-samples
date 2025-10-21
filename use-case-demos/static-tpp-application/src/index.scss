@@ -15,22 +15,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-.product-header-outer {
-    width: 100%;
-    height: 3.5rem;
-    background: var(--header-gradient);
-    color: var(--color-fonts-white);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-    font-size: 1.3rem;
-    font-weight: bold;
+* {
+    margin: 0;
 }
-
-.product-content-outer {
-    width: 100%;
-    height: 100%;
-}
-

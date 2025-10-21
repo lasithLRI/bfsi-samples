@@ -16,25 +16,29 @@
  * under the License.
  */
 
-import QuickActions from "./quick-actions.jsx";
+import HeroSection from "./hero-section/hero-section.jsx";
 import useAuthContext from "../../hooks/use-auth-context.js";
-import AccountsCentral from "../../layouts/accounts-central.jsx";
+import ApplicationLayout from "../../layouts/application-layout/application-layout.jsx";
 
 /**
  * The main component for the product's home page.
- * It fetches user information using the `useAuthContext` custom hook and
- * passes this data to the `QuickActions` component to display user-specific content.
+ *
+ * It uses the **`useAuthContext`** hook to retrieve **user information** (or authentication state).
+ * The component applies the primary application structure using the **`<ApplicationLayout>`**
+ * wrapper, and passes the user data to the **`<HeroSection>`** component for personalized display
+ * of greetings and quick actions.
+ *
+ * @returns {JSX.Element} The rendered Home page, wrapped in the standard application layout.
  */
 const Home = () => {
     const userInfo = useAuthContext();
     return (
         <>
-            <AccountsCentral>
-                <QuickActions userInfo={userInfo}/>
-            </AccountsCentral>
+            <ApplicationLayout>
+                <HeroSection userInfo={userInfo}/>
+            </ApplicationLayout>
         </>
     )
 }
 
 export default Home;
-

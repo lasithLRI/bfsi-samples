@@ -17,30 +17,34 @@
  */
 
 import {Route, Routes} from "react-router-dom";
-import {ConfigProvider} from "./providers/config-context.jsx";
-import OxygenThemeProvider from "./providers/oxygen-theme-provider.jsx";
+import ConfigContext from "./providers/config-context.jsx";
+import AppThemeProvider from "./providers/app-theme-provider.jsx";
 import Home from "./pages/home-page/home.jsx";
-import AccountsCentral from "./layouts/accounts-central.jsx";
+import {useContext} from "react";
 
 /**
- * The main application component that sets up the core routing and
- * provides necessary contexts for the 'Accounts Central' product section.
- * It defines a base layout with a header and a content area, and uses
- * nested routes to render specific product pages like 'Home'.
+ * The root component of the application, responsible for setting up the main routing structure
+ * and applying global theming via the `AppThemeProvider`.
+ *
+ * It consumes the **`ConfigContext`** to dynamically construct the base route path
+ * using the configured router name (accessed via `context.routerName.route`).
+ * It then defines **nested routes**, such as the 'home' page, within this main product route.
  */
 function App() {
 
+    const context = useContext(ConfigContext);
+
     return (<>
+        <AppThemeProvider>
             <Routes>
-                <Route path="/accounts-central/*" element={<ConfigProvider>
-                    <OxygenThemeProvider>
-                        <Routes>
-                            <Route path="/home" element={<Home/>}/>
-                        </Routes>
-                    </OxygenThemeProvider>
-                </ConfigProvider>}/>
+                <Route path={`/${context.routerName.route}/*`} element={
+                    <Routes>
+                        <Route path="home" element={<Home/>}/>
+                    </Routes>
+                }/>
             </Routes>
-        </>)
+        </AppThemeProvider>
+    </>)
 }
 
 export default App
