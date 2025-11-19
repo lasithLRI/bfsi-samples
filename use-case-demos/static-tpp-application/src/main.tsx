@@ -16,15 +16,23 @@
  * under the License.
  */
 
-.product-header-outer {
-    width: 100%;
-    height: 3.5rem;
-    background: linear-gradient(90deg, var(--oxygen-palette-secondary-main) 0.06%, var(--oxygen-palette-secondary-yellow) 139.7%);
-    color: var(--oxygen-palette-fontColor-main);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-    font-size: 1.3rem;
-    font-weight: bold;
-}
+import {StrictMode} from 'react'
+import {createRoot} from 'react-dom/client'
+import './index.scss'
+import App from './app.tsx'
+import {BrowserRouter} from "react-router-dom";
+
+/**
+ * The entry point of the React application.
+ * It creates a new React root for the DOM element with the ID 'root',
+ * and renders the main App component wrapped in StrictMode and BrowserRouter
+ * for development checks and client-side routing.
+ */
+createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
+    </StrictMode>,
+)
+
