@@ -3,7 +3,7 @@ package com.wso2.openbanking;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-@Path("/consent")
+@Path("")
 public class ConsentManagement {
     @GET
     @Path("/test")

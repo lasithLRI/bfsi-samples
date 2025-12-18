@@ -23,10 +23,77 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>InitialDataJAXServlet</servlet-name>
+        <servlet-class>
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
+        </servlet-class>
+
+        <init-param>
+            <param-name>jaxrs.providers</param-name>
+            <param-value>
+                com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider
+            </param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                com.wso2.openbanking.InitialData
+            </param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AuthCallbackServlet</servlet-name>
+        <servlet-class>com.wso2.openbanking.AuthCallbackServlet</servlet-class>
+    </servlet>
+
+<!--    <servlet>-->
+<!--        <servlet-name>LoginServlet</servlet-name>-->
+<!--        <servlet-class>com.wso2.openbanking.LoginServlet</servlet-class>-->
+<!--    </servlet>-->
+
+    <filter>
+        <filter-name>CORSFilter</filter-name>
+        <filter-class>com.wso2.openbanking.CorsFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>SecurityFilter</filter-name>
+        <filter-class>com.wso2.openbanking.SessionSecurityFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CORSFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <servlet-mapping>
         <servlet-name>ConsentManagementJAXServlet</servlet-name>
-        <url-pattern>/api/*</url-pattern>
+        <url-pattern>/consent/*</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>InitialDataJAXServlet</servlet-name>
+        <url-pattern>/init/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AuthCallbackServlet</servlet-name>
+        <url-pattern>/oauth2callback</url-pattern>
+    </servlet-mapping>
+
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>LoginServlet</servlet-name>-->
+<!--        <url-pattern>/login</url-pattern>-->
+<!--    </servlet-mapping>-->
 
     <session-config>
         <session-timeout>60</session-timeout>
