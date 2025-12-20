@@ -172,7 +172,7 @@ for this project used jakarta.validation-api -->
       <dependency>
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-rt-rs-extension-providers</artifactId>
-          <version>4.1.4</version>
+          <version>${cxf-version}</version>
       </dependency>
 
       <dependency>

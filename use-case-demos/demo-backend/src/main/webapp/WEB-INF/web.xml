@@ -50,10 +50,10 @@
         <servlet-class>com.wso2.openbanking.AuthCallbackServlet</servlet-class>
     </servlet>
 
-<!--    <servlet>-->
-<!--        <servlet-name>LoginServlet</servlet-name>-->
-<!--        <servlet-class>com.wso2.openbanking.LoginServlet</servlet-class>-->
-<!--    </servlet>-->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.wso2.openbanking.LoginServlet</servlet-class>
+    </servlet>
 
     <filter>
         <filter-name>CORSFilter</filter-name>
@@ -90,10 +90,10 @@
         <url-pattern>/oauth2callback</url-pattern>
     </servlet-mapping>
 
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>LoginServlet</servlet-name>-->
-<!--        <url-pattern>/login</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
 
     <session-config>
         <session-timeout>60</session-timeout>
