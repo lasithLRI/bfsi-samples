@@ -54,6 +54,7 @@ public class SessionSecurityFilter implements Filter {
             }
 
             String accessToken = (String) session.getAttribute("accessToken");
+            System.out.println(accessToken);
 
             if (isExpired(accessToken)) {
                 String refreshToken = (String) session.getAttribute("refreshToken");

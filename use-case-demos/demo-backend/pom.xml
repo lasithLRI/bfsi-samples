@@ -100,6 +100,14 @@
            <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
     </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>9</source>
+                <target>9</target>
+            </configuration>
+        </plugin>
     </plugins>
   </build>
   <dependencyManagement>
@@ -173,6 +181,12 @@ for this project used jakarta.validation-api -->
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-rt-rs-extension-providers</artifactId>
           <version>${cxf-version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.json.wso2</groupId>
+          <artifactId>json</artifactId>
+          <version>3.0.0.wso2v4</version>
       </dependency>
 
       <dependency>
