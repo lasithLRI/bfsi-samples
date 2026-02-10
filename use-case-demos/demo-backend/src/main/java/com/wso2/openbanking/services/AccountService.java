@@ -8,28 +8,23 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class AccountService {
 
     private final BankInfoService bankInfoService;
     private final HttpTlsClient client;
+    private final OAuthTokenService oauthService;
     private String accessToken;
 
-    public AccountService(BankInfoService bankInfoService) throws Exception {
+    public AccountService(BankInfoService bankInfoService, HttpTlsClient client) throws Exception {
         this.bankInfoService = bankInfoService;
-        this.client = new HttpTlsClient(
-                ConfigLoader.getCertificatePath(),
-                ConfigLoader.getKeyPath(),
-                ConfigLoader.getTruststorePath(),
-                ConfigLoader.getTruststorePassword()
-        );
+        this.client = client;
+        this.oauthService = new OAuthTokenService(client);
     }
 
     public void setAccessToken(String accessToken) {
@@ -65,10 +60,10 @@ public class AccountService {
 
         String addAccountUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents";
         String consentBody = createAccountConsentBody();
-        String token = getToken("accounts openid");
-        String consent = consentInit(token, consentBody, addAccountUrl);
+        String token = oauthService.getToken("accounts openid");
+        String consentResponse = oauthService.initializeConsent(token, consentBody, addAccountUrl);
 
-        return consentAuth(consent, "accounts openid");
+        return oauthService.authorizeConsent(consentResponse, "accounts openid");
     }
 
     private List<String> fetchAccountIds() throws IOException {
@@ -194,58 +189,5 @@ public class AccountService {
                 "    },\n" +
                 "    \"Risk\": {}\n" +
                 "}";
-    }
-
-    private String getToken(String scope) {
-        try {
-            String jti = new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
-            AppContext context = new AppContext(
-                    ConfigLoader.getClientId(),
-                    ConfigLoader.getClientSecret(),
-                    ConfigLoader.getOAuthAlgorithm(),
-                    ConfigLoader.getTokenType(),
-                    jti
-            );
-
-            String body = "grant_type=client_credentials" +
-                    "&scope=" + scope +
-                    "&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer" +
-                    "&client_id=" + context.getClientId() +
-                    "&client_assertion=" + context.createClientAsserstion() +
-                    "&redirect_uri=" + ConfigLoader.getRedirectUri();
-
-            String response = client.postJwt(ConfigLoader.getTokenUrl(), body);
-            return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String consentInit(String token, String consentBody, String url) throws Exception {
-        JSONObject jsonObject = new JSONObject(token);
-        token = jsonObject.get("access_token").toString();
-        String response = client.postConsentInit(url, consentBody, token);
-        return response;
-    }
-
-    private String consentAuth(String consentInit, String scope) throws Exception {
-        JSONObject jsonObject = new JSONObject(consentInit);
-        JSONObject data = jsonObject.getJSONObject("Data");
-        String consentId = data.getString("ConsentId");
-
-        String jti = new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
-        AppContext context = new AppContext(
-                ConfigLoader.getClientId(),
-                ConfigLoader.getClientSecret(),
-                ConfigLoader.getOAuthAlgorithm(),
-                ConfigLoader.getTokenType(),
-                jti
-        );
-
-        String requestObject = context.makeRequestObject(consentId);
-        String url = client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
-
-        return url;
     }
 }

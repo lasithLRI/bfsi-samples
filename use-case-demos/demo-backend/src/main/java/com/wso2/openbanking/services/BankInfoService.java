@@ -157,8 +157,4 @@ public class BankInfoService {
         }
         transactions.add(0, transaction);
     }
-
-    public List<AddAccountBankInfo> addNewAccount(){
-        return getAddAccountBanksInformation();
-    }
 }

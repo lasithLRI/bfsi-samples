@@ -39,27 +39,22 @@ public class AuthService {
 
     private String exchangeCodeForToken(String code) throws Exception {
         String jti = generateJti();
-        AppContext context = new AppContext(
-                ConfigLoader.getClientId(),
-                ConfigLoader.getClientSecret(),
-                ConfigLoader.getOAuthAlgorithm(),
-                ConfigLoader.getTokenType(),
-                jti
-        );
+        JwtTokenService jwtService = JwtTokenService.getInstance();
 
-        String body = buildTokenRequestBody(code, context);
+        String clientAssertion = jwtService.createClientAssertion(jti);
+        String body = buildTokenRequestBody(code, clientAssertion);
         String response = client.postAccesstoken(ConfigLoader.getTokenUrl(), body);
 
         return parseAccessToken(response);
     }
 
-    private String buildTokenRequestBody(String code, AppContext context) throws Exception {
+    private String buildTokenRequestBody(String code, String clientAssertion) throws Exception {
         return "grant_type=authorization_code" +
                 "&code=" + code +
                 "&scope=accounts openid" +
                 "&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer" +
-                "&client_id=" + context.getClientId() +
-                "&client_assertion=" + context.createClientAsserstion() +
+                "&client_id=" + ConfigLoader.getClientId() +
+                "&client_assertion=" + clientAssertion +
                 "&redirect_uri=" + ConfigLoader.getRedirectUri();
     }
 

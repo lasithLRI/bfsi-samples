@@ -21,8 +21,16 @@ public class InitialData {
 
     public InitialData() throws Exception {
         this.bankInfoService = new BankInfoService();
-        this.accountService = new AccountService(bankInfoService);
-        this.paymentService = new PaymentService(bankInfoService);
+
+        HttpTlsClient httpClient = new HttpTlsClient(
+                ConfigLoader.getCertificatePath(),
+                ConfigLoader.getKeyPath(),
+                ConfigLoader.getTruststorePath(),
+                ConfigLoader.getTruststorePassword()
+        );
+
+        this.accountService = new AccountService(bankInfoService, httpClient);
+        this.paymentService = new PaymentService(bankInfoService, httpClient);
         this.authService = new AuthService(accountService, paymentService);
         this.configService = new ConfigService();
     }
@@ -63,7 +71,7 @@ public class InitialData {
     @Path("/accounts")
     @Produces(MediaType.APPLICATION_JSON)
     public List<AddAccountBankInfo> addAccountBanks() {
-        return bankInfoService.addNewAccount();
+        return bankInfoService.getAddAccountBanksInformation();
     }
 
     @POST
