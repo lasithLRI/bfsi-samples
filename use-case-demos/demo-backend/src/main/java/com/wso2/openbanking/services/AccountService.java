@@ -1,5 +1,6 @@
 package com.wso2.openbanking.services;
 
+import com.wso2.openbanking.ConfigLoader;
 import com.wso2.openbanking.models.Account;
 import com.wso2.openbanking.models.Bank;
 import com.wso2.openbanking.models.Transaction;
@@ -17,18 +18,18 @@ import java.util.UUID;
 
 public class AccountService {
 
-    private static final String BASE_URL = "https://localhost:8243/open-banking/v3.1/aisp";
-    private static final String MOCK_BANK_NAME = "SandBox Mock Bank";
-    private static final String MOCK_BANK_LOGO = "/resources/assets/images/logos/global_asset_trust_logo.png";
-
     private final BankInfoService bankInfoService;
     private final HttpTlsClient client;
     private String accessToken;
 
     public AccountService(BankInfoService bankInfoService) throws Exception {
         this.bankInfoService = bankInfoService;
-        this.client = new HttpTlsClient("/obtransport.pem", "/obtransport.key",
-                "/client-truststore.jks", "123456");
+        this.client = new HttpTlsClient(
+                ConfigLoader.getCertificatePath(),
+                ConfigLoader.getKeyPath(),
+                ConfigLoader.getTruststorePath(),
+                ConfigLoader.getTruststorePassword()
+        );
     }
 
     public void setAccessToken(String accessToken) {
@@ -40,8 +41,10 @@ public class AccountService {
             bankInfoService.loadBanks();
         }
 
-        if (bankInfoService.isBankExists(MOCK_BANK_NAME)) {
-            System.out.println(MOCK_BANK_NAME + " already exists, skipping...");
+        String bankName = ConfigLoader.getMockBankName();
+
+        if (bankInfoService.isBankExists(bankName)) {
+            System.out.println(bankName + " already exists, skipping...");
             return;
         }
 
@@ -49,18 +52,18 @@ public class AccountService {
         System.out.println("Account IDs: " + accountIds.toString());
 
         List<Account> accounts = fetchAccountsWithTransactions(accountIds);
-        addNewBank(MOCK_BANK_NAME, accounts);
+        addNewBank(bankName, accounts);
 
-        System.out.println("Added " + MOCK_BANK_NAME + " with " + accounts.size() +
+        System.out.println("Added " + bankName + " with " + accounts.size() +
                 " accounts and their transactions");
     }
 
     public String processAddAccount(String bankName) throws Exception {
-        if (!bankName.equals(MOCK_BANK_NAME)) {
+        if (!bankName.equals(ConfigLoader.getMockBankName())) {
             return null;
         }
 
-        String addAccountUrl = BASE_URL + "/account-access-consents";
+        String addAccountUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents";
         String consentBody = createAccountConsentBody();
         String token = getToken("accounts openid");
         String consent = consentInit(token, consentBody, addAccountUrl);
@@ -69,7 +72,10 @@ public class AccountService {
     }
 
     private List<String> fetchAccountIds() throws IOException {
-        String response = client.getAccountsRequest(BASE_URL + "/accounts", this.accessToken);
+        String response = client.getAccountsRequest(
+                ConfigLoader.getAccountBaseUrl() + "/accounts",
+                this.accessToken
+        );
         JSONObject accountsJson = new JSONObject(response);
         JSONArray accountsArray = accountsJson.getJSONObject("Data").getJSONArray("Account");
 
@@ -95,7 +101,7 @@ public class AccountService {
     }
 
     private String fetchAccountName(String accountId) throws IOException {
-        String url = BASE_URL + "/accounts/" + accountId;
+        String url = ConfigLoader.getAccountBaseUrl() + "/accounts/" + accountId;
         String response = client.getAccountFromId(url, this.accessToken);
 
         JSONObject accountJson = new JSONObject(response);
@@ -113,7 +119,7 @@ public class AccountService {
     }
 
     private double fetchAccountBalance(String accountId) throws IOException {
-        String url = BASE_URL + "/accounts/" + accountId + "/balances";
+        String url = ConfigLoader.getAccountBaseUrl() + "/accounts/" + accountId + "/balances";
         String response = client.getAccountFromId(url, this.accessToken);
 
         JSONObject balanceJson = new JSONObject(response);
@@ -125,7 +131,7 @@ public class AccountService {
     }
 
     private List<Transaction> fetchAccountTransactions(String accountId) throws IOException {
-        String url = BASE_URL + "/accounts/" + accountId + "/transactions";
+        String url = ConfigLoader.getAccountBaseUrl() + "/accounts/" + accountId + "/transactions";
         String response = client.getAccountFromId(url, this.accessToken);
 
         JSONObject transactionsJson = new JSONObject(response);
@@ -155,7 +161,13 @@ public class AccountService {
     }
 
     private void addNewBank(String bankName, List<Account> accounts) {
-        Bank newBank = new Bank(bankName, MOCK_BANK_LOGO, "black", "black", accounts);
+        Bank newBank = new Bank(
+                bankName,
+                ConfigLoader.getMockBankLogo(),
+                ConfigLoader.getMockBankPrimaryColor(),
+                ConfigLoader.getMockBankSecondaryColor(),
+                accounts
+        );
         bankInfoService.addBank(newBank);
     }
 
@@ -187,17 +199,22 @@ public class AccountService {
     private String getToken(String scope) {
         try {
             String jti = new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
-            AppContext context = new AppContext("onKy05vpqDjTenzZSRjfSOfb3ZMa",
-                    "sCekNgSWIauQ34klRhDGqfwpjc4", "PS256", "JWT", jti);
+            AppContext context = new AppContext(
+                    ConfigLoader.getClientId(),
+                    ConfigLoader.getClientSecret(),
+                    ConfigLoader.getOAuthAlgorithm(),
+                    ConfigLoader.getTokenType(),
+                    jti
+            );
 
             String body = "grant_type=client_credentials" +
                     "&scope=" + scope +
                     "&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer" +
                     "&client_id=" + context.getClientId() +
                     "&client_assertion=" + context.createClientAsserstion() +
-                    "&redirect_uri=https://tpp.local.ob/ob_demo_backend_war/init/redirected";
+                    "&redirect_uri=" + ConfigLoader.getRedirectUri();
 
-            String response = client.postJwt("https://localhost:9446/oauth2/token", body);
+            String response = client.postJwt(ConfigLoader.getTokenUrl(), body);
             return response;
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,11 +235,16 @@ public class AccountService {
         String consentId = data.getString("ConsentId");
 
         String jti = new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
-        AppContext context = new AppContext("onKy05vpqDjTenzZSRjfSOfb3ZMa",
-                "sCekNgSWIauQ34klRhDGqfwpjc4", "PS256", "JWT", jti);
+        AppContext context = new AppContext(
+                ConfigLoader.getClientId(),
+                ConfigLoader.getClientSecret(),
+                ConfigLoader.getOAuthAlgorithm(),
+                ConfigLoader.getTokenType(),
+                jti
+        );
 
         String requestObject = context.makeRequestObject(consentId);
-        String url = client.postConsentAuthRequest(requestObject, "onKy05vpqDjTenzZSRjfSOfb3ZMa", scope);
+        String url = client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
 
         return url;
     }

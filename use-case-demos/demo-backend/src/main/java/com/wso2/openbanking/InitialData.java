@@ -81,7 +81,7 @@ public class InitialData {
     @Path("/redirected")
     @Produces("text/html")
     public Response redirectedPath() {
-        String html = HtmlResponseBuilder.buildAuthRedirectPage("http://localhost:5173/");
+        String html = HtmlResponseBuilder.buildAuthRedirectPage();
         return Response.ok(html).build();
     }
 

@@ -1,8 +1,9 @@
 package com.wso2.openbanking.services;
 
-import com.wso2.openbanking.http.AuthUrlBuilder;
+import com.wso2.openbanking.ConfigLoader;
 import com.wso2.openbanking.http.HttpConnection;
 import com.wso2.openbanking.http.SSLContextFactory;
+import com.wso2.openbanking.http.AuthUrlBuilder;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -16,8 +17,7 @@ public class HttpTlsClient {
         this.sslContext = SSLContextFactory.create(certPath, keyPath, trustStorePath, trustStorePassword);
     }
 
-    // ==================== OAuth Token Methods ====================
-
+    // OAuth Token Methods
     public String postJwt(String url, String body) throws Exception {
         return HttpConnection.post(url, sslContext)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -34,12 +34,11 @@ public class HttpTlsClient {
                 .execute();
     }
 
-    // ==================== Consent Methods ====================
-
+    // Consent Methods
     public String postConsentInit(String url, String body, String token) throws Exception {
         return HttpConnection.post(url, sslContext)
                 .addHeader("Authorization", "Bearer " + token)
-                .addHeader("x-fapi-financial-id", "open-bank")
+                .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
                 .addHeader("Content-Type", "application/json")
                 .withBody(body)
                 .execute();
@@ -54,11 +53,10 @@ public class HttpTlsClient {
                 .executeAndGetRedirect();
     }
 
-    // ==================== Account Methods ====================
-
+    // Account Methods
     public String getAccountsRequest(String url, String token) throws IOException {
         return HttpConnection.get(url, sslContext)
-                .addHeader("x-fapi-financial-id", "open-bank")
+                .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
                 .addHeader("Authorization", "Bearer " + token)
                 .addHeader("Accept", "application/json")
                 .addHeader("Content-Type", "application/json; charset=UTF-8")
@@ -67,28 +65,27 @@ public class HttpTlsClient {
 
     public String getAccountFromId(String url, String token) throws IOException {
         return HttpConnection.get(url, sslContext)
-                .addHeader("x-fapi-financial-id", "open-bank")
+                .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
                 .addHeader("Authorization", "Bearer " + token)
                 .addHeader("Accept", "application/json")
                 .addHeader("Content-Type", "application/json; charset=UTF-8")
                 .execute();
     }
 
-    // ==================== Payment Methods ====================
-
+    // Payment Methods
     public String postPaymentConsentInit(String url, String body, String token) throws Exception {
         return HttpConnection.post(url, sslContext)
                 .addHeader("Authorization", "Bearer " + token)
-                .addHeader("x-fapi-financial-id", "open-bank")
+                .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
                 .addHeader("Content-Type", "application/json")
-                .addHeader("x-idempotency-key", "709909")
+                .addHeader("x-idempotency-key", ConfigLoader.getPaymentIdempotencyKey())
                 .withBody(body)
                 .execute();
     }
 
     public String postPayments(String url, String body, String token) throws Exception {
         return HttpConnection.post(url, sslContext)
-                .addHeader("x-fapi-financial-id", "open-bank")
+                .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
                 .addHeader("Authorization", "Bearer " + token)
                 .addHeader("Accept", "application/json")
                 .addHeader("Content-Type", "application/json; charset=UTF-8")

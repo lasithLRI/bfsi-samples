@@ -1,5 +1,6 @@
 package com.wso2.openbanking.services;
 
+import com.wso2.openbanking.ConfigLoader;
 import com.wso2.openbanking.models.Account;
 import com.wso2.openbanking.models.Payment;
 import com.wso2.openbanking.models.Transaction;
@@ -14,17 +15,18 @@ import java.util.UUID;
 
 public class PaymentService {
 
-    private static final String PAYMENT_BASE_URL = "https://localhost:8243/open-banking/v3.1/pisp";
-    private static final String TOKEN_URL = "https://localhost:9446/oauth2/token";
-
     private final BankInfoService bankInfoService;
     private final HttpTlsClient client;
     private Payment currentPayment;
 
     public PaymentService(BankInfoService bankInfoService) throws Exception {
         this.bankInfoService = bankInfoService;
-        this.client = new HttpTlsClient("/obtransport.pem", "/obtransport.key",
-                "/client-truststore.jks", "123456");
+        this.client = new HttpTlsClient(
+                ConfigLoader.getCertificatePath(),
+                ConfigLoader.getKeyPath(),
+                ConfigLoader.getTruststorePath(),
+                ConfigLoader.getTruststorePassword()
+        );
     }
 
     public String processPaymentRequest(Payment payment) throws Exception {
@@ -33,7 +35,7 @@ public class PaymentService {
         String token = getToken("payments openid");
         System.out.println("token: " + token);
 
-        String paymentUrl = PAYMENT_BASE_URL + "/payment-consents";
+        String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payment-consents";
         String consentBody = createPaymentConsentBody();
         String response = consentInit(token, consentBody, paymentUrl);
 
@@ -59,7 +61,6 @@ public class PaymentService {
 
         updateAccountWithPayment(bankName, accountNumber, paymentAmount, transaction);
 
-        // Clear current payment after processing
         currentPayment = null;
     }
 
@@ -129,8 +130,13 @@ public class PaymentService {
     private String getToken(String scope) {
         try {
             String jti = new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
-            AppContext context = new AppContext("onKy05vpqDjTenzZSRjfSOfb3ZMa",
-                    "sCekNgSWIauQ34klRhDGqfwpjc4", "PS256", "JWT", jti);
+            AppContext context = new AppContext(
+                    ConfigLoader.getClientId(),
+                    ConfigLoader.getClientSecret(),
+                    ConfigLoader.getOAuthAlgorithm(),
+                    ConfigLoader.getTokenType(),
+                    jti
+            );
 
             String body = "grant_type=client_credentials" +
                     "&scope=" + scope +
@@ -139,7 +145,7 @@ public class PaymentService {
                     "&client_assertion=" + context.createClientAsserstion() +
                     "&redirect_uri=https://www.google.com/redirects/redirect1";
 
-            String response = client.postJwt(TOKEN_URL, body);
+            String response = client.postJwt(ConfigLoader.getTokenUrl(), body);
             return response;
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,11 +166,16 @@ public class PaymentService {
         String consentId = data.getString("ConsentId");
 
         String jti = new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
-        AppContext context = new AppContext("onKy05vpqDjTenzZSRjfSOfb3ZMa",
-                "sCekNgSWIauQ34klRhDGqfwpjc4", "PS256", "JWT", jti);
+        AppContext context = new AppContext(
+                ConfigLoader.getClientId(),
+                ConfigLoader.getClientSecret(),
+                ConfigLoader.getOAuthAlgorithm(),
+                ConfigLoader.getTokenType(),
+                jti
+        );
 
         String requestObject = context.makeRequestObject(consentId);
-        String url = client.postConsentAuthRequest(requestObject, "onKy05vpqDjTenzZSRjfSOfb3ZMa", scope);
+        String url = client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
 
         return url;
     }

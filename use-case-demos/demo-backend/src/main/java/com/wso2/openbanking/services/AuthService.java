@@ -1,16 +1,12 @@
 package com.wso2.openbanking.services;
 
+import com.wso2.openbanking.ConfigLoader;
 import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.util.UUID;
 
 public class AuthService {
-
-    private static final String TOKEN_URL = "https://localhost:9446/oauth2/token";
-    private static final String CLIENT_ID = "onKy05vpqDjTenzZSRjfSOfb3ZMa";
-    private static final String CLIENT_SECRET = "sCekNgSWIauQ34klRhDGqfwpjc4";
-    private static final String REDIRECT_URI = "https://tpp.local.ob/ob_demo_backend_war/init/redirected";
 
     private final AccountService accountService;
     private final PaymentService paymentService;
@@ -20,8 +16,12 @@ public class AuthService {
     public AuthService(AccountService accountService, PaymentService paymentService) throws Exception {
         this.accountService = accountService;
         this.paymentService = paymentService;
-        this.client = new HttpTlsClient("/obtransport.pem", "/obtransport.key",
-                "/client-truststore.jks", "123456");
+        this.client = new HttpTlsClient(
+                ConfigLoader.getCertificatePath(),
+                ConfigLoader.getKeyPath(),
+                ConfigLoader.getTruststorePath(),
+                ConfigLoader.getTruststorePassword()
+        );
     }
 
     public void setRequestStatus(String status) {
@@ -39,10 +39,16 @@ public class AuthService {
 
     private String exchangeCodeForToken(String code) throws Exception {
         String jti = generateJti();
-        AppContext context = new AppContext(CLIENT_ID, CLIENT_SECRET, "PS256", "JWT", jti);
+        AppContext context = new AppContext(
+                ConfigLoader.getClientId(),
+                ConfigLoader.getClientSecret(),
+                ConfigLoader.getOAuthAlgorithm(),
+                ConfigLoader.getTokenType(),
+                jti
+        );
 
         String body = buildTokenRequestBody(code, context);
-        String response = client.postAccesstoken(TOKEN_URL, body);
+        String response = client.postAccesstoken(ConfigLoader.getTokenUrl(), body);
 
         return parseAccessToken(response);
     }
@@ -54,7 +60,7 @@ public class AuthService {
                 "&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer" +
                 "&client_id=" + context.getClientId() +
                 "&client_assertion=" + context.createClientAsserstion() +
-                "&redirect_uri=" + REDIRECT_URI;
+                "&redirect_uri=" + ConfigLoader.getRedirectUri();
     }
 
     private String parseAccessToken(String response) {

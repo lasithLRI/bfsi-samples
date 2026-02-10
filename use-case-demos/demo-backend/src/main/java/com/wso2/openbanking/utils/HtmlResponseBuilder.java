@@ -1,6 +1,12 @@
 package com.wso2.openbanking.utils;
 
+import com.wso2.openbanking.ConfigLoader;
+
 public class HtmlResponseBuilder {
+
+    public static String buildAuthRedirectPage() {
+        return buildAuthRedirectPage(ConfigLoader.getFrontendHomeUrl());
+    }
 
     public static String buildAuthRedirectPage(String frontendHomeUrl) {
         return "<html>\n" +

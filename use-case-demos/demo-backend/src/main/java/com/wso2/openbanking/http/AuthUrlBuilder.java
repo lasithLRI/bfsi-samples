@@ -1,27 +1,22 @@
 package com.wso2.openbanking.http;
 
+import com.wso2.openbanking.ConfigLoader;
+
 import static org.apache.cxf.common.util.UrlUtils.urlEncode;
 
 public class AuthUrlBuilder {
 
-    private static final String AUTH_BASE_URL = "https://localhost:9446/oauth2/authorize";
-    private static final String REDIRECT_URI = "https://tpp.local.ob/ob_demo_backend_war/init/redirected";
-    private static final String STATE = "YWlzcDozMTQ2";
-    private static final String NONCE = "nonce";
-    private static final String PROMPT = "login";
-    private static final String RESPONSE_TYPE = "code id_token";
-
     public static String build(String requestObjectJwt, String clientId, String scope) {
-        StringBuilder url = new StringBuilder(AUTH_BASE_URL);
+        StringBuilder url = new StringBuilder(ConfigLoader.getAuthorizeUrl());
 
-        url.append("?response_type=").append(urlEncode(RESPONSE_TYPE));
+        url.append("?response_type=").append(urlEncode(ConfigLoader.getResponseType()));
         url.append("&client_id=").append(clientId);
         url.append("&scope=").append(urlEncode(scope));
-        url.append("&redirect_uri=").append(urlEncode(REDIRECT_URI));
-        url.append("&state=").append(urlEncode(STATE));
+        url.append("&redirect_uri=").append(urlEncode(ConfigLoader.getRedirectUri()));
+        url.append("&state=").append(urlEncode(ConfigLoader.getOAuthState()));
         url.append("&request=").append(urlEncode(requestObjectJwt));
-        url.append("&prompt=").append(urlEncode(PROMPT));
-        url.append("&nonce=").append(urlEncode(NONCE));
+        url.append("&prompt=").append(urlEncode(ConfigLoader.getOAuthPrompt()));
+        url.append("&nonce=").append(urlEncode(ConfigLoader.getOAuthNonce()));
 
         return url.toString();
     }
