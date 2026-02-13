@@ -41,8 +41,11 @@ interface InfographicsContentProps {
 export const InfographicsContent = ({total,chartInfo}:InfographicsContentProps)=>{
 
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down('md'));
+    const isBelow1024 = useMediaQuery('(max-width:1024px)');
+
     const displayDirection = isSmallScreen ? 'column' : 'row';
     const responsiveGap = isSmallScreen ? '0.2rem' : '1rem';
+
     const chartjsData = {
         labels: chartInfo.labels,
         datasets: [
@@ -58,10 +61,9 @@ export const InfographicsContent = ({total,chartInfo}:InfographicsContentProps)=
 
     const options: ChartOptions<'doughnut'> = {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         cutout:chartInfo.cutout,
         layout:{
-
             padding:{
                 left:0,
                 right:0,
@@ -69,21 +71,12 @@ export const InfographicsContent = ({total,chartInfo}:InfographicsContentProps)=
         },
         plugins: {
             legend: {
-                // position: "right",
-                // align: 'center',
-                // labels: {
-                //     usePointStyle: true,
-                //     boxWidth: 12,
-                //     padding: 15,
-                //     font:{
-                //         size: 12
-                //     }
-                // }
                 display: false,
             },
             tooltip: {}
         },
     }
+
     return(
         <>
             <Box flexDirection={displayDirection} display={"flex"} width={"100%"} gap={'1rem'} >
@@ -94,7 +87,7 @@ export const InfographicsContent = ({total,chartInfo}:InfographicsContentProps)=
                         <p>Last update 1 min ago</p>
                     </div>
                 </Card>
-                <Card className={'info-graphic-card'}>
+                <Card className={`info-graphic-card ${isBelow1024 ? 'mobile-layout' : ''}`}>
                     <h3>Account Distribution</h3>
                     <div className="chart-wrapper">
                         <div className="chart-container">

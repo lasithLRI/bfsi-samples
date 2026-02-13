@@ -79,7 +79,7 @@ const AllTransactionsPage = ({name, transactions,
     const showNextButton = currentPage < totalPages;
     return (
         <>
-            <ApplicationLayout name={name}>
+            <ApplicationLayout name={name} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Transactions"}>
                     <Box className={'table-container'}>
                         <TableComponent

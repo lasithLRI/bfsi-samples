@@ -70,7 +70,7 @@ const AddAccountsPage =
     }
     return (
         <>
-            <ApplicationLayout name={appName}>
+            <ApplicationLayout name={appName} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Add Account"}>
                     <Box className="accounts-outer">
                         <h3 style={{marginBottom:"1.5rem"}}>Select your Bank</h3>

@@ -17,7 +17,7 @@
  */
 
 
-import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
+
 
 import { Grid } from "@mui/material";
 import HomePageLayout from "../../layouts/home-page-layout/home-page-layout.tsx";
@@ -36,10 +36,11 @@ import CustomTitle from "../../components/custom-title/custom-title.tsx";
 import {useNavigate} from "react-router-dom";
 import OverlayConfirmation from "../../components/overlay-confirmation/overlay-confirmation.tsx";
 import TableComponent from "../../components/table-component.tsx";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Joyride from "react-joyride";
 import { DEMO_STEPS } from "../../utility/onboarding.ts";
 import type { CallBackProps } from 'react-joyride';
+import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
 
 interface AccountsCentralLayoutProps {
     name: string;
@@ -54,22 +55,14 @@ interface AccountsCentralLayoutProps {
     overlayInformation: OverlayDataProp;
     transactionTableHeaderData?:TableConfigs[];
     standingOrdersTableHeaderData?:TableConfigs[];
+    runTour: boolean;
+    setRunTour: (value: boolean) => void;
+    onStartTour: () => void;
 }
 
-export interface SideButtonProps {
-    name: string;
-}
-
-/**
- * @function Home
- * @description The main dashboard component that composes various UI elements
- * like infographics, connected accounts, and transaction lists, into the
- * central application layout. It handles specific button clicks to navigate
- * to other functional pages (e.g., 'Add Account', 'view more').
- */
 const Home = ({standingOrdersTableHeaderData,name,userInfo,total,chartData,
                   banksWithAccounts,transactions,standingOrderList,appInfo,banksList,overlayInformation,
-                  transactionTableHeaderData}:AccountsCentralLayoutProps)=>{
+                  transactionTableHeaderData, runTour, setRunTour, onStartTour}:AccountsCentralLayoutProps)=>{
 
     const navigate = useNavigate();
     const addAccount =()=>{
@@ -89,34 +82,34 @@ const Home = ({standingOrdersTableHeaderData,name,userInfo,total,chartData,
             addAccount();
         }else if(buttonName === "View More"){
             viewMore(title);
-
         }
     }
-    const [runTour, setRunTour] = useState(false);
+
     useEffect(() => {
-        const hasSeenTour = sessionStorage.getItem("hasCompletedTour");
-        if (hasSeenTour !== "true") {
+        // Auto-start tour only if not completed
+        const tourCompleted = sessionStorage.getItem('tourCompleted');
+        if (tourCompleted !== 'true') {
             const timer = setTimeout(() => {
                 setRunTour(true);
             }, 1000);
             return () => clearTimeout(timer);
         }
-    }, []);
+    }, [setRunTour]);
+
     const handleCallback = (data: CallBackProps) => {
         const { status, action } = data;
         if (action === 'close') {
             setRunTour(false);
-            sessionStorage.setItem("hasCompletedTour", "true");
             return;
         }
         if (status === 'finished' || status === 'skipped') {
             setRunTour(false);
-            sessionStorage.setItem("hasCompletedTour", "true");
         }
     };
+
     return (
         <>
-            <ApplicationLayout name={name}>
+            <ApplicationLayout name={name} onStartTour={onStartTour}>
                 <HomePageLayout userInfo={userInfo} appInfo={appInfo}>
                     <Grid className={'info-graphic'}>
                         <InfographicsContent total={total} chartInfo={chartData}/>
@@ -167,6 +160,18 @@ const Home = ({standingOrdersTableHeaderData,name,userInfo,total,chartData,
                     },
                     buttonSkip: {
                         display: 'none'
+                    },
+                    tooltip: {
+                        padding: '1rem',
+                    },
+                    tooltipContent: {
+                        padding: '8px 0'
+                    },
+                    tooltipTitle: {
+                        margin: '0 0 8px 0'
+                    },
+                    tooltipFooter: {
+                        marginTop: '8px'
                     }
                 }}
                 locale={{
@@ -179,4 +184,3 @@ const Home = ({standingOrdersTableHeaderData,name,userInfo,total,chartData,
 }
 
 export default Home;
-

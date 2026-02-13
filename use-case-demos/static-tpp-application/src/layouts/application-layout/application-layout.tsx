@@ -17,11 +17,15 @@
  */
 
 import {type FC, type ReactNode} from "react";
+import { createPortal } from "react-dom";
 import Header from "../../components/header/header";
+import { Button } from "@oxygen-ui/react";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export interface ApplicationLayoutProps {
     name: string;
     children: ReactNode;
+    onStartTour?: () => void;
 }
 
 /**
@@ -30,7 +34,7 @@ export interface ApplicationLayoutProps {
  * overall structure for the application. It renders the global `Header`
  * and contains the main content (`children`) of the current page below it.
  */
-export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name,children }) => {
+export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children, onStartTour }) => {
     return (
         <>
             <div className="application-layout">
@@ -39,9 +43,30 @@ export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name,children })
                     {children}
                 </div>
             </div>
-
-
-
+            {/* Render button using Portal directly to body */}
+            {onStartTour && createPortal(
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={onStartTour}
+                    startIcon={<HelpOutlineIcon />}
+                    sx={{
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        zIndex: 999999,
+                        textTransform: 'none',
+                        backgroundColor: 'white',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        '&:hover': {
+                            backgroundColor: 'var(--oxygen-palette-primary-main)'
+                        }
+                    }}
+                >
+                    Start Tour
+                </Button>,
+                document.body
+            )}
         </>
     );
 };
