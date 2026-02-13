@@ -49,24 +49,20 @@ export function App() {
 
     const location = useLocation();
 
-    // Initialize tour state from sessionStorage
     const [runTour, setRunTour] = useState(() => {
         const tourCompleted = sessionStorage.getItem('tourCompleted');
         return tourCompleted !== 'true'; // Auto-run if not completed
     });
 
-// Wrapper to also update sessionStorage
     const handleSetRunTour = (value: boolean) => {
         setRunTour(value);
         if (!value) {
-            // When tour is stopped/completed, mark as completed
             sessionStorage.setItem('tourCompleted', 'true');
         }
     };
 
     const handleStartTour = () => {
         setRunTour(true);
-        // Don't mark as completed when manually starting
     };
 
 

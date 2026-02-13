@@ -26,6 +26,7 @@ export interface ApplicationLayoutProps {
     name: string;
     children: ReactNode;
     onStartTour?: () => void;
+    isTourRunning?: boolean;
 }
 
 /**
@@ -34,7 +35,7 @@ export interface ApplicationLayoutProps {
  * overall structure for the application. It renders the global `Header`
  * and contains the main content (`children`) of the current page below it.
  */
-export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children, onStartTour }) => {
+export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children, onStartTour, isTourRunning }) => {
     return (
         <>
             <div className="application-layout">
@@ -43,8 +44,8 @@ export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children, 
                     {children}
                 </div>
             </div>
-            {/* Render button using Portal directly to body */}
-            {onStartTour && createPortal(
+
+            {onStartTour && !isTourRunning && createPortal(
                 <Button
                     variant="outlined"
                     color="primary"
@@ -59,7 +60,8 @@ export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children, 
                         backgroundColor: 'white',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                         '&:hover': {
-                            backgroundColor: 'var(--oxygen-palette-primary-main)'
+                            backgroundColor: 'var(--oxygen-palette-primary-main)',
+                            color:'var(--oxygen-palette-fontColor-white)'
                         }
                     }}
                 >

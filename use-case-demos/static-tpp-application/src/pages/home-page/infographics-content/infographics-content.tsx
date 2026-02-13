@@ -103,10 +103,8 @@ export const InfographicsContent = ({total,chartInfo}:InfographicsContentProps)=
                             ))}
                         </div>
                     </div>
-
                 </Card>
             </Box>
-
         </>
     );
 }

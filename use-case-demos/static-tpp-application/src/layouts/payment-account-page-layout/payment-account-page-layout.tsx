@@ -39,15 +39,15 @@ const PaymentAccountPageLayout = ({children,title}:PageLayoutProps)=>{
     }
     return (
         <>
-                <Box className='title-and-back-container'>
-                    <IconButton onClick={handleBackNavigation}>
-                        <ChevronLeftIcon size={'24'}/>
-                    </IconButton>
-                    <h3>{title}</h3>
-                </Box>
-                <Box className={'payments-layout'}>
-                    {children}
-                </Box>
+            <Box className='title-and-back-container'>
+                <IconButton onClick={handleBackNavigation}>
+                    <ChevronLeftIcon size={'24'}/>
+                </IconButton>
+                <h3>{title}</h3>
+            </Box>
+            <Box className={'payments-layout'}>
+                {children}
+            </Box>
         </>
     );
 }

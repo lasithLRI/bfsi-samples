@@ -86,7 +86,6 @@ const Home = ({standingOrdersTableHeaderData,name,userInfo,total,chartData,
     }
 
     useEffect(() => {
-        // Auto-start tour only if not completed
         const tourCompleted = sessionStorage.getItem('tourCompleted');
         if (tourCompleted !== 'true') {
             const timer = setTimeout(() => {
@@ -109,7 +108,7 @@ const Home = ({standingOrdersTableHeaderData,name,userInfo,total,chartData,
 
     return (
         <>
-            <ApplicationLayout name={name} onStartTour={onStartTour}>
+            <ApplicationLayout name={name} onStartTour={onStartTour} isTourRunning={runTour}>
                 <HomePageLayout userInfo={userInfo} appInfo={appInfo}>
                     <Grid className={'info-graphic'}>
                         <InfographicsContent total={total} chartInfo={chartData}/>

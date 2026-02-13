@@ -33,6 +33,7 @@ export interface HeaderProps {
  */
 const Header: FC<HeaderProps> = ({ name }) => {
     return(
+        
         <div className="header-outer">
             <p>{name}</p>
             <IconButton style={{ color: 'white' }}>

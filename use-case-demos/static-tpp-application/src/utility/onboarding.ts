@@ -35,12 +35,12 @@ export const DEMO_STEPS: Step[] = [
         target: '.view-all-transactions',
         content: 'You can view all transactions here. ',
         title: 'View All Transactions (3/4)',
-        disableBeacon: true,  // ✅ Added this
+        disableBeacon: true,
     },
     {
         target: '.view-all-standing-orders',
         content: 'You can view all standing orders. ',
         title: 'View All Standing Orders  (4/4)',
-        disableBeacon: true,  // ✅ Added this
+        disableBeacon: true,
     },
 ];
