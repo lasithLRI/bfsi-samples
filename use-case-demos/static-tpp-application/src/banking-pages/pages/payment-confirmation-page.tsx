@@ -32,6 +32,19 @@ const PaymentConfirmationPage = () => {
     const { onSuccessHandler, navigationData, themeColor, handleCancel } =
         useOutletContext<OutletContext>();
 
+    /**
+     * Extracts account number by removing the bank name prefix
+     * @param fullAccount - Full account string (e.g., "Ascend Global Bank-0066-4435-9454")
+     * @returns Account number only (e.g., "0066-4435-9454")
+     */
+    const getAccountNumberOnly = (fullAccount: string | undefined): string => {
+        if (!fullAccount) return 'N/A';
+        const firstHyphenIndex = fullAccount.indexOf('-');
+        return firstHyphenIndex !== -1
+            ? fullAccount.substring(firstHyphenIndex + 1)
+            : fullAccount;
+    };
+
     return (
         <>
             <Grid container className={'content-page-container'} xs={12} sm={12} md={12} lg={12}>
@@ -55,7 +68,7 @@ const PaymentConfirmationPage = () => {
                         }}
                     >
                         <Box sx={{ marginBottom: '0.5rem' }}>
-                            <strong>From Account:</strong> {navigationData.current?.formData?.userAccount ?? 'N/A'}
+                            <strong>From Account:</strong> {getAccountNumberOnly(navigationData.current?.formData?.userAccount)}
                         </Box>
                         <List
                             sx={{

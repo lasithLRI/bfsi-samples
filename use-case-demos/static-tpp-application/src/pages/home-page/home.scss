@@ -234,7 +234,7 @@
     }
 
     .table-row{
-      background: var(-tableHeaderBackground);
+      background: var(--oxygen-palette-primary-tableHeaderBackground);
       .table-body{
         font-size: 1.2rem;
         text-transform: capitalize;

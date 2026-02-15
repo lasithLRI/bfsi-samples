@@ -19,7 +19,7 @@
 import {Box, Button, FormControl, FormControlLabel, Grid, List, ListItem, Switch} from "@oxygen-ui/react";
 import {useOutletContext} from "react-router-dom";
 import type {OutletContext} from "./login-page.tsx";
-import {getExpiryDate, type SelectedAccountEntry} from "./multiple-accounts-selection-page.tsx";
+import {getExpiryDate, type SelectedAccountEntry} from "./accounts-selections-types.ts";
 import './inner-pages-stylings.scss'
 
 /**
