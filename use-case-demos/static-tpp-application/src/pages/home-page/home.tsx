@@ -161,7 +161,7 @@ const Home = ({standingOrdersTableHeaderData,name,userInfo,total,chartData,
                         display: 'none'
                     },
                     tooltip: {
-                        padding: '1rem',
+                        padding: '8px',
                     },
                     tooltipContent: {
                         padding: '8px 0'
