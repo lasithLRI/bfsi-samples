@@ -42,7 +42,6 @@ const SingleAccountSelectionPage = () => {
     const {
         accountsNumbersToAdd,
         onSuccessHandler,
-        navigationData,
         accountsToAdd,
         selectedAccountNumber,
         themeColor,
@@ -61,7 +60,6 @@ const SingleAccountSelectionPage = () => {
     const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedAccount(event.target.value);
     };
-    const bankName = navigationData.current?.bankInfo?.name || 'Bank';
 
     return (
         <Grid container className={'content-page-container'} xs={12} sm={12} md={12} lg={12}>
@@ -99,7 +97,7 @@ const SingleAccountSelectionPage = () => {
                                             sx={{ '--oxygen-palette-primary-main': themeColor }}
                                         />
                                     }
-                                    label={`${bankName}-${account}`}
+                                    label={`${account}`}
                                     value={account}
                                     sx={{ fontSize: '0.95rem' }}
                                 />

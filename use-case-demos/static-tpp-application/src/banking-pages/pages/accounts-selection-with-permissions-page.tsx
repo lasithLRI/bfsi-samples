@@ -44,7 +44,7 @@ export const getExpiryDate = () => {
 
 const AccountsSelectionWithPermissionsPage = ()=>{
 
-    const {accountsNumbersToAdd, onSuccessHandler, navigationData, accountsToAdd, selectedAccountNumber, themeColor, handleCancel} = useOutletContext<OutletContext>();
+    const {accountsNumbersToAdd, onSuccessHandler, accountsToAdd, selectedAccountNumber, themeColor, handleCancel} = useOutletContext<OutletContext>();
     const accountsList = accountsNumbersToAdd.map((account) => selectedAccountNumber + account);
     const permissions = ["Read Accounts", "Read Balances", "Read Transactions"];
 
@@ -141,7 +141,7 @@ const AccountsSelectionWithPermissionsPage = ()=>{
                                                     sx={{ '--oxygen-palette-primary-main': themeColor }}
                                                 />
                                             }
-                                            label={`${navigationData.current?.bankInfo?.name ?? 'Bank'}-${account}`}
+                                            label={`${account}`}
                                             sx={{ fontSize: '0.95rem' }}
                                         />
                                     );

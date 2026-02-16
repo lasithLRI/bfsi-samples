@@ -32,12 +32,8 @@ export const calculateNextDate = (daysToAdd: number): string => {
     const futureDate = new Date(currentDate);
     futureDate.setDate(currentDate.getDate() + daysToAdd);
 
-    // Format as YYYY-MM-DD
-    const year = futureDate.getFullYear();
-    const month = String(futureDate.getMonth() + 1).padStart(2, '0');
-    const day = String(futureDate.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
+    // Format as YYYY-MM-DD using toISOString and splitting
+    return futureDate.toISOString().split('T')[0];
 };
 
 /**
@@ -76,11 +72,9 @@ export const calculatePastDate = (daysAgo: number): string => {
     const currentDate = new Date();
     const pastDate = new Date(currentDate);
     pastDate.setDate(currentDate.getDate() - daysAgo);
-    const year = pastDate.getFullYear();
-    const month = String(pastDate.getMonth() + 1).padStart(2, '0');
-    const day = String(pastDate.getDate()).padStart(2, '0');
 
-    return `${year}-${month}-${day}`;
+    // Format as YYYY-MM-DD using toISOString and splitting
+    return pastDate.toISOString().split('T')[0];
 };
 
 /**

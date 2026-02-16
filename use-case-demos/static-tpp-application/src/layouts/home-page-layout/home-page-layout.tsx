@@ -34,8 +34,8 @@ interface HomePageLayoutProps {
  * at the top and wraps the main content (`children`) below it, applying responsive padding.
  */
 const HomePageLayout = ({children,userInfo, appInfo}:HomePageLayoutProps)=>{
-    const isLargeScreen = useMediaQuery(useTheme().breakpoints.down('md'));
-    const responsivePadding = isLargeScreen ? "16px 8px": "16px 24px";
+    const isLargeScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
+    const responsivePadding = isLargeScreen ? "1rem 1rem": "1rem 4rem";
     return(
         <>
             <Box className='home-page-outer'>

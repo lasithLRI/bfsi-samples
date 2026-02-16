@@ -55,6 +55,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {useConfig} from "./use-config.ts";
 import {queryClient} from "../utility/query-client.ts";
 import {processAllBankDates} from "../utility/date-utils.ts";
+import {getNextTransactionId} from "../utility/transaction-utils.ts";
 
 /**
  * @function useConfigContext
@@ -62,7 +63,10 @@ import {processAllBankDates} from "../utility/date-utils.ts";
  * aggregates raw data into calculated properties (e.g., totals, chart data),
  * and critically, handles global state updates following bank redirection flows (payments, account linking).
  *
- * NOW INCLUDES: Automatic processing of standing orders to convert relative day numbers to actual dates.
+ * NOW INCLUDES:
+ * - Automatic processing of standing orders to convert relative day numbers to actual dates.
+ * - Proper transaction ID generation with 8-digit format (T00123460)
+ * - Current date assignment for new transactions
  */
 const CONFIG_QUER_KEY = ["appConfig"];
 
@@ -84,20 +88,25 @@ const useConfigContext = () => {
             console.error("Failed to update session storage");
         }
     }
+
     const processedBanks = useMemo(() => {
         if (!configData?.banks) return [];
         return processAllBankDates(configData.banks);
     }, [configData?.banks]);
+
     const allTransactions = useMemo(() => {
         return processedBanks.flatMap(bank =>
             bank.accounts.flatMap((account: { transactions: any; }) => account.transactions || [])
         );
     }, [processedBanks]);
+
     const [accountsToTransactions, setAccountsToTransactions] = useState<any[]>([]);
     console.log(accountsToTransactions)
+
     useEffect(() => {
         setAccountsToTransactions(allTransactions);
     }, [allTransactions]);
+
     const totals = useMemo(() => {
         if (!configData) return [];
         return processedBanks.map((bank) => {
@@ -106,6 +115,7 @@ const useConfigContext = () => {
             return { bank, total };
         });
     }, [processedBanks, configData]);
+
     const chartInfo = useMemo(() => {
         if (!configData) return { label: '', labels: [], data: [], backgroundColor: [], borderColor: [], borderWidth: 0, cutout: '0%' };
         return {
@@ -118,9 +128,11 @@ const useConfigContext = () => {
             cutout: '35%'
         }
     }, [configData, totals]);
+
     const totalBalances = useMemo(() => {
         return totals.reduce((s, b) => s + b.total, 0);
     }, [totals]);
+
     const banksWithAllAccounts = useMemo(() => {
         if (!configData) return [];
         return processedBanks.map((bank) => {
@@ -139,9 +151,11 @@ const useConfigContext = () => {
             };
         });
     }, [processedBanks, configData]);
+
     const standingOrdersWithDates = useMemo(() => {
         return processedBanks.flatMap(bank => bank.standingOrders || []);
     }, [processedBanks]);
+
     useEffect(() => {
         if (!configData || (!location.state && !redirectState)) {
             return;
@@ -168,42 +182,56 @@ const useConfigContext = () => {
                 newTransactionData.account = formattedAccountNumber;
                 const transactionAmount = parseFloat(newTransactionData.amount);
                 const sourceBankName = newTransactionData.bank;
+
                 const newConfig = queryClient
                     .setQueryData(CONFIG_QUER_KEY, (oldConfig: Config | undefined) => {
-                    const baseConfig = oldConfig || configData;
-                    const updatedBanks = baseConfig.banks.map(bank => {
-                        if (bank.name === sourceBankName) {
-                            const updatedAccounts =
-                                bank.accounts.map((account: Account) => {
-                                if (account.id === formattedAccountNumber || account.id === fullAccountNumber) {
-                                    const newBalance = (account.balance ?? 0) - transactionAmount;
-                                    if (newBalance < 0) {
-                                        throw new Error(`Insufficient funds: cannot process payment of 
+                        const baseConfig = oldConfig || configData;
+                        const updatedBanks = baseConfig.banks.map(bank => {
+                            if (bank.name === sourceBankName) {
+                                const updatedAccounts =
+                                    bank.accounts.map((account: Account) => {
+                                        if (account.id === formattedAccountNumber || account.id === fullAccountNumber) {
+                                            const newBalance = (account.balance ?? 0) - transactionAmount;
+                                            if (newBalance < 0) {
+                                                throw new Error(`Insufficient funds: cannot process payment of 
                                         ${transactionAmount} from account with balance ${account.balance}`);
-                                    }
-                                    const currentTransactions = account.transactions || [];
-                                    return {
-                                        ...account,
-                                        balance: newBalance,
-                                        transactions: [newTransactionData, ...currentTransactions]
-                                    };
-                                }
-                                return account;
-                            });
-                            return {
-                                ...bank,
-                                accounts: updatedAccounts
-                            };
-                        }
-                        return bank;
+                                            }
+                                            const currentTransactions = account.transactions || [];
+
+                                            // Generate proper transaction ID and add current date
+                                            const newTransactionId = getNextTransactionId(currentTransactions);
+                                            const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+
+                                            const formattedTransaction = {
+                                                ...newTransactionData,
+                                                id: newTransactionId,
+                                                date: currentDate
+                                            };
+
+                                            return {
+                                                ...account,
+                                                balance: newBalance,
+                                                transactions: [formattedTransaction, ...currentTransactions]
+                                            };
+                                        }
+                                        return account;
+                                    });
+                                return {
+                                    ...bank,
+                                    accounts: updatedAccounts
+                                };
+                            }
+                            return bank;
+                        });
+                        return {
+                            ...baseConfig!,
+                            banks: updatedBanks,
+                        };
                     });
-                    return {
-                        ...baseConfig!,
-                        banks: updatedBanks,
-                    };
-                });
+
                 queryClient.invalidateQueries({ queryKey: CONFIG_QUER_KEY });
                 updateSessionStorage(newConfig as Config);
+
                 const paymentOverlayText = `Your payment of ${newTransactionData.currency} ${newTransactionData.amount}  
                 has been successfully processed.`;
                 setOverlayInformation({
@@ -231,7 +259,8 @@ const useConfigContext = () => {
                         id: newAccountId,
                         bank: bankName,
                         name: "savings account",
-                        balance: 500
+                        balance: 500,
+                        transactions: [] // Initialize with empty transactions array
                     };
                     const updatedBanks = baseConfig.banks.map(bank => {
                         if (bank.name === bankName) {
@@ -273,44 +302,44 @@ const useConfigContext = () => {
                 let generatedNewAccounts: Account[] = [];
                 const newConfigWithAccount = queryClient
                     .setQueryData(CONFIG_QUER_KEY, (oldConfig:Config | undefined)=> {
-                    const baseConfig = oldConfig || configData;
-                    const structuredPermissionsData = newAccounts.accountDetails[0];
-                    const bankName = newAccounts.bankInfo;
-                    const readAccountNumbers = structuredPermissionsData
-                        .flatMap((entry: any) => entry.accounts || []);
-                    const uniqueAccountNumbers = [...new Set(readAccountNumbers)] as string[];
-                    generatedNewAccounts = uniqueAccountNumbers.map((accNo: string) => {
-                        return {
-                            id: accNo,
-                            bank: bankName,
-                            name: "savings (M)",
-                            balance: 500,
-                            transactions: []
-                        };
-                    });
-                    const updatedBanks = baseConfig.banks.map(bank => {
-                        if (bank.name === bankName) {
-                            const existingIds = new Set(bank.accounts.map(a => a.id));
-                            const filteredNew = generatedNewAccounts
-                                .filter(a => !existingIds.has(a.id));
+                        const baseConfig = oldConfig || configData;
+                        const structuredPermissionsData = newAccounts.accountDetails[0];
+                        const bankName = newAccounts.bankInfo;
+                        const readAccountNumbers = structuredPermissionsData
+                            .flatMap((entry: any) => entry.accounts || []);
+                        const uniqueAccountNumbers = [...new Set(readAccountNumbers)] as string[];
+                        generatedNewAccounts = uniqueAccountNumbers.map((accNo: string) => {
                             return {
-                                ...bank,
-                                accounts: [...(bank.accounts || []), ...filteredNew]
+                                id: accNo,
+                                bank: bankName,
+                                name: "savings (M)",
+                                balance: 500,
+                                transactions: []
                             };
+                        });
+                        const updatedBanks = baseConfig.banks.map(bank => {
+                            if (bank.name === bankName) {
+                                const existingIds = new Set(bank.accounts.map(a => a.id));
+                                const filteredNew = generatedNewAccounts
+                                    .filter(a => !existingIds.has(a.id));
+                                return {
+                                    ...bank,
+                                    accounts: [...(bank.accounts || []), ...filteredNew]
+                                };
+                            }
+                            return bank;
+                        });
+                        return {
+                            ...baseConfig!,
+                            banks: updatedBanks
                         }
-                        return bank;
                     });
-                    return {
-                        ...baseConfig!,
-                        banks: updatedBanks
-                    }
-                });
                 const config = newConfigWithAccount as Config;
                 queryClient.invalidateQueries({ queryKey: CONFIG_QUER_KEY });
                 updateSessionStorage(config);
                 const multipleAccountOverlayContext = `The new accounts 
                 ${generatedNewAccounts?.map((account)=>account.id).join(", ") } 
-                were added new accounts successfully. `;
+                were added successfully.`;
                 setOverlayInformation({flag:true,overlayData:{context:multipleAccountOverlayContext
                         ,secondaryButtonText:"",mainButtonText:"Ok",title:"Accounts added successfully"
                         ,onMainButtonClick:handleOverlayClose}});

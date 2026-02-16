@@ -35,7 +35,7 @@ import MultipleAccountsAuthorizationPage from "./banking-pages/pages/multiple-ac
 import AccountsSelectionWithPermissionsPage from "./banking-pages/pages/accounts-selection-with-permissions-page.tsx";
 import AllTransactions from "./pages/all-transactions-page/all-transactions.tsx";
 import AllStandingOrders from "./pages/all-standing-orders/all-standing-orders.tsx";
-import {useCallback, useEffect} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 
 
@@ -48,6 +48,24 @@ import {useCallback, useEffect} from "react";
 export function App() {
 
     const location = useLocation();
+
+    const [runTour, setRunTour] = useState(() => {
+        const tourCompleted = sessionStorage.getItem('tourCompleted');
+        return tourCompleted !== 'true'; // Auto-run if not completed
+    });
+
+    const handleSetRunTour = (value: boolean) => {
+        setRunTour(value);
+        if (!value) {
+            sessionStorage.setItem('tourCompleted', 'true');
+        }
+    };
+
+    const handleStartTour = () => {
+        setRunTour(true);
+    };
+
+
     const sendHeight = useCallback(() => {
         requestAnimationFrame(() => {
             setTimeout(() => {
@@ -123,7 +141,6 @@ export function App() {
     return (
         <>
             <AppThemeProvider color={colors}>
-
                 <Routes>
                     <Route path={`/${appInfo.route}/*`} element={
                         <Routes>
@@ -142,9 +159,12 @@ export function App() {
                                              overlayInformation={overlayInformation}
                                              transactionTableHeaderData={transactionTableHeaderData}
                                              standingOrdersTableHeaderData={standingOrdersTableHeaderData}
+                                             runTour={runTour}
+                                             setRunTour={handleSetRunTour}
+                                             onStartTour={handleStartTour}
                                        />
                                    }/>
-                            <Route path="paybills" element={<PaymentsPage banksList={banksInfomation} payeeData={payeesData} banksWithAccounts={banksWithAccounts} appInfo={appInfo}/>}/>
+                            <Route path="paybills" element={<PaymentsPage banksList={banksInfomation} payeeData={payeesData} banksWithAccounts={banksWithAccounts} appInfo={appInfo} setRunTour={setRunTour}/>}/>
                             <Route path="accounts" element={<AddAccountsPage bankInformations={banksInfomation}/>}/>
                             <Route path="transactions" element={<AllTransactions name={appInfo.applicationName} transactions={transactions} transactionTableHeaderData={transactionTableHeaderData}/>}/>
                             <Route path="standing-orders" element={<AllStandingOrders name={appInfo.applicationName} standingOrdersList={standingOrderList} standingOrdersTableHeaderData={standingOrdersTableHeaderData}/>}/>

@@ -28,6 +28,7 @@ interface PaymentsPageProps {
     banksWithAccounts: BanksWithAccounts[];
     payeeData: Payee[];
     banksList: Bank[];
+    setRunTour: (value: boolean) => void;
 }
 
 /**
@@ -40,7 +41,7 @@ const PaymentsPage = ({appInfo,banksWithAccounts, payeeData,
                           banksList}:PaymentsPageProps) => {
     return (
         <>
-            <ApplicationLayout name={appInfo.applicationName}>
+            <ApplicationLayout name={appInfo.applicationName} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Payments"}>
                     <Card sx={{height:'600px', overflow:'hidden', width: '500px'}}>
                         <PaymentForm banksList={banksList} payeeData={payeeData}

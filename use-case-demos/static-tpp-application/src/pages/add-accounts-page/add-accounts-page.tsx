@@ -47,9 +47,7 @@ const AddAccountsPage =
     const location = useLocation();
     const navigationState = location.state as NavigationState;
     const appName = navigationState?.name;
-
     const [isRedirecting, setIsRedirecting] = useState(false);
-
     const onAddAccountsHandler = (bankName:string)=>{
         const target = bankInformations.find((bank) =>
              bank.name === bankName
@@ -70,7 +68,7 @@ const AddAccountsPage =
     }
     return (
         <>
-            <ApplicationLayout name={appName}>
+            <ApplicationLayout name={appName} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Add Account"}>
                     <Box className="accounts-outer">
                         <h3 style={{marginBottom:"1.5rem"}}>Select your Bank</h3>
@@ -89,7 +87,6 @@ const AddAccountsPage =
                             ))}
                         </div>
                     </Box>
-
                 </PaymentAccountPageLayout>
             </ApplicationLayout>
         </>

@@ -49,7 +49,7 @@ const AllStandingOrders = ({standingOrdersTableHeaderData,
 
     return (
         <>
-            <ApplicationLayout name={name}>
+            <ApplicationLayout name={name} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Standing Orders"}>
                     <Box className={'standing-orders-container-outer'}>
                         <TableComponent dataLimit={9} tableData={standingOrdersToDisplay} tableType={""}

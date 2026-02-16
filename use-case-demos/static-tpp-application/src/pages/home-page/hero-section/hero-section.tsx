@@ -51,9 +51,9 @@ const HeroSection = ({userInfo, appInfo}:HeroSectionProps) => {
     const isLargeScreen = useMediaQuery(useTheme().breakpoints.down('md'));
     const navigate = useNavigate();
     const responsiveDirections = isLargeScreen ? 'column' : 'row';
-    const responsiveMinHeight = isLargeScreen ? '32px' : '12px';
+    const responsiveMinHeight = isLargeScreen ? '4rem' : '8rem';
     const responsiveDisplay = isLargeScreen ? 'none' : 'flex';
-    const responsivePadding = isLargeScreen ? '1rem' : '2rem';
+    const responsivePadding = isLargeScreen ? '1rem' : '4rem';
     const actionButtons: ActionButton[] = [
         {icon: <BoltIcon size={'medium'}/>, name: "Pay Bills"},
         {icon: <ArrowLeftArrowRightIcon size={'medium'}/>, name: "Transfer"},
