@@ -16,10 +16,8 @@
  * under the License.
  */
 
-import {Box, IconButton, } from "@oxygen-ui/react";
+import {Box } from "@oxygen-ui/react";
 import type {StandingOrders, TableConfigs} from "../../hooks/config-interfaces.ts";
-import {useState} from "react";
-import {ChevronRight} from "@mui/icons-material";
 import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
 import PaymentAccountPageLayout from "../../layouts/payment-account-page-layout/payment-account-page-layout.tsx";
 import TableComponent from "../../components/table-component.tsx";
@@ -40,24 +38,13 @@ interface StandingOrdersTableProps {
 const AllStandingOrders = ({standingOrdersTableHeaderData,
                                name, standingOrdersList}:StandingOrdersTableProps)=>{
 
-    const [paginationIndex,setPaginatedIndex] = useState(10);
-    const isDisabled =  standingOrdersList[paginationIndex+1] == null
-    const onHandleNextButtonClick = () => {
-        setPaginatedIndex(paginationIndex+10);
-    }
-    const standingOrdersToDisplay = standingOrdersList.slice(paginationIndex-10,paginationIndex)
-
     return (
         <>
             <ApplicationLayout name={name} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Standing Orders"}>
                     <Box className={'standing-orders-container-outer'}>
-                        <TableComponent dataLimit={9} tableData={standingOrdersToDisplay} tableType={""}
+                        <TableComponent dataLimit={9} tableData={standingOrdersList} tableType={""}
                                         dataConfigs={standingOrdersTableHeaderData}/>
-                        <IconButton onClick={onHandleNextButtonClick} disabled={isDisabled}>
-                            <p>Next</p>
-                            <ChevronRight/>
-                        </IconButton>
                     </Box>
                 </PaymentAccountPageLayout>
             </ApplicationLayout>
