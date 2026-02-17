@@ -30,109 +30,35 @@ public class ConfigLoader {
         return prop.getProperty(key, defaultValue);
     }
 
-    // OAuth Configuration
-    public static String getClientId() {
-        return getProperty("oauth.client.id");
-    }
+    public static String getClientId() { return getProperty("oauth.client.id"); }
+    public static String getClientSecret() { return getProperty("oauth.client.secret"); }
+    public static String getOAuthAlgorithm() { return getProperty("oauth.algorithm"); }
+    public static String getTokenType() { return getProperty("oauth.token.type"); }
+    public static String getTokenUrl() { return getProperty("oauth.token.url"); }
+    public static String getAuthorizeUrl() { return getProperty("oauth.authorize.url"); }
+    public static String getRedirectUri() { return getProperty("oauth.redirect.uri"); }
+    public static String getOAuthState() { return getProperty("oauth.state"); }
+    public static String getOAuthNonce() { return getProperty("oauth.nonce"); }
+    public static String getOAuthPrompt() { return getProperty("oauth.prompt"); }
+    public static String getResponseType() { return getProperty("oauth.response.type"); }
 
-    public static String getClientSecret() {
-        return getProperty("oauth.client.secret");
-    }
+    public static String getAccountBaseUrl() { return getProperty("openbanking.account.base.url"); }
+    public static String getPaymentBaseUrl() { return getProperty("openbanking.payment.base.url"); }
 
-    public static String getOAuthAlgorithm() {
-        return getProperty("oauth.algorithm");
-    }
+    public static String getFapiFinancialId() { return getProperty("openbanking.fapi.financial.id"); }
+    public static String getPaymentIdempotencyKey() { return getProperty("openbanking.payment.idempotency.key"); }
 
-    public static String getTokenType() {
-        return getProperty("oauth.token.type");
-    }
+    public static String getCertificatePath() { return getProperty("ssl.certificate.path"); }
+    public static String getKeyPath() { return getProperty("ssl.key.path"); }
+    public static String getTruststorePath() { return getProperty("ssl.truststore.path"); }
+    public static String getTruststorePassword() { return getProperty("ssl.truststore.password"); }
 
-    public static String getTokenUrl() {
-        return getProperty("oauth.token.url");
-    }
+    public static String getFrontendHomeUrl() { return getProperty("frontend.home.url"); }
 
-    public static String getAuthorizeUrl() {
-        return getProperty("oauth.authorize.url");
-    }
+    public static String getMockBankName() { return getProperty("mock.bank.name"); }
+    public static String getMockBankLogo() { return getProperty("mock.bank.logo"); }
+    public static String getMockBankPrimaryColor() { return getProperty("mock.bank.color.primary"); }
+    public static String getMockBankSecondaryColor() { return getProperty("mock.bank.color.secondary"); }
 
-    public static String getRedirectUri() {
-        return getProperty("oauth.redirect.uri");
-    }
-
-    public static String getOAuthState() {
-        return getProperty("oauth.state");
-    }
-
-    public static String getOAuthNonce() {
-        return getProperty("oauth.nonce");
-    }
-
-    public static String getOAuthPrompt() {
-        return getProperty("oauth.prompt");
-    }
-
-    public static String getResponseType() {
-        return getProperty("oauth.response.type");
-    }
-
-    // Open Banking URLs
-    public static String getAccountBaseUrl() {
-        return getProperty("openbanking.account.base.url");
-    }
-
-    public static String getPaymentBaseUrl() {
-        return getProperty("openbanking.payment.base.url");
-    }
-
-    // Open Banking Headers
-    public static String getFapiFinancialId() {
-        return getProperty("openbanking.fapi.financial.id");
-    }
-
-    public static String getPaymentIdempotencyKey() {
-        return getProperty("openbanking.payment.idempotency.key");
-    }
-
-    // SSL Configuration
-    public static String getCertificatePath() {
-        return getProperty("ssl.certificate.path");
-    }
-
-    public static String getKeyPath() {
-        return getProperty("ssl.key.path");
-    }
-
-    public static String getTruststorePath() {
-        return getProperty("ssl.truststore.path");
-    }
-
-    public static String getTruststorePassword() {
-        return getProperty("ssl.truststore.password");
-    }
-
-    // Frontend Configuration
-    public static String getFrontendHomeUrl() {
-        return getProperty("frontend.home.url");
-    }
-
-    // Mock Bank Configuration
-    public static String getMockBankName() {
-        return getProperty("mock.bank.name");
-    }
-
-    public static String getMockBankLogo() {
-        return getProperty("mock.bank.logo");
-    }
-
-    public static String getMockBankPrimaryColor() {
-        return getProperty("mock.bank.color.primary");
-    }
-
-    public static String getMockBankSecondaryColor() {
-        return getProperty("mock.bank.color.secondary");
-    }
-
-    private ConfigLoader() {
-        // Prevent instantiation
-    }
+    private ConfigLoader() {}
 }
