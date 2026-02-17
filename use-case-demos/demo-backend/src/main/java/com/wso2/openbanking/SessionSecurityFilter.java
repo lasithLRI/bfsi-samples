@@ -46,10 +46,19 @@ public class SessionSecurityFilter implements Filter {
             return;
         }
 
-        if (path.startsWith("/init/data")){
+        if (path.startsWith("/init/data") ||
+                path.startsWith("/init/initialize") ||
+                path.startsWith("/init/bank") ||
+                path.startsWith("/init/load-payment") ||
+                path.startsWith("/init/payment") ||
+                path.startsWith("/init/accounts") ||
+                path.startsWith("/init/addaccounts")){
 
             if (!isAuthenticated) {
                 handleUnauthorized(httpRequest, httpResponse);
+
+                System.out.println("OOOOOOOOOOOOOOOOOOO");
+
                 return;
             }
 
@@ -80,6 +89,9 @@ public class SessionSecurityFilter implements Filter {
             }
 
         }
+
+        System.out.println("SessionSecurityFilter.doFilter==================");
+
         filterChain.doFilter(httpRequest, httpResponse);
         return;
 

@@ -6,6 +6,7 @@ import com.wso2.openbanking.models.Payment;
 import com.wso2.openbanking.models.Transaction;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +17,8 @@ public class PaymentService {
 
     private static final DateTimeFormatter DATETIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final ZoneOffset ZONE_OFFSET = ZoneOffset.of("+05:30");
 
     private final BankInfoService bankInfoService;
@@ -42,15 +45,32 @@ public class PaymentService {
 
     public void addPaymentToAccount() {
         if (currentPayment == null) {
+            System.out.println("WARNING: No current payment to add");
             return;
         }
 
         try {
             String[] userAccount = parseAccountIdentifier(currentPayment.getUserAccount());
+            String bankName = userAccount[0];
+            String accountNumber = userAccount[1];
             double paymentAmount = Double.parseDouble(currentPayment.getAmount());
-            Transaction transaction = createPaymentTransaction(currentPayment);
 
-            updateAccountBalance(userAccount[0], userAccount[1], paymentAmount, transaction);
+            // Create transaction with bank and account fields properly set
+            Transaction transaction = createPaymentTransaction(currentPayment, bankName, accountNumber);
+
+            // Update account balance and add transaction
+            updateAccountBalance(bankName, accountNumber, paymentAmount, transaction);
+
+            System.out.println("✓ Payment transaction added successfully");
+            System.out.println("  Transaction ID: " + transaction.getId());
+            System.out.println("  Bank: " + transaction.getBank());
+            System.out.println("  Account: " + transaction.getAccount());
+            System.out.println("  Date: " + transaction.getDate());
+            System.out.println("  Amount: " + transaction.getCurrency() + " " + transaction.getAmount());
+
+        } catch (Exception e) {
+            System.err.println("ERROR: Failed to add payment to account: " + e.getMessage());
+            e.printStackTrace();
         } finally {
             currentPayment = null;
         }
@@ -58,18 +78,33 @@ public class PaymentService {
 
     // ==================== Transaction Management ====================
 
-    private Transaction createPaymentTransaction(Payment payment) {
-        String transactionId = "TXN-" + UUID.randomUUID().toString();
-        String currentDate = ZonedDateTime.now(ZONE_OFFSET).format(DATETIME_FORMATTER);
+    /**
+     * Creates a payment transaction with proper date format (yyyy-MM-dd)
+     * Sets the date to today's date instead of using day of month
+     */
+    private Transaction createPaymentTransaction(Payment payment, String bankName, String accountNumber) {
+        Transaction transaction = new Transaction();
 
-        return new Transaction(
-                transactionId,
-                currentDate,
-                payment.getReference(),
-                payment.getAmount(),
-                payment.getCurrency(),
-                "Debit"
-        );
+        // Set basic transaction fields
+        // Generate ID in format: T00123456
+        transaction.setId(generateTransactionId());
+
+        // Use current date in yyyy-MM-dd format (consistent with loaded transactions)
+        String currentDate = LocalDate.now().format(DATE_FORMATTER);
+        transaction.setDate(currentDate);
+
+        transaction.setReference(payment.getReference());
+        transaction.setAmount(payment.getAmount());
+        transaction.setCurrency(payment.getCurrency());
+        transaction.setCreditDebitStatus("c");  // 'd' for debit (outgoing payment)
+
+        // CRITICAL: Set bank and account fields so they appear in the flat transactions array
+        transaction.setBank(bankName);
+        transaction.setAccount(accountNumber);
+
+        System.out.println("Created transaction with ID: " + transaction.getId() + " and date: " + currentDate);
+
+        return transaction;
     }
 
     private void updateAccountBalance(String bankName, String accountNumber,
@@ -78,8 +113,25 @@ public class PaymentService {
 
         if (accountOpt.isPresent()) {
             Account account = accountOpt.get();
-            account.setBalance(account.getBalance() - amount);
+
+            // Check for sufficient balance
+            double currentBalance = account.getBalance();
+            if (currentBalance < amount) {
+                System.err.println("ERROR: Insufficient balance. Required: " + amount + ", Available: " + currentBalance);
+                throw new RuntimeException("Insufficient balance");
+            }
+
+            // Deduct balance
+            account.setBalance(currentBalance - amount);
+
+            // Add transaction to account at index 0 (top of list)
+            // The addTransactionToAccount method will handle sorting
             bankInfoService.addTransactionToAccount(account, transaction);
+
+            System.out.println("✓ Account balance updated: " + currentBalance + " -> " + (currentBalance - amount));
+        } else {
+            System.err.println("ERROR: Account not found - Bank: " + bankName + ", Account: " + accountNumber);
+            throw new RuntimeException("Account not found");
         }
     }
 
@@ -163,6 +215,17 @@ public class PaymentService {
     }
 
     // ==================== Helper Methods ====================
+
+    /**
+     * Generates a transaction ID in the format T00123456
+     * T followed by 8 digits with leading zeros
+     */
+    private String generateTransactionId() {
+        // Generate a random 8-digit number
+        int randomNumber = (int) (Math.random() * 100000000);
+        // Format with leading zeros to ensure 8 digits
+        return String.format("T%08d", randomNumber);
+    }
 
     private String[] parseAccountIdentifier(String accountIdentifier) {
         String[] parts = accountIdentifier.split("-", 2);

@@ -43,6 +43,14 @@ public class InitialData {
     }
 
     @GET
+    @Path("/initialize")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ConfigResponse initializeApplication() {
+        bankInfoService.loadBanks();
+        return bankInfoService.getConfigurations();
+    }
+
+    @GET
     @Path("/bank")
     @Produces(MediaType.APPLICATION_JSON)
     public ConfigResponse getBankData() {
@@ -79,6 +87,8 @@ public class InitialData {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectAccountToAdd(Map<String, String> reqBody) throws Exception {
+        System.out.println("====================");
+        System.out.println(reqBody.get("bankName"));
         String redirectUrl = accountService.processAddAccount(reqBody.get("bankName"));
         authService.setRequestStatus("accounts");
 

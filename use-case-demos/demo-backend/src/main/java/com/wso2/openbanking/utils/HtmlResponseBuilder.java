@@ -20,8 +20,8 @@ public class HtmlResponseBuilder {
                 "            align-items: center;\n" +
                 "            height: 100vh;\n" +
                 "            margin: 0;\n" +
-                "            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n" +
-                "            color: white;\n" +
+                "            background: white;\n" +
+                "            color: black;\n" +
                 "        }\n" +
                 "        #status {\n" +
                 "            font-size: 1.2em;\n" +

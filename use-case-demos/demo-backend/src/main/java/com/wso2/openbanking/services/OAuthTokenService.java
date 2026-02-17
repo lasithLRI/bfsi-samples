@@ -38,7 +38,13 @@ public class OAuthTokenService {
     public String initializeConsent(String token, String consentBody, String url) throws Exception {
         JSONObject jsonObject = new JSONObject(token);
         String accessToken = jsonObject.getString("access_token");
-        return client.postConsentInit(url, consentBody, accessToken);
+        System.out.println("accessToken: " + accessToken);
+        System.out.println("consentBody: " + consentBody);
+        System.out.println("url: " + url);
+        String aaaa = client.postConsentInit(url, consentBody, accessToken);
+        System.out.println("sijdvhdshv$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        System.out.println(aaaa+"8888888888888888888888888888888");
+        return aaaa;
     }
 
     /**
@@ -48,7 +54,7 @@ public class OAuthTokenService {
         String consentId = extractConsentId(consentResponse);
         String jti = generateJti();
         String requestObject = jwtTokenService.createRequestObject(consentId, jti);
-
+        System.out.println("requestObject: " + requestObject);
         return client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
     }
 

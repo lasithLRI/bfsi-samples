@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Transaction {
-    String id;
-    String date;
-    String reference;
-    String amount;
-    String currency;
-    String creditDebitStatus;
+    private String id;
+    private String date;
+    private String reference;
+    private String amount;
+    private String currency;
+    private String creditDebitStatus;
+    private String bank;
+    private String account;
 
     public Transaction(String id, String date, String reference, String amount, String currency, String creditDebitStatus) {
         this.id = id;
@@ -69,5 +71,21 @@ public class Transaction {
 
     public void setCreditDebitStatus(String creditDebitStatus) {
         this.creditDebitStatus = creditDebitStatus;
+    }
+
+    public String getBank() {
+        return bank;
+    }
+
+    public void setBank(String bank) {
+        this.bank = bank;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
     }
 }

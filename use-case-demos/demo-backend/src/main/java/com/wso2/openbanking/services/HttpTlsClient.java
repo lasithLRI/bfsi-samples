@@ -34,7 +34,7 @@ public class HttpTlsClient {
                 .execute();
     }
 
-    // Consent Methods
+
     public String postConsentInit(String url, String body, String token) throws Exception {
         return HttpConnection.post(url, sslContext)
                 .addHeader("Authorization", "Bearer " + token)
@@ -43,6 +43,36 @@ public class HttpTlsClient {
                 .withBody(body)
                 .execute();
     }
+
+//    public String postConsentInit(String url, String body, String token) throws Exception {
+//        System.out.println("==================== POST CONSENT INIT DEBUG ====================");
+//        System.out.println("URL: " + url);
+//        System.out.println("Request Body: " + body);
+//        System.out.println("Token: " + (token != null ? token.substring(0, Math.min(20, token.length())) + "..." : "null"));
+//        System.out.println("FAPI Financial ID: " + ConfigLoader.getFapiFinancialId());
+//        System.out.println("================================================================");
+//
+//        try {
+//            String response = HttpConnection.post(url, sslContext)
+//                    .addHeader("Authorization", "Bearer " + token)
+//                    .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
+//                    .addHeader("Content-Type", "application/json")
+//                    .withBody(body)
+//                    .execute();
+//
+//            System.out.println("==================== POST CONSENT RESPONSE ====================");
+//            System.out.println("Response: " + response);
+//            System.out.println("================================================================");
+//
+//            return response;
+//        } catch (Exception e) {
+//            System.err.println("==================== POST CONSENT ERROR ====================");
+//            System.err.println("Error Message: " + e.getMessage());
+//            e.printStackTrace();
+//            System.err.println("============================================================");
+//            throw e;
+//        }
+//    }
 
     public String postConsentAuthRequest(String requestObjectJwt, String clientId, String scope)
             throws IOException {
