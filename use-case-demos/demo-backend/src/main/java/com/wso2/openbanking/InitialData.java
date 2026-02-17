@@ -71,14 +71,13 @@ public class InitialData {
     public Response makePayment(Payment payment) throws Exception {
         String redirectUrl = paymentService.processPaymentRequest(payment);
         authService.setRequestStatus("payments");
-
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
     @GET
     @Path("/accounts")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AddAccountBankInfo> addAccountBanks() {
+    public List<AddAccountBankInfo> getAddAccountBanks() {
         return bankInfoService.getAddAccountBanksInformation();
     }
 
@@ -86,12 +85,9 @@ public class InitialData {
     @Path("/addaccounts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response selectAccountToAdd(Map<String, String> reqBody) throws Exception {
-        System.out.println("====================");
-        System.out.println(reqBody.get("bankName"));
-        String redirectUrl = accountService.processAddAccount(reqBody.get("bankName"));
+    public Response selectAccountToAdd(Map<String, String> requestBody) throws Exception {
+        String redirectUrl = accountService.processAddAccount(requestBody.get("bankName"));
         authService.setRequestStatus("accounts");
-
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 

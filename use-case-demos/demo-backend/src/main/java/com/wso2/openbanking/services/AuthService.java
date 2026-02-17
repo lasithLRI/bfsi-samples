@@ -30,25 +30,19 @@ public class AuthService {
 
     public void processAuthorizationCallback(String code, String state, String sessionState, String idToken)
             throws Exception {
-
-        System.out.println("Processing authorization callback - Code: " + code);
-
         String accessToken = exchangeCodeForToken(code);
         handleAuthorizationSuccess(accessToken);
     }
 
     private String exchangeCodeForToken(String code) throws Exception {
         String jti = generateJti();
-        JwtTokenService jwtService = JwtTokenService.getInstance();
-
-        String clientAssertion = jwtService.createClientAssertion(jti);
+        String clientAssertion = JwtTokenService.getInstance().createClientAssertion(jti);
         String body = buildTokenRequestBody(code, clientAssertion);
         String response = client.postAccesstoken(ConfigLoader.getTokenUrl(), body);
-
         return parseAccessToken(response);
     }
 
-    private String buildTokenRequestBody(String code, String clientAssertion) throws Exception {
+    private String buildTokenRequestBody(String code, String clientAssertion) {
         return "grant_type=authorization_code" +
                 "&code=" + code +
                 "&scope=accounts openid" +
@@ -59,42 +53,17 @@ public class AuthService {
     }
 
     private String parseAccessToken(String response) {
-        JSONObject json = new JSONObject(response);
-
-        System.out.println("Token response: " + response);
-
-        String accessToken = json.getString("access_token");
-        String refreshToken = json.getString("refresh_token");
-        String scope = json.getString("scope");
-        String idToken = json.getString("id_token");
-        int expiresIn = json.getInt("expires_in");
-
-        logTokenDetails(accessToken, refreshToken, scope, idToken, expiresIn);
-
-        return accessToken;
+        return new JSONObject(response).getString("access_token");
     }
 
     private void handleAuthorizationSuccess(String accessToken) throws Exception {
-        System.out.println("Authorization successful. Access Token: " + accessToken);
-
         accountService.setAccessToken(accessToken);
 
         if ("accounts".equals(requestStatus)) {
-            System.out.println("Processing account authorization");
             accountService.addMockBankAccountsInformation();
         } else if ("payments".equals(requestStatus)) {
-            System.out.println("Processing payment authorization");
             paymentService.addPaymentToAccount();
         }
-    }
-
-    private void logTokenDetails(String accessToken, String refreshToken, String scope,
-                                 String idToken, int expiresIn) {
-        System.out.println("Access Token: " + accessToken);
-        System.out.println("Refresh Token: " + refreshToken);
-        System.out.println("Scope: " + scope);
-        System.out.println("ID Token: " + idToken);
-        System.out.println("Expires In: " + expiresIn);
     }
 
     private String generateJti() {

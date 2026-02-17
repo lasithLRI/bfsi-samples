@@ -21,7 +21,7 @@ public class JwtTokenService {
     private static final long TOKEN_VALIDITY_MINUTES = 5;
 
     private static JwtTokenService instance;
-    private PrivateKey privateKey;
+    private final PrivateKey privateKey;
 
     private JwtTokenService() throws Exception {
         this.privateKey = loadPrivateKey();
@@ -85,30 +85,22 @@ public class JwtTokenService {
     private String buildJwt(String headerJson, String payloadJson) throws Exception {
         String encodedHeader = base64UrlEncode(headerJson.getBytes(StandardCharsets.UTF_8));
         String encodedPayload = base64UrlEncode(payloadJson.getBytes(StandardCharsets.UTF_8));
-
         String signingInput = encodedHeader + "." + encodedPayload;
-        String signature = signData(signingInput);
-
-        return signingInput + "." + signature;
+        return signingInput + "." + signData(signingInput);
     }
 
     private String signData(String data) throws Exception {
-        byte[] dataBytes = data.getBytes(StandardCharsets.US_ASCII);
-
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
-        PSSParameterSpec pssSpec = new PSSParameterSpec(
+        signature.setParameter(new PSSParameterSpec(
                 HASH_ALGORITHM,
                 MGF_ALGORITHM,
                 new MGF1ParameterSpec(HASH_ALGORITHM),
                 SALT_LENGTH,
                 TRAILER_FIELD
-        );
-        signature.setParameter(pssSpec);
+        ));
         signature.initSign(privateKey);
-        signature.update(dataBytes);
-
-        byte[] rawSignature = signature.sign();
-        return base64UrlEncode(rawSignature);
+        signature.update(data.getBytes(StandardCharsets.US_ASCII));
+        return base64UrlEncode(signature.sign());
     }
 
     private PrivateKey loadPrivateKey() throws Exception {

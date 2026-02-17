@@ -18,7 +18,6 @@ public class KeyReader {
 
         byte[] keyBytes = Base64.getDecoder().decode(keyPem);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePrivate(keySpec);
+        return KeyFactory.getInstance("RSA").generatePrivate(keySpec);
     }
 }

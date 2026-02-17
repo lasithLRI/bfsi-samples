@@ -1,5 +1,8 @@
 package com.wso2.openbanking.services;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class RequestObjectPayload {
 
     private final String iss;
@@ -22,7 +25,7 @@ public class RequestObjectPayload {
         this.redirectUri = redirectUri;
         this.state = state;
         this.nonce = nonce;
-        this.clientId = iss; // Same as iss
+        this.clientId = iss;
         this.aud = aud;
         this.nbf = nbf;
         this.exp = exp;
@@ -31,41 +34,38 @@ public class RequestObjectPayload {
     }
 
     public String toJson() {
-        return "{\n" +
-                "  \"iss\": \"" + iss + "\",\n" +
-                "  \"response_type\": \"" + responseType + "\",\n" +
-                "  \"redirect_uri\": \"" + redirectUri + "\",\n" +
-                "  \"state\": \"" + state + "\",\n" +
-                "  \"nonce\": \"" + nonce + "\",\n" +
-                "  \"client_id\": \"" + clientId + "\",\n" +
-                "  \"aud\": \"" + aud + "\",\n" +
-                "  \"nbf\": " + nbf + ",\n" +
-                "  \"exp\": " + exp + ",\n" +
-                "  \"scope\": \"" + scope + "\",\n" +
-                "  \"claims\": {\n" +
-                "    \"id_token\": {\n" +
-                "      \"acr\": {\n" +
-                "        \"values\": [\n" +
-                "          \"urn:openbanking:psd2:sca\",\n" +
-                "          \"urn:openbanking:psd2:ca\"\n" +
-                "        ],\n" +
-                "        \"essential\": true\n" +
-                "      },\n" +
-                "      \"openbanking_intent_id\": {\n" +
-                "        \"value\": \"" + consentId + "\",\n" +
-                "        \"essential\": true\n" +
-                "      },\n" +
-                "      \"auth_time\": {\n" +
-                "        \"essential\": true\n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"userinfo\": {\n" +
-                "      \"openbanking_intent_id\": {\n" +
-                "        \"value\": \"" + consentId + "\",\n" +
-                "        \"essential\": true\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
+        JSONObject intentId = new JSONObject()
+                .put("value", consentId)
+                .put("essential", true);
+
+        JSONObject acr = new JSONObject()
+                .put("values", new JSONArray()
+                        .put("urn:openbanking:psd2:sca")
+                        .put("urn:openbanking:psd2:ca"))
+                .put("essential", true);
+
+        JSONObject idToken = new JSONObject()
+                .put("acr", acr)
+                .put("openbanking_intent_id", intentId)
+                .put("auth_time", new JSONObject().put("essential", true));
+
+        JSONObject userInfo = new JSONObject()
+                .put("openbanking_intent_id", intentId);
+
+        return new JSONObject()
+                .put("iss", iss)
+                .put("response_type", responseType)
+                .put("redirect_uri", redirectUri)
+                .put("state", state)
+                .put("nonce", nonce)
+                .put("client_id", clientId)
+                .put("aud", aud)
+                .put("nbf", nbf)
+                .put("exp", exp)
+                .put("scope", scope)
+                .put("claims", new JSONObject()
+                        .put("id_token", idToken)
+                        .put("userinfo", userInfo))
+                .toString();
     }
 }

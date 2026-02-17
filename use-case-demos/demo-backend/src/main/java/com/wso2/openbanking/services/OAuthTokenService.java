@@ -16,14 +16,10 @@ public class OAuthTokenService {
         this.jwtTokenService = JwtTokenService.getInstance();
     }
 
-    /**
-     * Get OAuth token for the specified scope
-     */
     public String getToken(String scope) {
         try {
             String jti = generateJti();
             String clientAssertion = jwtTokenService.createClientAssertion(jti);
-
             String body = buildTokenRequestBody(scope, clientAssertion);
             return client.postJwt(ConfigLoader.getTokenUrl(), body);
         } catch (Exception e) {
@@ -32,36 +28,22 @@ public class OAuthTokenService {
         }
     }
 
-    /**
-     * Initialize consent with the authorization server
-     */
     public String initializeConsent(String token, String consentBody, String url) throws Exception {
-        JSONObject jsonObject = new JSONObject(token);
-        String accessToken = jsonObject.getString("access_token");
-        System.out.println("accessToken: " + accessToken);
-        System.out.println("consentBody: " + consentBody);
-        System.out.println("url: " + url);
-        String aaaa = client.postConsentInit(url, consentBody, accessToken);
-        System.out.println("sijdvhdshv$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        System.out.println(aaaa+"8888888888888888888888888888888");
-        return aaaa;
+        String accessToken = new JSONObject(token).getString("access_token");
+        return client.postConsentInit(url, consentBody, accessToken);
     }
 
-    /**
-     * Authorize consent and get authorization URL
-     */
     public String authorizeConsent(String consentResponse, String scope) throws Exception {
         String consentId = extractConsentId(consentResponse);
         String jti = generateJti();
         String requestObject = jwtTokenService.createRequestObject(consentId, jti);
-        System.out.println("requestObject: " + requestObject);
         return client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
     }
 
     private String extractConsentId(String consentResponse) {
-        JSONObject jsonObject = new JSONObject(consentResponse);
-        JSONObject data = jsonObject.getJSONObject("Data");
-        return data.getString("ConsentId");
+        return new JSONObject(consentResponse)
+                .getJSONObject("Data")
+                .getString("ConsentId");
     }
 
     private String buildTokenRequestBody(String scope, String clientAssertion) {

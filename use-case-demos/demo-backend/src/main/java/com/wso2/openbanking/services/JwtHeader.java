@@ -1,5 +1,7 @@
 package com.wso2.openbanking.services;
 
+import org.json.JSONObject;
+
 public class JwtHeader {
 
     private final String alg;
@@ -13,11 +15,11 @@ public class JwtHeader {
     }
 
     public String toJson() {
-        return "{"
-                + "\"alg\":\"" + alg + "\","
-                + "\"kid\":\"" + kid + "\","
-                + "\"typ\":\"" + typ + "\""
-                + "}";
+        return new JSONObject()
+                .put("alg", alg)
+                .put("kid", kid)
+                .put("typ", typ)
+                .toString();
     }
 
     public String getAlg() {

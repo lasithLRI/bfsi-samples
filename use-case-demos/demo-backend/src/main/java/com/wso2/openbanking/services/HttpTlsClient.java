@@ -17,7 +17,6 @@ public class HttpTlsClient {
         this.sslContext = SSLContextFactory.create(certPath, keyPath, trustStorePath, trustStorePassword);
     }
 
-    // OAuth Token Methods
     public String postJwt(String url, String body) throws Exception {
         return HttpConnection.post(url, sslContext)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -34,7 +33,6 @@ public class HttpTlsClient {
                 .execute();
     }
 
-
     public String postConsentInit(String url, String body, String token) throws Exception {
         return HttpConnection.post(url, sslContext)
                 .addHeader("Authorization", "Bearer " + token)
@@ -44,46 +42,14 @@ public class HttpTlsClient {
                 .execute();
     }
 
-//    public String postConsentInit(String url, String body, String token) throws Exception {
-//        System.out.println("==================== POST CONSENT INIT DEBUG ====================");
-//        System.out.println("URL: " + url);
-//        System.out.println("Request Body: " + body);
-//        System.out.println("Token: " + (token != null ? token.substring(0, Math.min(20, token.length())) + "..." : "null"));
-//        System.out.println("FAPI Financial ID: " + ConfigLoader.getFapiFinancialId());
-//        System.out.println("================================================================");
-//
-//        try {
-//            String response = HttpConnection.post(url, sslContext)
-//                    .addHeader("Authorization", "Bearer " + token)
-//                    .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
-//                    .addHeader("Content-Type", "application/json")
-//                    .withBody(body)
-//                    .execute();
-//
-//            System.out.println("==================== POST CONSENT RESPONSE ====================");
-//            System.out.println("Response: " + response);
-//            System.out.println("================================================================");
-//
-//            return response;
-//        } catch (Exception e) {
-//            System.err.println("==================== POST CONSENT ERROR ====================");
-//            System.err.println("Error Message: " + e.getMessage());
-//            e.printStackTrace();
-//            System.err.println("============================================================");
-//            throw e;
-//        }
-//    }
-
     public String postConsentAuthRequest(String requestObjectJwt, String clientId, String scope)
             throws IOException {
         String authUrl = AuthUrlBuilder.build(requestObjectJwt, clientId, scope);
-
         return HttpConnection.get(authUrl, sslContext)
                 .followRedirects(false)
                 .executeAndGetRedirect();
     }
 
-    // Account Methods
     public String getAccountsRequest(String url, String token) throws IOException {
         return HttpConnection.get(url, sslContext)
                 .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
@@ -102,7 +68,6 @@ public class HttpTlsClient {
                 .execute();
     }
 
-    // Payment Methods
     public String postPaymentConsentInit(String url, String body, String token) throws Exception {
         return HttpConnection.post(url, sslContext)
                 .addHeader("Authorization", "Bearer " + token)

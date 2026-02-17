@@ -1,5 +1,7 @@
 package com.wso2.openbanking.services;
 
+import org.json.JSONObject;
+
 public class ClientAssertionPayload {
 
     private final String iss;
@@ -19,13 +21,13 @@ public class ClientAssertionPayload {
     }
 
     public String toJson() {
-        return "{"
-                + "\"iss\":\"" + iss + "\","
-                + "\"sub\":\"" + sub + "\","
-                + "\"exp\":" + exp + ","
-                + "\"iat\":" + iat + ","
-                + "\"jti\":\"" + jti + "\","
-                + "\"aud\":\"" + aud + "\""
-                + "}";
+        return new JSONObject()
+                .put("iss", iss)
+                .put("sub", sub)
+                .put("exp", exp)
+                .put("iat", iat)
+                .put("jti", jti)
+                .put("aud", aud)
+                .toString();
     }
 }

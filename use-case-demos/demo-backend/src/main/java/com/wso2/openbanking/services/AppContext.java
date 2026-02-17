@@ -1,8 +1,8 @@
 package com.wso2.openbanking.services;
 
 /**
- * @deprecated Use JwtTokenService.getInstance() instead
- * This class is kept for backward compatibility
+ * @deprecated Use JwtTokenService.getInstance() instead.
+ * Kept for backward compatibility.
  */
 @Deprecated
 public class AppContext {
@@ -17,7 +17,7 @@ public class AppContext {
         this.jwtTokenService = JwtTokenService.getInstance();
     }
 
-    public String createClientAsserstion() throws Exception {
+    public String createClientAssertion() throws Exception {
         return jwtTokenService.createClientAssertion(jti);
     }
 
