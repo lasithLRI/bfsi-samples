@@ -16,6 +16,7 @@
  * under the License.
  */
 
+import React from "react";
 import { Grid } from "@mui/material";
 import HomePageLayout from "../../layouts/home-page-layout/home-page-layout.tsx";
 import type {
@@ -33,12 +34,13 @@ import CustomTitle from "../../components/custom-title/custom-title.tsx";
 import { useNavigate } from "react-router-dom";
 import OverlayConfirmation from "../../components/overlay-confirmation/overlay-confirmation.tsx";
 import TableComponent from "../../components/table-component.tsx";
-import Joyride from "react-joyride";
+import Joyride, { ACTIONS, EVENTS, STATUS } from "react-joyride";
 import { DEMO_STEPS } from "../../utility/onboarding.ts";
 import type { CallBackProps } from 'react-joyride';
 import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
 
 interface AccountsCentralLayoutProps {
+    children?: React.ReactNode;
     name: string;
     userInfo: User;
     total: number;
@@ -52,6 +54,7 @@ interface AccountsCentralLayoutProps {
     transactionTableHeaderData?: TableConfigs[];
     standingOrdersTableHeaderData?: TableConfigs[];
     runTour: boolean;
+    tourKey: number;
     setRunTour: (value: boolean) => void;
     onStartTour: () => void;
 }
@@ -59,7 +62,8 @@ interface AccountsCentralLayoutProps {
 const Home = ({
                   standingOrdersTableHeaderData, name, userInfo, total, chartData,
                   banksWithAccounts, transactions, standingOrderList, appInfo, banksList,
-                  overlayInformation, transactionTableHeaderData, runTour, setRunTour, onStartTour
+                  overlayInformation, transactionTableHeaderData, runTour, tourKey,
+                  setRunTour, onStartTour
               }: AccountsCentralLayoutProps) => {
 
     const navigate = useNavigate();
@@ -87,30 +91,36 @@ const Home = ({
     };
 
     /**
-     * Called whenever the tour ends for any reason — finished, skipped, or
-     * the X button closed. Marks the tour as seen in sessionStorage and
-     * smoothly scrolls back to the top of the page.
+     * Single exit handler for every way the tour can end.
+     * Marks seenTour in sessionStorage and scrolls back to top.
      */
     const endTour = () => {
         setRunTour(false);
         sessionStorage.setItem('seenTour', 'true');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        if (window.parent !== window) {
-            window.parent.postMessage({ type: 'scroll-to-top' }, '*');
-        }
     };
 
+    /**
+     * Covers every Joyride exit path so seenTour is always written:
+     *  - ACTIONS.CLOSE   → user clicked X on any step
+     *  - ACTIONS.SKIP    → user clicked Skip
+     *  - ACTIONS.RESET   → tour programmatically reset
+     *  - STATUS.FINISHED → user clicked Finish on last step
+     *  - STATUS.SKIPPED  → Joyride's internal skipped status
+     *  - EVENTS.TOUR_END → safety net — fires after any tour end
+     */
     const handleCallback = (data: CallBackProps) => {
-        const { status, action } = data;
+        const { status, action, type } = data;
 
-        // X / close button clicked
-        if (action === 'close') {
-            endTour();
-            return;
-        }
+        const isDone =
+            action === ACTIONS.CLOSE   ||
+            action === ACTIONS.SKIP    ||
+            action === ACTIONS.RESET   ||
+            status === STATUS.FINISHED ||
+            status === STATUS.SKIPPED  ||
+            type   === EVENTS.TOUR_END;
 
-        // Tour stepped through to the end, or skip button pressed
-        if (status === 'finished' || status === 'skipped') {
+        if (isDone) {
             endTour();
         }
     };
@@ -153,7 +163,13 @@ const Home = ({
                 />
             }
 
+            {/*
+              * key={tourKey} — when tourKey increments, React unmounts and
+              * remounts Joyride entirely, resetting its internal stepIndex to 0.
+              * This guarantees "Start Tour" always begins from the first step.
+              */}
             <Joyride
+                key={tourKey}
                 steps={DEMO_STEPS}
                 run={runTour}
                 continuous

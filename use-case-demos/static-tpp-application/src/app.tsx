@@ -17,7 +17,7 @@
  */
 
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Home from "./pages/home-page/home.jsx";
 import useConfigContext from "./hooks/use-config-context.ts";
 import AppThemeProvider from "./providers/app-theme-provider.tsx";
@@ -38,40 +38,35 @@ import AllTransactions from "./pages/all-transactions-page/all-transactions.tsx"
 import AllStandingOrders from "./pages/all-standing-orders/all-standing-orders.tsx";
 import SplashScreen from "./pages/splash-screen.tsx";
 
+const tourAlreadySeen = () =>
+    sessionStorage.getItem('tourCompleted') === 'true' ||
+    sessionStorage.getItem('seenTour') === 'true';
+
 /**
  * @function App
- * @description The root component that sets up global theming and routing.
+ * @description Root component with theming and routing.
  *
- * Splash → Tour sequencing:
- * - If the splash has never been shown, the tour is held at false until the
- *   splash is dismissed. handleSplashClose() marks the splash done and then
- *   triggers the tour (if it hasn't been completed before).
- * - If the splash was already shown in a previous session visit, the tour
- *   initialises normally from sessionStorage.
+ * tourKey increments on every (re)start to force Joyride to remount
+ * from step 0 regardless of where the previous run was interrupted.
  */
 export function App() {
 
     const location = useLocation();
 
     const splashAlreadyShown = sessionStorage.getItem('splashShown') === 'true';
-    const tourAlreadyCompleted = sessionStorage.getItem('tourCompleted') === 'true';
 
-    // Splash is shown only on first visit of the session.
     const [showSplash, setShowSplash] = useState(() => !splashAlreadyShown);
-
-    // Tour starts immediately only if splash was already dismissed in a prior
-    // visit AND the tour hasn't been completed. Otherwise it waits for the
-    // splash to close.
-    const [runTour, setRunTour] = useState(
-        () => splashAlreadyShown && !tourAlreadyCompleted
-    );
+    const [runTour, setRunTour] = useState(() => splashAlreadyShown && !tourAlreadySeen());
+    const [tourKey, setTourKey] = useState(0);
 
     const handleSplashClose = () => {
         sessionStorage.setItem('splashShown', 'true');
         setShowSplash(false);
-        // Start the tour right after splash closes (if not yet completed).
-        if (sessionStorage.getItem('tourCompleted') !== 'true') {
-            setTimeout(() => setRunTour(true), 400); // brief delay for splash exit animation
+        if (!tourAlreadySeen()) {
+            setTimeout(() => {
+                setTourKey(k => k + 1);
+                setRunTour(true);
+            }, 400);
         }
     };
 
@@ -83,57 +78,14 @@ export function App() {
     };
 
     const handleStartTour = () => {
+        setTourKey(k => k + 1);
         setRunTour(true);
     };
 
-    const sendHeight = useCallback(() => {
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                const height = Math.max(
-                    document.body.scrollHeight,
-                    document.documentElement.scrollHeight,
-                    document.body.offsetHeight,
-                    document.documentElement.offsetHeight
-                );
-                window.parent.postMessage({ type: 'iframe-height', height }, '*');
-            }, 600);
-        });
-    }, []);
-
+    // Scroll to top on every route change
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (window.parent !== window) {
-            window.parent.postMessage({ type: 'scroll-to-top' }, '*');
-        }
-        sendHeight();
-        const timers = [
-            setTimeout(sendHeight, 1000),
-            setTimeout(sendHeight, 1500),
-            setTimeout(sendHeight, 2000),
-        ];
-        return () => timers.forEach(clearTimeout);
-    }, [location.pathname, sendHeight]);
-
-    useEffect(() => {
-        const handleClick = () => {
-            setTimeout(sendHeight, 100);
-            setTimeout(sendHeight, 300);
-        };
-        let resizeTimer: number | undefined;
-        const handleResize = () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(sendHeight, 300);
-        };
-        window.addEventListener('click', handleClick);
-        window.addEventListener('resize', handleResize);
-        window.addEventListener('load', sendHeight);
-        return () => {
-            window.removeEventListener('click', handleClick);
-            window.removeEventListener('resize', handleResize);
-            window.removeEventListener('load', sendHeight);
-            clearTimeout(resizeTimer);
-        };
-    }, [sendHeight]);
+    }, [location.pathname]);
 
     const {
         banksInfomation, accountsNumbersToAdd, colors, standingOrdersTableHeaderData,
@@ -173,6 +125,7 @@ export function App() {
                                 transactionTableHeaderData={transactionTableHeaderData}
                                 standingOrdersTableHeaderData={standingOrdersTableHeaderData}
                                 runTour={runTour}
+                                tourKey={tourKey}
                                 setRunTour={handleSetRunTour}
                                 onStartTour={handleStartTour}
                             />
