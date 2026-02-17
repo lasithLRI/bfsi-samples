@@ -86,20 +86,32 @@ const Home = ({
         }
     };
 
-    // ── Removed: the useEffect that independently called setRunTour(true) ──
-    // Tour sequencing is now fully controlled in app.tsx:
-    //   splash closes → handleSplashClose() → setTimeout(() => setRunTour(true), 400)
-    // Having a second useEffect here caused the tour to fire before the splash
-    // dismissed, and then fail to re-trigger after it closed.
+    /**
+     * Called whenever the tour ends for any reason — finished, skipped, or
+     * the X button closed. Marks the tour as seen in sessionStorage and
+     * smoothly scrolls back to the top of the page.
+     */
+    const endTour = () => {
+        setRunTour(false);
+        sessionStorage.setItem('seenTour', 'true');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (window.parent !== window) {
+            window.parent.postMessage({ type: 'scroll-to-top' }, '*');
+        }
+    };
 
     const handleCallback = (data: CallBackProps) => {
         const { status, action } = data;
+
+        // X / close button clicked
         if (action === 'close') {
-            setRunTour(false);
+            endTour();
             return;
         }
+
+        // Tour stepped through to the end, or skip button pressed
         if (status === 'finished' || status === 'skipped') {
-            setRunTour(false);
+            endTour();
         }
     };
 
