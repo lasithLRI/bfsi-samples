@@ -24,7 +24,7 @@ All configurations for this demo application are stored in the `config.json` fil
 
 ### Required Tool Versions
 
-* **Node.js**: The recommended build tool is `npm`, which is bundled with Node.js. It's best to use the latest LTS (Long-Term Support) version of Node.js for stability. Tested node version is `v22.17.0`.
+* **Node.js**: The recommended build tool is `npm`, which is bundled with Node.js. It's best to use the latest LTS (Long-Term Support) version of Node.js for stability. Tested node version is `v24.13.1`.
 
 * **Vite**: This project is built using Vite, a fast front-end build tool.
 
