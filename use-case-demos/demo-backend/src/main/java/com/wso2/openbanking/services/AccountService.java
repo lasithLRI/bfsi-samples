@@ -1,6 +1,7 @@
 package com.wso2.openbanking.services;
 
 import com.wso2.openbanking.ConfigLoader;
+import com.wso2.openbanking.exception.BankInfoLoadException;
 import com.wso2.openbanking.models.Account;
 import com.wso2.openbanking.models.Bank;
 import com.wso2.openbanking.models.Transaction;
@@ -40,7 +41,7 @@ public class AccountService {
         this.accessToken = accessToken;
     }
 
-    public void addMockBankAccountsInformation() throws IOException {
+    public void addMockBankAccountsInformation() throws IOException, BankInfoLoadException {
         if (bankInfoService.getBanks() == null) {
             bankInfoService.loadBanks();
         }

@@ -1,6 +1,8 @@
 package com.wso2.openbanking;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wso2.openbanking.exception.AuthorizationException;
+import com.wso2.openbanking.exception.BankInfoLoadException;
 import com.wso2.openbanking.models.*;
 import com.wso2.openbanking.services.*;
 import com.wso2.openbanking.utils.HtmlResponseBuilder;
@@ -8,6 +10,8 @@ import com.wso2.openbanking.utils.HtmlResponseBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.*;
 
 @Path("")
@@ -45,17 +49,25 @@ public class InitialData {
     @GET
     @Path("/initialize")
     @Produces(MediaType.APPLICATION_JSON)
-    public ConfigResponse initializeApplication() {
-        bankInfoService.loadBanks();
-        return bankInfoService.getConfigurations();
+    public Response initializeApplication() {
+        try {
+            bankInfoService.loadBanks();
+            return Response.ok(bankInfoService.getConfigurations()).build();
+        } catch (BankInfoLoadException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 
     @GET
     @Path("/bank")
     @Produces(MediaType.APPLICATION_JSON)
-    public ConfigResponse getBankData() {
-        bankInfoService.loadBanks();
-        return bankInfoService.getConfigurations();
+    public Response getBankData() {
+        try {
+            bankInfoService.loadBanks();
+            return Response.ok(bankInfoService.getConfigurations()).build();
+        } catch (BankInfoLoadException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 
     @GET
@@ -77,8 +89,12 @@ public class InitialData {
     @GET
     @Path("/accounts")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<AddAccountBankInfo> getAddAccountBanks() {
-        return bankInfoService.getAddAccountBanksInformation();
+    public Response getAddAccountBanks() {
+        try {
+            return Response.ok(bankInfoService.getAddAccountBanksInformation()).build();
+        } catch (BankInfoLoadException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 
     @POST
@@ -101,13 +117,13 @@ public class InitialData {
 
     @GET
     @Path("/processAuth")
-    public void processAuth(
-            @QueryParam("code") String code,
-            @QueryParam("state") String state,
-            @QueryParam("session_state") String sessionState,
-            @QueryParam("id_token") String idToken) throws Exception {
-
-        authService.processAuthorizationCallback(code);
+    public Response processAuth(@QueryParam("code") String code) {
+        try {
+            authService.processAuthorizationCallback(code);
+            return Response.ok().build();
+        } catch (AuthorizationException e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
     }
 
     private Map<String, String> createRedirectResponse(String url) {

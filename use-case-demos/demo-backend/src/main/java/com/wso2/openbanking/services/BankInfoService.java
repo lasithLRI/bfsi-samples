@@ -3,12 +3,14 @@ package com.wso2.openbanking.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wso2.openbanking.ConfigLoader;
+import com.wso2.openbanking.exception.BankInfoLoadException;
 import com.wso2.openbanking.models.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,12 +34,13 @@ public class BankInfoService {
     private AddAccountBankInfo addAccountBankInfo;
 
     public BankInfoService() {
+        // No initialization required: all fields are populated lazily via loadBanks()
     }
 
-    public void loadBanks() {
+    public void loadBanks() throws BankInfoLoadException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
             if (inputStream == null) {
-                throw new RuntimeException("Config file not found: " + CONFIG_FILE);
+                throw new BankInfoLoadException("Config file not found on classpath: " + CONFIG_FILE);
             }
             if (this.banks == null) {
                 JsonNode rootNode = objectMapper.readTree(inputStream);
@@ -52,17 +55,21 @@ public class BankInfoService {
                 loadMockBankFromProperties();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BankInfoLoadException("Failed to read or parse config file: " + CONFIG_FILE, e);
         }
     }
 
-    private void loadBanksFromJson(JsonNode rootNode) {
+    private void loadBanksFromJson(JsonNode rootNode) throws BankInfoLoadException {
         JsonNode banksNode = rootNode.get("banks");
         if (banksNode != null && banksNode.isArray()) {
-            this.banks = objectMapper.convertValue(
-                    banksNode,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, Bank.class)
-            );
+            try {
+                this.banks = objectMapper.convertValue(
+                        banksNode,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, Bank.class)
+                );
+            } catch (IllegalArgumentException e) {
+                throw new BankInfoLoadException("Failed to deserialize banks array from config", e);
+            }
             convertDateOffsets();
             sortTransactionsByDate();
         }
@@ -88,7 +95,7 @@ public class BankInfoService {
                 int daysAgo = Integer.parseInt(dateValue);
                 transaction.setDate(today.minusDays(daysAgo).format(DATE_FORMATTER));
             } catch (NumberFormatException e) {
-                // Already a formatted date string, no conversion needed
+                // dateValue is already a formatted date string (e.g. "2024-03-15") — no conversion needed
             }
         }
     }
@@ -102,7 +109,7 @@ public class BankInfoService {
                 int daysFromNow = Integer.parseInt(nextDateValue);
                 order.setNextDate(today.plusDays(daysFromNow).format(DATE_FORMATTER));
             } catch (NumberFormatException e) {
-                // Already a formatted date string, no conversion needed
+                // nextDateValue is already a formatted date string (e.g. "2024-03-15") — no conversion needed
             }
         }
     }
@@ -168,13 +175,14 @@ public class BankInfoService {
         }
     }
 
-    private void loadStandingOrdersHeaders(JsonNode rootNode) {
+    private void loadStandingOrdersHeaders(JsonNode rootNode) throws BankInfoLoadException {
         JsonNode headersNode = rootNode.get("standingOrdersTableHeaderData");
         if (headersNode != null) {
             try {
-                this.standingOrdersTableHeaders = objectMapper.convertValue(headersNode, StandingOrdersTableHeaderData.class);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to parse standingOrdersTableHeaderData", e);
+                this.standingOrdersTableHeaders = objectMapper.convertValue(
+                        headersNode, StandingOrdersTableHeaderData.class);
+            } catch (IllegalArgumentException e) {
+                throw new BankInfoLoadException("Failed to parse standingOrdersTableHeaderData", e);
             }
         }
     }
@@ -190,12 +198,11 @@ public class BankInfoService {
         try {
             String mockBankName = ConfigLoader.getMockBankName();
             String mockBankLogo = ConfigLoader.getMockBankLogo();
-            if (mockBankName != null && !mockBankName.isEmpty()
-                    && mockBankLogo != null && !mockBankLogo.isEmpty()) {
+            if (!mockBankName.isEmpty() && !mockBankLogo.isEmpty()) {
                 this.addAccountBankInfo = new AddAccountBankInfo(mockBankName, mockBankLogo);
             }
-        } catch (RuntimeException e) {
-            // Mock bank properties are optional — skip if not configured
+        } catch (IllegalStateException e) {
+            // Mock bank properties are optional — skip silently if not configured
         }
     }
 
@@ -278,9 +285,9 @@ public class BankInfoService {
         return new LoadPaymentPageResponse(bankInfoInPayments, this.payees, this.currencies);
     }
 
-    public List<AddAccountBankInfo> getAddAccountBanksInformation() {
+    public List<AddAccountBankInfo> getAddAccountBanksInformation() throws BankInfoLoadException {
         if (this.banks == null) {
-            throw new RuntimeException("Banks not loaded. Call loadBanks() first.");
+            throw new BankInfoLoadException("Banks not loaded. Call loadBanks() first.");
         }
         Map<String, AddAccountBankInfo> uniqueBanks = new LinkedHashMap<>();
         this.banks.forEach(bank -> uniqueBanks.putIfAbsent(
@@ -298,7 +305,8 @@ public class BankInfoService {
             try {
                 return LocalDate.parse(t2.getDate(), DATE_FORMATTER)
                         .compareTo(LocalDate.parse(t1.getDate(), DATE_FORMATTER));
-            } catch (Exception e) {
+            } catch (DateTimeParseException e) {
+                // If either date is unparseable, treat the two entries as equal in sort order
                 return 0;
             }
         };
@@ -309,7 +317,8 @@ public class BankInfoService {
             try {
                 return LocalDate.parse(o1.getNextDate(), DATE_FORMATTER)
                         .compareTo(LocalDate.parse(o2.getNextDate(), DATE_FORMATTER));
-            } catch (Exception e) {
+            } catch (DateTimeParseException e) {
+                // If either date is unparseable, treat the two entries as equal in sort order
                 return 0;
             }
         };
