@@ -44,7 +44,6 @@ interface PaymentFormProps {
     banksList: Bank[];
 }
 
-const currency = ["GBP","EURO","USD"]
 export const ErrorMessage = ({error}:{error:any})=>{
     if (!error)return null;
     return <p className={"error-message-payments"}>{error.message}</p>
@@ -93,10 +92,10 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
             const timer = setTimeout(()=>{
                 navigate("/"+target.route+"/login?type=payment",{
                     state:{
-                    formData: formDataToSubmit,
-                    message: "payment",
-                    bankInfo: target,
-                }
+                        formData: formDataToSubmit,
+                        message: "payment",
+                        bankInfo: target,
+                    }
                 })
                 return () => clearTimeout(timer);
             },1000);
@@ -173,50 +172,31 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                 <div style={{display: 'flex',gap:'1rem'}}>
                     <FormControl fullWidth={true} margin={'dense'}>
                         <label>Currency</label>
-                        <Controller name={'currency'} control={control}
-                                    render={({field}) => (
-                            <Select {...field}
-                                    displayEmpty
-                                    renderValue={(value) => {
-                                        const selected = value as string
-                                        if (selected === "") {
-                                            return (
-                                                <span style={{color: 'rgba(0, 0, 0, 0.38)'}}>GBP</span>
-                                            );
-                                        }
-                                        return selected;
-                                    }}
-                                    error={!!errors.currency}>
-                                {currency.map((unit)=>(
-                                    <MenuItem key={unit} value={`${unit}`}>{unit}</MenuItem>
-                                ))}
-                            </Select>
-                        )}/>
-                        <ErrorMessage error={errors.currency}/>
+                        <OutlinedInput value="GBP" disabled />
                     </FormControl>
                     <FormControl fullWidth={true} margin={'dense'}>
                         <label>Amount <span style={{color:"var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
                         <Controller name={'amount'} control={control}
                                     rules={{required:true,min: 0.01}}
                                     render={({field}) => (
-                            <NumericFormat
-                                {...field}
-                                value={field.value === 0 ? '' : field.value}
-                                customInput={OutlinedInput}
-                                thousandSeparator={true}
-                                decimalScale={2}
-                                fixedDecimalScale={true}
-                                allowLeadingZeros={false}
-                                allowNegative={false}
-                                onValueChange={(values) => {
-                                    field.onChange(values.floatValue || 0);
+                                        <NumericFormat
+                                            {...field}
+                                            value={field.value === 0 ? '' : field.value}
+                                            customInput={OutlinedInput}
+                                            thousandSeparator={true}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                            allowLeadingZeros={false}
+                                            allowNegative={false}
+                                            onValueChange={(values) => {
+                                                field.onChange(values.floatValue || 0);
 
-                                }}
-                                error={!!errors.amount}
-                                placeholder="0.00"
-                                type="text"
-                            />
-                        )}/>
+                                            }}
+                                            error={!!errors.amount}
+                                            placeholder="0.00"
+                                            type="text"
+                                        />
+                                    )}/>
                         <ErrorMessage error={errors.amount}/>
                     </FormControl>
                 </div>
@@ -224,13 +204,13 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                     <label>Reference <span style={{color:"var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
                     <Controller name={'reference'} control={control} rules={{required:true}}
                                 render={({field}) => (
-                        <OutlinedInput
-                            {...field}
-                            placeholder={"Enter your reference"}
-                            type={"text"}
-                            error={!!errors.reference}
-                        />
-                    )}/>
+                                    <OutlinedInput
+                                        {...field}
+                                        placeholder={"Enter your reference"}
+                                        type={"text"}
+                                        error={!!errors.reference}
+                                    />
+                                )}/>
                     <ErrorMessage error={errors.reference}/>
                 </FormControl>
                 <Box className={"payment-button-container"} flexDirection={responsiveDirection}>
