@@ -33,12 +33,12 @@ All configurations for this demo application are stored in the `config.json` fil
 **Install Dependencies**: Navigate to the project's root directory in your terminal and install all required dependencies.
 
 ```bash
-npm install
+pnpm install
 ```
 **Start the Development Server**: Once the dependencies are installed, you can start the development server.
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 The Vite development server will start, and the application will be accessible at a local address, usually `http://localhost:5173`. The terminal will provide the exact URL.
 
