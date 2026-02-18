@@ -138,7 +138,7 @@ public class SessionSecurityFilter implements Filter {
         String[] parts = accessToken.split("\\.");
         if (parts.length != 3) return null;
 
-        byte[] bytes = Base64.getDecoder().decode(parts[1]);
+        byte[] bytes = Base64.getUrlDecoder().decode(parts[1]);
         return objectMapper.readTree(new String(bytes, StandardCharsets.UTF_8));
     }
 

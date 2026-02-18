@@ -107,7 +107,7 @@ public class InitialData {
             @QueryParam("session_state") String sessionState,
             @QueryParam("id_token") String idToken) throws Exception {
 
-        authService.processAuthorizationCallback(code, state, sessionState, idToken);
+        authService.processAuthorizationCallback(code);
     }
 
     private Map<String, String> createRedirectResponse(String url) {

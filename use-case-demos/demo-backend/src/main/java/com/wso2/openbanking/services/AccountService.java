@@ -9,7 +9,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -27,6 +26,10 @@ public class AccountService {
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    private static final String FIELD_ACCOUNT = "Account";
+    private static final String FIELD_AMOUNT = "Amount";
+    private static final String ACCOUNTS_PATH = "/accounts/";
+
     public AccountService(BankInfoService bankInfoService, HttpTlsClient client) throws Exception {
         this.bankInfoService = bankInfoService;
         this.client = client;
@@ -41,23 +44,17 @@ public class AccountService {
         if (bankInfoService.getBanks() == null) {
             bankInfoService.loadBanks();
         }
-
         String bankName = ConfigLoader.getMockBankName();
         boolean bankExists = bankInfoService.isBankExists(bankName);
-
         List<String> fetchedAccountIds = fetchAccountIds();
         Set<String> existingAccountIds = getExistingAccountIds(bankName);
-
         List<String> newAccountIds = fetchedAccountIds.stream()
                 .filter(id -> !existingAccountIds.contains(id))
                 .collect(Collectors.toList());
-
         if (newAccountIds.isEmpty()) {
             return;
         }
-
         List<Account> newAccounts = fetchAccountsWithTransactions(newAccountIds, bankName);
-
         if (bankExists) {
             addAccountsToExistingBank(bankName, newAccounts);
         } else {
@@ -69,27 +66,22 @@ public class AccountService {
         if (!bankName.equals(ConfigLoader.getMockBankName())) {
             return null;
         }
-
         String addAccountUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents";
         String consentBody = createAccountConsentBody();
         String token = oauthService.getToken("accounts openid");
         String consentResponse = oauthService.initializeConsent(token, consentBody, addAccountUrl);
-
         return oauthService.authorizeConsent(consentResponse, "accounts openid");
     }
 
     private Set<String> getExistingAccountIds(String bankName) {
         Set<String> existingIds = new HashSet<>();
-
         if (bankInfoService.getBanks() == null) {
             return existingIds;
         }
-
         bankInfoService.getBanks().stream()
                 .filter(bank -> bank.getName().equals(bankName))
                 .flatMap(bank -> bank.getAccounts().stream())
                 .forEach(account -> existingIds.add(account.getId()));
-
         return existingIds;
     }
 
@@ -103,29 +95,24 @@ public class AccountService {
                         currentAccounts = new ArrayList<>();
                         bank.setAccounts(currentAccounts);
                     }
-
                     Set<String> currentIds = currentAccounts.stream()
                             .map(Account::getId)
                             .collect(Collectors.toSet());
-
                     List<Account> uniqueNewAccounts = newAccounts.stream()
                             .filter(account -> !currentIds.contains(account.getId()))
                             .collect(Collectors.toList());
-
                     currentAccounts.addAll(uniqueNewAccounts);
                 });
     }
 
     private List<String> fetchAccountIds() throws IOException {
-        String response = client.getAccountsRequest(
+        String response = client.getWithAuth(
                 ConfigLoader.getAccountBaseUrl() + "/accounts",
                 this.accessToken
         );
-
         JSONArray accountsArray = new JSONObject(response)
                 .getJSONObject("Data")
-                .getJSONArray("Account");
-
+                .getJSONArray(FIELD_ACCOUNT);
         List<String> accountIds = new ArrayList<>();
         for (int i = 0; i < accountsArray.length(); i++) {
             accountIds.add(accountsArray.getJSONObject(i).getString("AccountId"));
@@ -139,7 +126,6 @@ public class AccountService {
             String accountName = fetchAccountName(accountId);
             double balance = fetchAccountBalance(accountId);
             List<Transaction> transactions = fetchAccountTransactions(accountId, bankName);
-
             Account account = new Account(accountId, accountName, balance, transactions);
             account.setBank(bankName);
             accounts.add(account);
@@ -148,16 +134,14 @@ public class AccountService {
     }
 
     private String fetchAccountName(String accountId) throws IOException {
-        String url = ConfigLoader.getAccountBaseUrl() + "/accounts/" + accountId;
-        String response = client.getAccountFromId(url, this.accessToken);
-
+        String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId;
+        String response = client.getWithAuth(url, this.accessToken);
         JSONObject accountDataNode = new JSONObject(response)
                 .getJSONObject("Data")
-                .getJSONArray("Account")
+                .getJSONArray(FIELD_ACCOUNT)
                 .getJSONObject(0);
-
-        if (accountDataNode.has("Account")) {
-            return accountDataNode.getJSONArray("Account")
+        if (accountDataNode.has(FIELD_ACCOUNT)) {
+            return accountDataNode.getJSONArray(FIELD_ACCOUNT)
                     .getJSONObject(0)
                     .optString("Name", "Open Banking Account");
         }
@@ -165,27 +149,23 @@ public class AccountService {
     }
 
     private double fetchAccountBalance(String accountId) throws IOException {
-        String url = ConfigLoader.getAccountBaseUrl() + "/accounts/" + accountId + "/balances";
-        String response = client.getAccountFromId(url, this.accessToken);
-
+        String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId + "/balances";
+        String response = client.getWithAuth(url, this.accessToken);
         String amount = new JSONObject(response)
                 .getJSONObject("Data")
                 .getJSONArray("Balance")
                 .getJSONObject(0)
-                .getJSONObject("Amount")
-                .getString("Amount");
-
+                .getJSONObject(FIELD_AMOUNT)
+                .getString(FIELD_AMOUNT);
         return Double.parseDouble(amount);
     }
 
     private List<Transaction> fetchAccountTransactions(String accountId, String bankName) throws IOException {
-        String url = ConfigLoader.getAccountBaseUrl() + "/accounts/" + accountId + "/transactions";
-        String response = client.getAccountFromId(url, this.accessToken);
-
+        String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId + "/transactions";
+        String response = client.getWithAuth(url, this.accessToken);
         JSONArray transactionsArray = new JSONObject(response)
                 .getJSONObject("Data")
                 .getJSONArray("Transaction");
-
         List<Transaction> transactions = new ArrayList<>();
         for (int i = 0; i < transactionsArray.length(); i++) {
             transactions.add(parseTransaction(transactionsArray.getJSONObject(i), bankName, accountId));
@@ -198,14 +178,12 @@ public class AccountService {
         transaction.setId(txn.getString("TransactionId"));
         transaction.setDate(convertIsoDateTimeToDate(txn.getString("BookingDateTime")));
         transaction.setReference(txn.getString("TransactionInformation"));
-
-        JSONObject amountObj = txn.getJSONObject("Amount");
-        transaction.setAmount(amountObj.getString("Amount"));
+        JSONObject amountObj = txn.getJSONObject(FIELD_AMOUNT);
+        transaction.setAmount(amountObj.getString(FIELD_AMOUNT));
         transaction.setCurrency(amountObj.getString("Currency"));
         transaction.setCreditDebitStatus(txn.getString("CreditDebitIndicator"));
         transaction.setBank(bankName);
         transaction.setAccount(accountId);
-
         return transaction;
     }
 
@@ -237,8 +215,7 @@ public class AccountService {
     }
 
     private String createAccountConsentBody() {
-        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.of("+05:30"));
-
+        ZonedDateTime now = ZonedDateTime.now(java.time.ZoneOffset.of("+05:30"));
         JSONObject permissions = new JSONObject()
                 .put("Permissions", new JSONArray()
                         .put("ReadAccountsBasic")
@@ -248,7 +225,6 @@ public class AccountService {
                 .put("ExpirationDateTime", now.plusDays(90).format(ISO_DATETIME_FORMATTER))
                 .put("TransactionFromDateTime", now.minusDays(30).format(ISO_DATETIME_FORMATTER))
                 .put("TransactionToDateTime", now.format(ISO_DATETIME_FORMATTER));
-
         return new JSONObject()
                 .put("Data", permissions)
                 .put("Risk", new JSONObject())

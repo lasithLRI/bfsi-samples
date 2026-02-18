@@ -50,16 +50,7 @@ public class HttpTlsClient {
                 .executeAndGetRedirect();
     }
 
-    public String getAccountsRequest(String url, String token) throws IOException {
-        return HttpConnection.get(url, sslContext)
-                .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
-                .addHeader("Authorization", "Bearer " + token)
-                .addHeader("Accept", "application/json")
-                .addHeader("Content-Type", "application/json; charset=UTF-8")
-                .execute();
-    }
-
-    public String getAccountFromId(String url, String token) throws IOException {
+    public String getWithAuth(String url, String token) throws IOException {
         return HttpConnection.get(url, sslContext)
                 .addHeader("x-fapi-financial-id", ConfigLoader.getFapiFinancialId())
                 .addHeader("Authorization", "Bearer " + token)

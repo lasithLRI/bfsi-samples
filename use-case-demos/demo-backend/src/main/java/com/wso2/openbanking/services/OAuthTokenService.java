@@ -1,10 +1,8 @@
 package com.wso2.openbanking.services;
 
 import com.wso2.openbanking.ConfigLoader;
+import com.wso2.openbanking.utils.JwtUtils;
 import org.json.JSONObject;
-
-import java.math.BigInteger;
-import java.util.UUID;
 
 public class OAuthTokenService {
 
@@ -18,8 +16,7 @@ public class OAuthTokenService {
 
     public String getToken(String scope) {
         try {
-            String jti = generateJti();
-            String clientAssertion = jwtTokenService.createClientAssertion(jti);
+            String clientAssertion = jwtTokenService.createClientAssertion(JwtUtils.generateJti());
             String body = buildTokenRequestBody(scope, clientAssertion);
             return client.postJwt(ConfigLoader.getTokenUrl(), body);
         } catch (Exception e) {
@@ -35,8 +32,7 @@ public class OAuthTokenService {
 
     public String authorizeConsent(String consentResponse, String scope) throws Exception {
         String consentId = extractConsentId(consentResponse);
-        String jti = generateJti();
-        String requestObject = jwtTokenService.createRequestObject(consentId, jti);
+        String requestObject = jwtTokenService.createRequestObject(consentId, JwtUtils.generateJti());
         return client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
     }
 
@@ -53,9 +49,5 @@ public class OAuthTokenService {
                 "&client_id=" + ConfigLoader.getClientId() +
                 "&client_assertion=" + clientAssertion +
                 "&redirect_uri=" + ConfigLoader.getRedirectUri();
-    }
-
-    private String generateJti() {
-        return new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
     }
 }

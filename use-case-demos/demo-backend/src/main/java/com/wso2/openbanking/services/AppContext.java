@@ -1,10 +1,5 @@
 package com.wso2.openbanking.services;
 
-/**
- * @deprecated Use JwtTokenService.getInstance() instead.
- * Kept for backward compatibility.
- */
-@Deprecated
 public class AppContext {
 
     private final String clientId;

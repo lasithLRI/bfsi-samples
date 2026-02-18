@@ -1,10 +1,11 @@
 package com.wso2.openbanking.services;
 
 import com.wso2.openbanking.ConfigLoader;
+import com.wso2.openbanking.exception.AuthorizationException;
+import com.wso2.openbanking.utils.JwtUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.math.BigInteger;
-import java.util.UUID;
+import java.io.IOException;
 
 public class AuthService {
 
@@ -13,7 +14,8 @@ public class AuthService {
     private final HttpTlsClient client;
     private String requestStatus = "accounts";
 
-    public AuthService(AccountService accountService, PaymentService paymentService) throws Exception {
+    public AuthService(AccountService accountService, PaymentService paymentService)
+            throws Exception {
         this.accountService = accountService;
         this.paymentService = paymentService;
         this.client = new HttpTlsClient(
@@ -28,18 +30,24 @@ public class AuthService {
         this.requestStatus = status;
     }
 
-    public void processAuthorizationCallback(String code, String state, String sessionState, String idToken)
-            throws Exception {
+    public void processAuthorizationCallback(String code) throws AuthorizationException {
         String accessToken = exchangeCodeForToken(code);
         handleAuthorizationSuccess(accessToken);
     }
 
-    private String exchangeCodeForToken(String code) throws Exception {
-        String jti = generateJti();
-        String clientAssertion = JwtTokenService.getInstance().createClientAssertion(jti);
-        String body = buildTokenRequestBody(code, clientAssertion);
-        String response = client.postAccesstoken(ConfigLoader.getTokenUrl(), body);
-        return parseAccessToken(response);
+    private String exchangeCodeForToken(String code) throws AuthorizationException {
+        try {
+            String clientAssertion = JwtTokenService.getInstance().createClientAssertion(JwtUtils.generateJti());
+            String body = buildTokenRequestBody(code, clientAssertion);
+            String response = client.postAccesstoken(ConfigLoader.getTokenUrl(), body);
+            return parseAccessToken(response);
+        } catch (IOException e) {
+            throw new AuthorizationException("Failed to contact token endpoint", e);
+        } catch (JSONException e) {
+            throw new AuthorizationException("Token response did not contain a valid access_token", e);
+        } catch (Exception e) {
+            throw new AuthorizationException("Failed to create client assertion due to a security error", e);
+        }
     }
 
     private String buildTokenRequestBody(String code, String clientAssertion) {
@@ -56,17 +64,17 @@ public class AuthService {
         return new JSONObject(response).getString("access_token");
     }
 
-    private void handleAuthorizationSuccess(String accessToken) throws Exception {
+    private void handleAuthorizationSuccess(String accessToken) throws AuthorizationException {
         accountService.setAccessToken(accessToken);
-
-        if ("accounts".equals(requestStatus)) {
-            accountService.addMockBankAccountsInformation();
-        } else if ("payments".equals(requestStatus)) {
-            paymentService.addPaymentToAccount();
+        try {
+            if ("accounts".equals(requestStatus)) {
+                accountService.addMockBankAccountsInformation();
+            } else if ("payments".equals(requestStatus)) {
+                paymentService.addPaymentToAccount();
+            }
+        } catch (IOException e) {
+            throw new AuthorizationException(
+                    "Failed to persist data after successful authorization for scope: " + requestStatus, e);
         }
-    }
-
-    private String generateJti() {
-        return new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();
     }
 }

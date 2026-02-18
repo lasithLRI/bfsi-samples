@@ -70,10 +70,8 @@ public class BankInfoService {
 
     private void convertDateOffsets() {
         LocalDate today = LocalDate.now();
-
         for (Bank bank : this.banks) {
             if (bank.getAccounts() == null) continue;
-
             for (Account account : bank.getAccounts()) {
                 convertTransactionDates(account, today);
                 convertStandingOrderDates(account, today);
@@ -83,7 +81,6 @@ public class BankInfoService {
 
     private void convertTransactionDates(Account account, LocalDate today) {
         if (account.getTransactions() == null) return;
-
         for (Transaction transaction : account.getTransactions()) {
             String dateValue = transaction.getDate();
             if (dateValue == null) continue;
@@ -98,7 +95,6 @@ public class BankInfoService {
 
     private void convertStandingOrderDates(Account account, LocalDate today) {
         if (account.getStandingOrders() == null) return;
-
         for (StandingOrder order : account.getStandingOrders()) {
             String nextDateValue = order.getNextDate();
             if (nextDateValue == null) continue;
@@ -114,7 +110,6 @@ public class BankInfoService {
     private void sortTransactionsByDate() {
         for (Bank bank : this.banks) {
             if (bank.getAccounts() == null) continue;
-
             for (Account account : bank.getAccounts()) {
                 if (account.getTransactions() != null && !account.getTransactions().isEmpty()) {
                     account.getTransactions().sort(byDateDescending());
@@ -135,7 +130,6 @@ public class BankInfoService {
     private void loadColors(JsonNode rootNode) {
         JsonNode colorsNode = rootNode.get("colors");
         if (colorsNode == null) return;
-
         if (colorsNode.isArray()) {
             Map<String, Object> mergedColors = new HashMap<>();
             for (JsonNode colorObj : colorsNode) {
@@ -196,7 +190,6 @@ public class BankInfoService {
         try {
             String mockBankName = ConfigLoader.getMockBankName();
             String mockBankLogo = ConfigLoader.getMockBankLogo();
-
             if (mockBankName != null && !mockBankName.isEmpty()
                     && mockBankLogo != null && !mockBankLogo.isEmpty()) {
                 this.addAccountBankInfo = new AddAccountBankInfo(mockBankName, mockBankLogo);
@@ -232,7 +225,6 @@ public class BankInfoService {
     private List<Transaction> collectEnrichedTransactions() {
         List<Transaction> result = new ArrayList<>();
         if (this.banks == null) return result;
-
         for (Bank bank : this.banks) {
             if (bank.getAccounts() == null) continue;
             for (Account account : bank.getAccounts()) {
@@ -257,7 +249,6 @@ public class BankInfoService {
     private List<StandingOrder> collectEnrichedStandingOrders() {
         List<StandingOrder> result = new ArrayList<>();
         if (this.banks == null) return result;
-
         for (Bank bank : this.banks) {
             if (bank.getAccounts() == null) continue;
             for (Account account : bank.getAccounts()) {
@@ -284,7 +275,6 @@ public class BankInfoService {
                 .flatMap(bank -> bank.getAccounts().stream()
                         .map(account -> new BankInfoInPayments(bank.getName(), account.getId())))
                 .collect(Collectors.toList());
-
         return new LoadPaymentPageResponse(bankInfoInPayments, this.payees, this.currencies);
     }
 
@@ -292,22 +282,16 @@ public class BankInfoService {
         if (this.banks == null) {
             throw new RuntimeException("Banks not loaded. Call loadBanks() first.");
         }
-
         Map<String, AddAccountBankInfo> uniqueBanks = new LinkedHashMap<>();
-
         this.banks.forEach(bank -> uniqueBanks.putIfAbsent(
                 bank.getName(),
                 new AddAccountBankInfo(bank.getName(), bank.getImage())
         ));
-
         if (this.addAccountBankInfo != null) {
             uniqueBanks.putIfAbsent(this.addAccountBankInfo.getName(), this.addAccountBankInfo);
         }
-
         return new ArrayList<>(uniqueBanks.values());
     }
-
-    // --- Comparators ---
 
     private Comparator<Transaction> byDateDescending() {
         return (t1, t2) -> {
@@ -331,16 +315,8 @@ public class BankInfoService {
         };
     }
 
-    // --- Package-private methods for use by other services ---
-
-    List<Bank> getBanks() {
-        return banks;
-    }
-
-    void addBank(Bank bank) {
-        this.banks.add(bank);
-    }
-
+    List<Bank> getBanks() { return banks; }
+    void addBank(Bank bank) { this.banks.add(bank); }
     boolean isBankExists(String bankName) {
         return this.banks.stream().anyMatch(bank -> bankName.equals(bank.getName()));
     }
