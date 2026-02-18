@@ -19,7 +19,7 @@
 import {Controller, useForm} from "react-hook-form";
 import {Box, Button, FormControl, MenuItem, OutlinedInput, Select} from "@oxygen-ui/react";
 import {NumericFormat} from "react-number-format";
-import {useState} from "react";
+import {useState, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import type {AppInfo, Bank, Payee} from "../../../hooks/config-interfaces.ts";
 import OverlayConfirmation from "../../../components/overlay-confirmation/overlay-confirmation.tsx";
@@ -45,7 +45,7 @@ interface PaymentFormProps {
 }
 
 export const ErrorMessage = ({error}:{error:any})=>{
-    if (!error)return null;
+    if (!error) return null;
     return <p className={"error-message-payments"}>{error.message}</p>
 }
 
@@ -55,13 +55,12 @@ export const ErrorMessage = ({error}:{error:any})=>{
  * It collects payment details and, upon confirmation, redirects the user to the
  * corresponding bank's authorization flow (via `react-router` state).
  */
-const PaymentForm = ({banksWithAllAccounts, payeeData,
-                         banksList}:PaymentFormProps) => {
+const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormProps) => {
 
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down('md'));
     const responsiveDirection = isSmallScreen ? 'column' : 'row';
     const navigate = useNavigate();
-    const {control, handleSubmit, formState: {errors},reset} = useForm<PaymentFormData>({
+    const {control, handleSubmit, formState: {errors}, reset} = useForm<PaymentFormData>({
         defaultValues: {
             userAccount: '',
             payeeAccount: '',
@@ -70,61 +69,73 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
             reference: ''
         }
     });
+
     const [isConfirming, setIsConfirming] = useState(false);
-    const [formDataToSubmit, setFormDataToSubmit] = useState<PaymentFormData | null>(null)
+    const [formDataToSubmit, setFormDataToSubmit] = useState<PaymentFormData | null>(null);
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
+    // Store timer ID in a ref so it can be cleared on unmount
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Cleanup timer on unmount to prevent navigate calls on unmounted component
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+        };
+    }, []);
+
     const onSubmit = (data: PaymentFormData) => {
         setFormDataToSubmit(data);
         setIsConfirming(true);
-    }
-    const [isRedirecting, setIsRedirecting] = useState(false);
+    };
+
     const handleConfirmedAndRedirect = () => {
-        if (formDataToSubmit){
+        if (formDataToSubmit) {
             setIsConfirming(false);
             const bankName = formDataToSubmit.userAccount.split('-')[0];
-            const target = banksList.find((bank)=>{
-                return bank.name === bankName;
-            })
-            if(!target){
-                console.log(`Bank "${bankName}" not found in banksList`)
+            const target = banksList.find((bank) => bank.name === bankName);
+            if (!target) {
+                console.log(`Bank "${bankName}" not found in banksList`);
                 return;
             }
             setIsRedirecting(true);
-            const timer = setTimeout(()=>{
-                navigate("/"+target.route+"/login?type=payment",{
-                    state:{
+            timerRef.current = setTimeout(() => {
+                navigate("/" + target.route + "/login?type=payment", {
+                    state: {
                         formData: formDataToSubmit,
                         message: "payment",
                         bankInfo: target,
                     }
-                })
-                return () => clearTimeout(timer);
-            },1000);
+                });
+            }, 1000);
         }
-    }
+    };
 
     const handleCancelConfirmation = () => {
         setIsConfirming(false);
         setFormDataToSubmit(null);
-    }
-    const paymentConfirmationMsg = `Do you wish to proceed with the payment 
-    of ${formDataToSubmit?.currency} ${formDataToSubmit?.amount} to payee ${formDataToSubmit?.payeeAccount}? `
+    };
 
-    if(isRedirecting){
-        return(
-            <RedirectionComponent/>
-        );
+    const paymentConfirmationMsg = `Do you wish to proceed with the payment 
+    of ${formDataToSubmit?.currency} ${formDataToSubmit?.amount} to payee ${formDataToSubmit?.payeeAccount}? `;
+
+    if (isRedirecting) {
+        return <RedirectionComponent/>;
     }
+
     return (
         <>
             <h2 className={"payment-form-heading"}>Payment Information</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <FormControl fullWidth={true} margin={'dense'}>
-                    <label>Select Account <span style={{color:"var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
+                    <label>Select Account <span style={{color: "var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
                     <Controller name={'userAccount'} control={control} rules={{required: true}} render={({field}) => (
                         <Select {...field}
                                 displayEmpty
                                 renderValue={(value) => {
-                                    const selected = value as string
+                                    const selected = value as string;
                                     if (selected === "") {
                                         return (
                                             <span style={{color: 'rgba(0, 0, 0, 0.38)'}}>Select your account</span>
@@ -133,8 +144,8 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                                     return selected;
                                 }}
                                 error={!!errors.userAccount}>
-                            {banksWithAllAccounts.map((bankWithAccounts)=>
-                                bankWithAccounts.accounts.map((account)=>(
+                            {banksWithAllAccounts.map((bankWithAccounts) =>
+                                bankWithAccounts.accounts.map((account) => (
                                     <MenuItem key={`${bankWithAccounts.bank.name}-${account.id}`}
                                               value={`${bankWithAccounts.bank.name}-${account.id}`}>
                                         {bankWithAccounts.bank.name}-{account.id}
@@ -145,13 +156,14 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                     )}/>
                     <ErrorMessage error={errors.userAccount}/>
                 </FormControl>
+
                 <FormControl fullWidth={true} margin={'dense'}>
-                    <label>Biller <span style={{color:"var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
-                    <Controller name={'payeeAccount'} control={control} rules={{required:true}} render={({field}) => (
+                    <label>Biller <span style={{color: "var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
+                    <Controller name={'payeeAccount'} control={control} rules={{required: true}} render={({field}) => (
                         <Select {...field}
                                 displayEmpty
                                 renderValue={(value) => {
-                                    const selected = value as string
+                                    const selected = value as string;
                                     if (selected === "") {
                                         return (
                                             <span style={{color: 'rgba(0, 0, 0, 0.38)'}}>Select biller account</span>
@@ -160,7 +172,7 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                                     return selected;
                                 }}
                                 error={!!errors.payeeAccount}>
-                            {payeeData.map((payee,index)=>(
+                            {payeeData.map((payee, index) => (
                                 <MenuItem key={index} value={`${payee.name}-${payee.accountNumber}`}>
                                     {payee.name}-{payee.accountNumber}
                                 </MenuItem>
@@ -169,15 +181,16 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                     )}/>
                     <ErrorMessage error={errors.payeeAccount}/>
                 </FormControl>
-                <div style={{display: 'flex',gap:'1rem'}}>
+
+                <div style={{display: 'flex', gap: '1rem'}}>
                     <FormControl fullWidth={true} margin={'dense'}>
                         <label>Currency</label>
-                        <OutlinedInput value="GBP" disabled />
+                        <OutlinedInput value="GBP" disabled/>
                     </FormControl>
                     <FormControl fullWidth={true} margin={'dense'}>
-                        <label>Amount <span style={{color:"var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
+                        <label>Amount <span style={{color: "var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
                         <Controller name={'amount'} control={control}
-                                    rules={{required:true,min: 0.01}}
+                                    rules={{required: true, min: 0.01}}
                                     render={({field}) => (
                                         <NumericFormat
                                             {...field}
@@ -190,7 +203,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                                             allowNegative={false}
                                             onValueChange={(values) => {
                                                 field.onChange(values.floatValue || 0);
-
                                             }}
                                             error={!!errors.amount}
                                             placeholder="0.00"
@@ -200,9 +212,10 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                         <ErrorMessage error={errors.amount}/>
                     </FormControl>
                 </div>
+
                 <FormControl fullWidth={true} margin={'dense'} sx={{height: '2vh'}}>
-                    <label>Reference <span style={{color:"var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
-                    <Controller name={'reference'} control={control} rules={{required:true}}
+                    <label>Reference <span style={{color: "var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
+                    <Controller name={'reference'} control={control} rules={{required: true}}
                                 render={({field}) => (
                                     <OutlinedInput
                                         {...field}
@@ -213,14 +226,16 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
                                 )}/>
                     <ErrorMessage error={errors.reference}/>
                 </FormControl>
+
                 <Box className={"payment-button-container"} flexDirection={responsiveDirection}>
                     <FormControl fullWidth={true} margin={'dense'}>
                         <Button variant={"contained"} type={"submit"}>Pay Now</Button>
                     </FormControl>
                     <FormControl fullWidth={true} margin={'dense'}>
-                        <Button variant={"outlined"} type={"button"} onClick={()=>{reset()}}>Reset</Button>
+                        <Button variant={"outlined"} type={"button"} onClick={() => {reset()}}>Reset</Button>
                     </FormControl>
                 </Box>
+
                 {isConfirming && (
                     <OverlayConfirmation title={"Payment Confirmation"} content={paymentConfirmationMsg}
                                          onConfirm={handleConfirmedAndRedirect} onCancel={handleCancelConfirmation}
@@ -229,6 +244,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData,
             </form>
         </>
     );
-}
+};
 
 export default PaymentForm;

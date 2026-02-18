@@ -30,10 +30,8 @@ interface StandingOrdersTableProps {
 
 /**
  * @function AllStandingOrders
- * @description A dedicated page component for displaying a paginated view of all
- * recurring payments (standing orders) in a table.
- * It manages the pagination state to show 10 items at a time and integrates
- * into the main application layout.
+ * @description A dedicated page component for displaying all recurring payments
+ * (standing orders) in a table. Integrates into the main application layout.
  */
 const AllStandingOrders = ({standingOrdersTableHeaderData,
                                name, standingOrdersList}:StandingOrdersTableProps)=>{
