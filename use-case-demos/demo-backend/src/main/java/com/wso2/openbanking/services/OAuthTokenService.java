@@ -32,7 +32,7 @@ public class OAuthTokenService {
 
     public String authorizeConsent(String consentResponse, String scope) throws Exception {
         String consentId = extractConsentId(consentResponse);
-        String requestObject = jwtTokenService.createRequestObject(consentId, JwtUtils.generateJti());
+        String requestObject = jwtTokenService.createRequestObject(consentId);
         return client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
     }
 

@@ -2,9 +2,13 @@ package com.wso2.openbanking.services;
 
 import com.wso2.openbanking.ConfigLoader;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.util.Base64;
@@ -56,7 +60,7 @@ public class JwtTokenService {
         return buildJwt(header.toJson(), payload.toJson());
     }
 
-    public String createRequestObject(String consentId, String jti) throws Exception {
+    public String createRequestObject(String consentId) throws Exception {
         long currentTime = getCurrentTimeSeconds();
         long expiration = currentTime + TimeUnit.MINUTES.toSeconds(TOKEN_VALIDITY_MINUTES);
 
@@ -66,18 +70,18 @@ public class JwtTokenService {
                 ConfigLoader.getTokenType()
         );
 
-        RequestObjectPayload payload = new RequestObjectPayload(
-                ConfigLoader.getClientId(),
-                ConfigLoader.getResponseType(),
-                ConfigLoader.getRedirectUri(),
-                ConfigLoader.getOAuthState(),
-                ConfigLoader.getOAuthNonce(),
-                ConfigLoader.getTokenUrl(),
-                currentTime,
-                expiration,
-                "openid accounts payments",
-                consentId
-        );
+        RequestObjectPayload payload = new RequestObjectPayload.Builder()
+                .iss(ConfigLoader.getClientId())
+                .responseType(ConfigLoader.getResponseType())
+                .redirectUri(ConfigLoader.getRedirectUri())
+                .state(ConfigLoader.getOAuthState())
+                .nonce(ConfigLoader.getOAuthNonce())
+                .aud(ConfigLoader.getTokenUrl())
+                .nbf(currentTime)
+                .exp(expiration)
+                .scope("openid accounts payments")
+                .consentId(consentId)
+                .build();
 
         return buildJwt(header.toJson(), payload.toJson());
     }
@@ -103,10 +107,13 @@ public class JwtTokenService {
         return base64UrlEncode(signature.sign());
     }
 
-    private PrivateKey loadPrivateKey() throws Exception {
-        return KeyReader.loadPrivateKeyFromStream(
-                JwtTokenService.class.getResourceAsStream(SIGNING_KEY_PATH)
-        );
+    private PrivateKey loadPrivateKey()
+            throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+        InputStream keyStream = JwtTokenService.class.getResourceAsStream(SIGNING_KEY_PATH);
+        if (keyStream == null) {
+            throw new IOException("Signing key not found on classpath: " + SIGNING_KEY_PATH);
+        }
+        return KeyReader.loadPrivateKeyFromStream(keyStream);
     }
 
     private String base64UrlEncode(byte[] bytes) {

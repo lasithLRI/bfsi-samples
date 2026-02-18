@@ -21,6 +21,6 @@ public class AppContext {
     }
 
     public String makeRequestObject(String consentId) throws Exception {
-        return jwtTokenService.createRequestObject(consentId, jti);
+        return jwtTokenService.createRequestObject(consentId);
     }
 }

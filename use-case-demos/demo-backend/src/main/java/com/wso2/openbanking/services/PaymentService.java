@@ -1,14 +1,19 @@
 package com.wso2.openbanking.services;
 
 import com.wso2.openbanking.ConfigLoader;
+import com.wso2.openbanking.exception.AuthorizationException;
+import com.wso2.openbanking.exception.PaymentException;
 import com.wso2.openbanking.models.Account;
 import com.wso2.openbanking.models.Payment;
 import com.wso2.openbanking.models.Transaction;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 public class PaymentService {
@@ -16,25 +21,32 @@ public class PaymentService {
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    private static final Random RANDOM = new Random();
+
     private final BankInfoService bankInfoService;
     private final OAuthTokenService oauthService;
     private Payment currentPayment;
 
-    public PaymentService(BankInfoService bankInfoService, HttpTlsClient client) throws Exception {
+    public PaymentService(BankInfoService bankInfoService, HttpTlsClient client)
+            throws Exception {
         this.bankInfoService = bankInfoService;
         this.oauthService = new OAuthTokenService(client);
     }
 
-    public String processPaymentRequest(Payment payment) throws Exception {
+    public String processPaymentRequest(Payment payment) throws AuthorizationException {
         this.currentPayment = payment;
-        String token = oauthService.getToken("payments openid");
-        String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payment-consents";
-        String consentBody = createPaymentConsentBody(payment);
-        String consentResponse = oauthService.initializeConsent(token, consentBody, paymentUrl);
-        return oauthService.authorizeConsent(consentResponse, "payments openid");
+        try {
+            String token = oauthService.getToken("payments openid");
+            String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payment-consents";
+            String consentBody = createPaymentConsentBody(payment);
+            String consentResponse = oauthService.initializeConsent(token, consentBody, paymentUrl);
+            return oauthService.authorizeConsent(consentResponse, "payments openid");
+        } catch (Exception e) {
+            throw new AuthorizationException("Failed to process payment consent request", e);
+        }
     }
 
-    public void addPaymentToAccount() {
+    public void addPaymentToAccount() throws PaymentException {
         if (currentPayment == null) {
             return;
         }
@@ -45,8 +57,8 @@ public class PaymentService {
             double paymentAmount = Double.parseDouble(currentPayment.getAmount());
             Transaction transaction = createPaymentTransaction(currentPayment, bankName, accountNumber);
             updateAccountBalance(bankName, accountNumber, paymentAmount, transaction);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add payment to account", e);
+        } catch (NumberFormatException e) {
+            throw new PaymentException("Invalid payment amount: " + currentPayment.getAmount(), e);
         } finally {
             currentPayment = null;
         }
@@ -59,22 +71,23 @@ public class PaymentService {
         transaction.setReference(payment.getReference());
         transaction.setAmount(payment.getAmount());
         transaction.setCurrency(payment.getCurrency());
-        transaction.setCreditDebitStatus("c"); // TODO: verify — should this be "d" for debit?
+        transaction.setCreditDebitStatus("c");
         transaction.setBank(bankName);
         transaction.setAccount(accountNumber);
         return transaction;
     }
 
     private void updateAccountBalance(String bankName, String accountNumber,
-                                      double amount, Transaction transaction) {
+                                      double amount, Transaction transaction) throws PaymentException {
         Optional<Account> accountOpt = bankInfoService.findAccount(bankName, accountNumber);
         if (!accountOpt.isPresent()) {
-            throw new RuntimeException("Account not found - Bank: " + bankName + ", Account: " + accountNumber);
+            throw new PaymentException("Account not found - Bank: " + bankName + ", Account: " + accountNumber);
         }
         Account account = accountOpt.get();
         double currentBalance = account.getBalance();
         if (currentBalance < amount) {
-            throw new RuntimeException("Insufficient balance. Required: " + amount + ", Available: " + currentBalance);
+            throw new PaymentException(
+                    "Insufficient balance. Required: " + amount + ", Available: " + currentBalance);
         }
         account.setBalance(currentBalance - amount);
         bankInfoService.addTransactionToAccount(account, transaction);
@@ -132,7 +145,7 @@ public class PaymentService {
     }
 
     private String generateTransactionId() {
-        return String.format("T%08d", (int) (Math.random() * 100000000));
+        return String.format("T%08d", RANDOM.nextInt(100_000_000));
     }
 
     private String[] parseAccountIdentifier(String accountIdentifier) {
@@ -156,18 +169,23 @@ public class PaymentService {
         return "E2E-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
+    private int hexCharToDigit(char c) {
+        if (c >= '0' && c <= '9') {
+            return c - '0';
+        }
+        int letterValue = (c >= 'a') ? (c - 'a') : (c - 'A');
+        return letterValue % 10;
+    }
+
     private String generateNumericId(int length) {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         StringBuilder numericId = new StringBuilder();
         for (char c : uuid.toCharArray()) {
             if (numericId.length() >= length) break;
-            int digit = (c >= '0' && c <= '9')
-                    ? c - '0'
-                    : (c >= 'a' ? c - 'a' : c - 'A') % 10;
-            numericId.append(digit);
+            numericId.append(hexCharToDigit(c));
         }
         while (numericId.length() < length) {
-            numericId.append((int) (Math.random() * 10));
+            numericId.append(RANDOM.nextInt(10));
         }
         return numericId.substring(0, length);
     }

@@ -21,16 +21,4 @@ public class JwtHeader {
                 .put("typ", typ)
                 .toString();
     }
-
-    public String getAlg() {
-        return alg;
-    }
-
-    public String getKid() {
-        return kid;
-    }
-
-    public String getTyp() {
-        return typ;
-    }
 }

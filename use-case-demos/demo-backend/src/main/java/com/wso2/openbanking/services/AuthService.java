@@ -2,6 +2,8 @@ package com.wso2.openbanking.services;
 
 import com.wso2.openbanking.ConfigLoader;
 import com.wso2.openbanking.exception.AuthorizationException;
+import com.wso2.openbanking.exception.BankInfoLoadException;
+import com.wso2.openbanking.exception.PaymentException;
 import com.wso2.openbanking.utils.JwtUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,6 +77,10 @@ public class AuthService {
         } catch (IOException e) {
             throw new AuthorizationException(
                     "Failed to persist data after successful authorization for scope: " + requestStatus, e);
+        } catch (BankInfoLoadException e) {
+            throw new RuntimeException(e);
+        } catch (PaymentException e) {
+            throw new RuntimeException(e);
         }
     }
 }
