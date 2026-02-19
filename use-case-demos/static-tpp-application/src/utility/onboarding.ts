@@ -19,6 +19,7 @@
 import type { Step } from 'react-joyride';
 
 export const DEMO_STEPS: Step[] = [
+
     {
         target: '.add-account-btn',
         content: 'You can experience the Accounts initiation process here.',

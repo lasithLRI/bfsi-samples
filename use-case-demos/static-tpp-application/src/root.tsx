@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -16,18 +16,22 @@
  * under the License.
  */
 
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.scss';
-import Root from './root.tsx';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { HashRouter } from 'react-router-dom';
+import { App } from './app.tsx';
+import { queryClient } from './utility/query-client.ts';
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-    throw new Error("Root element with id 'root' not found");
-}
-
-createRoot(rootElement).render(
-    <StrictMode>
-        <Root />
-    </StrictMode>
+/**
+ * @component Root
+ * @description Wraps the App with global providers.
+ * SplashScreen state is managed inside App so it sits within AppThemeProvider.
+ */
+const Root = () => (
+    <QueryClientProvider client={queryClient}>
+        <HashRouter>
+            <App />
+        </HashRouter>
+    </QueryClientProvider>
 );
+
+export default Root;

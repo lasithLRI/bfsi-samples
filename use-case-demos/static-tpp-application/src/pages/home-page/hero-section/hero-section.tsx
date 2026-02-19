@@ -85,7 +85,7 @@ const HeroSection = ({userInfo, appInfo}:HeroSectionProps) => {
                     <Box className='avatar-container' sx={{display: responsiveDisplay}}>
                         <img src={userInfo.image} alt='avatar' className='avatar' />
                     </Box>
-                    <p>Hello,<br/><span>{userInfo.name}{greetingSelection()}</span></p>
+                    <p className="introduction">Hello,<br/><span>{userInfo.name}{greetingSelection()}</span></p>
                 </Grid>
                 <Grid className='hero-inner-secton actions' sx={{minHeight: responsiveMinHeight}}>
                     {actionButtons.map((button, index) => {
