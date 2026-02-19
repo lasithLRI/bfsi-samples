@@ -31,7 +31,7 @@ import './inner-pages-stylings.scss'
 const AccountsAuthorizationPage = ()=>{
 
     const { onSuccessHandler, accountsToAdd, themeColor, handleCancel } = useOutletContext<OutletContext>();
-    const permissions = ["Read Account Details","Read Account Balances","Read Account Balances"];
+    const permissions = ["Read Account Details","Read Account Balances","Read Account Transactions"];
     const getFutureDate = () => {
         const futureDate = new Date();
         futureDate.setMonth(futureDate.getMonth() + 2);
