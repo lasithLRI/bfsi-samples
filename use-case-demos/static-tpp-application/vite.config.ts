@@ -21,6 +21,6 @@ import react from '@vitejs/plugin-react'
 
 
 export default defineConfig({
-  base: './',
+  base: '/bfsi-samples/use-case-demos/static-tpp-application/',
   plugins: [react()],
 });
