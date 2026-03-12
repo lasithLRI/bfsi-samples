@@ -30,14 +30,14 @@ docker build \
     --no-cache -t wso2is-ob:4.0.0 .
 echo "IS server build complete"
 
-cd "$WSO2_AM_SERVER"
-docker build \
-    --build-arg BASE_PRODUCT_VERSION=4.5.0 \
-    --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
-    --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
-    --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
-    --no-cache -t wso2am-ob:4.0.0 .
-echo "AM server build complete"
+#cd "$WSO2_AM_SERVER"
+#docker build \
+#    --build-arg BASE_PRODUCT_VERSION=4.5.0 \
+#    --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
+#    --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
+#    --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
+#    --no-cache -t wso2am-ob:4.0.0 .
+#echo "AM server build complete"
 
 cd "$DEMO_BACKEND"
 mvn clean package -DskipTests
