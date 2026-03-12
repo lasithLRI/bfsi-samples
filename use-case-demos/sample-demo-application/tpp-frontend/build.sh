@@ -14,7 +14,9 @@ IS_WEBAPPS_PATH="/home/wso2carbon/wso2is-7.1.0/repository/deployment/server/weba
 
 lsof -ti:8000 | xargs kill -9 2>/dev/null || true
 
-python3 -m http.server 8000 &
+#netstat -ano | Select-String ":8000 " | ForEach-Object { $parts = $_ -split '\s+'; taskkill /F /PID $parts[-1] }
+
+python -m http.server 8000 &
 SERVER_PID=$!
 
 cd "$MY_SQL"
@@ -30,14 +32,14 @@ docker build \
     --no-cache -t wso2is-ob:4.0.0 .
 echo "IS server build complete"
 
-#cd "$WSO2_AM_SERVER"
-#docker build \
-#    --build-arg BASE_PRODUCT_VERSION=4.5.0 \
-#    --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
-#    --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
-#    --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
-#    --no-cache -t wso2am-ob:4.0.0 .
-#echo "AM server build complete"
+cd "$WSO2_AM_SERVER"
+docker build \
+    --build-arg BASE_PRODUCT_VERSION=4.5.0 \
+    --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
+    --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
+    --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
+    --no-cache -t wso2am-ob:4.0.0 .
+echo "AM server build complete"
 
 cd "$DEMO_BACKEND"
 mvn clean package -DskipTests
@@ -72,13 +74,13 @@ echo "Exploded WAR deployed: $WAR_NAME"
 
 rm -rf "$TMP_DIR"
 
-# Fix: ClassNotFoundException for BrandingPreferenceRetrievalClient
-echo "Applying BrandingPreferenceRetrievalClient fix..."
-docker exec "$IS_CONTAINER_NAME" cp \
-    /home/wso2carbon/wso2is-7.1.0/lib/runtimes/cxf3/org.wso2.carbon.identity.mgt.endpoint.util-7.8.23.107.jar \
-    /home/wso2carbon/wso2is-7.1.0/repository/deployment/server/webapps/authenticationendpoint/WEB-INF/lib/
-echo "Fix applied — restarting obiam..."
-docker restart "$IS_CONTAINER_NAME"
+## Fix: ClassNotFoundException for BrandingPreferenceRetrievalClient
+#echo "Applying BrandingPreferenceRetrievalClient fix..."
+#docker exec "$IS_CONTAINER_NAME" cp \
+#    /home/wso2carbon/wso2is-7.1.0/lib/runtimes/cxf3/org.wso2.carbon.identity.mgt.endpoint.util-7.8.23.107.jar \
+#    /home/wso2carbon/wso2is-7.1.0/repository/deployment/server/webapps/authenticationendpoint/WEB-INF/lib/
+#echo "Fix applied — restarting obiam..."
+#docker restart "$IS_CONTAINER_NAME"
 
 echo "Waiting for obiam to be healthy again..."
 until [ "$(docker inspect -f '{{.State.Health.Status}}' obiam)" = "healthy" ]; do
