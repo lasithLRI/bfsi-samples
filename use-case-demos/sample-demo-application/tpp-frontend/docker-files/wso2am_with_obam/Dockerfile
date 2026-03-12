@@ -82,7 +82,7 @@ USER root
 
 # Install bash temporarily for running the merge script and keytool commands cleanly
 # Also install coreutils for 'yes' command compatibility
-RUN apk update && apk add bash coreutils openssl --no-cache
+RUN apk update && apk add bash coreutils openssl
 
 # --- Copy Accelerator ---
 

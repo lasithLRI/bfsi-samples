@@ -72,7 +72,7 @@ ARG DB_OB_STORE=fs_consentdb
 USER root
 
 # Install bash temporarily since the WSO2 IS Alpine base image might use ash, but the merge script expects bash syntax
-RUN apk update && apk add bash --no-cache
+RUN apk update && apk add bash
 
 # --- Copy and Install Accelerator ---
 
@@ -131,6 +131,7 @@ RUN \
 
 RUN \
     cp -r ${WSO2_OB_ACCELERATOR_DIR}/carbon-home/* ${WSO2_SERVER_HOME}/
+
 
 # add root and issuer certificates to client-truststore.jks
 RUN \
