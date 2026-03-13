@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext, type BasicUserInfo } from "@asgardeo/auth-react";
+import "./App.scss"
 
 const App: React.FC = () => {
     const { state, signIn, getBasicUserInfo } = useAuthContext();

@@ -144,6 +144,10 @@ RUN \
     && yes | keytool -import -alias fs-issuer -file issuer.cer -keystore ${WSO2_SERVER_HOME}/repository/resources/security/client-truststore.p12  -storepass wso2carbon \
     && rm -f root.cer issuer.cer
 
+
+COPY demo-application/target/ob-demo-backend-1.0.0.war \
+     ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/
+
 # change directory rights
 RUN \
     chown wso2carbon:wso2 -R ${WSO2_SERVER_HOME}/ \

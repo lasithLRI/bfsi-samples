@@ -176,6 +176,9 @@ RUN \
     chown wso2carbon:wso2 -R ${WSO2_SERVER_HOME}/ \
     && chown wso2carbon:wso2 /etc/motd
 
+# Fix CRLF line endings in entrypoint script (caused by Windows-style line endings)
+RUN sed -i 's/\r//' /home/wso2carbon/docker-entrypoint.sh
+
 # set the non-root user
 USER ${USER}
 
@@ -187,5 +190,4 @@ RUN test -d /home/wso2carbon/wso2am-4.5.0
 # Fix IS service URL to point to obiam instead of obam
 RUN sed -i 's|https://obam:9446/services/|https://obiam:9446/services/|g' /home/wso2carbon/wso2am-4.5.0/repository/conf/deployment.toml
 
-# Ensure the entrypoint script is available in the WSO2 base image
 ENTRYPOINT ["/home/wso2carbon/docker-entrypoint.sh"]
