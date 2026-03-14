@@ -1,30 +1,55 @@
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
-import "./hero-section.scss"
+import "../home.scss"
 // @ts-ignore
 import {ArrowLeftArrowRightIcon, UserGroupIcon, ClockAsteriskIcon, BoltIcon} from '@oxygen-ui/react-icons';
 import {Box, Grid} from "@oxygen-ui/react";
 import {useMediaQuery, useTheme} from "@mui/material";
-//import { useNavigate} from "react-router-dom";
-//import type {AppInfo, User} from "../../../hooks/config-interfaces.ts";
-import QuickActionButton from "../quick-action/QuickActionButton.tsx";
-import type {UserInfo} from "../../utility/custom-interfaces.ts";
+import { useNavigate} from "react-router-dom";
+import type {AppInfo, User} from "../../../hooks/config-interfaces.ts";
+import QuickActionButton from "../../../components/quick-action-button/quick-action-button.tsx";
+
+/**
+ * A responsive dashboard header component that displays a personalized, time-of-day-sensitive
+ * greeting and user avatar. It renders a row of quick-access action buttons (Payments, Transfer, etc.)
+ * which navigate the user based on the configured app route. The layout adapts for mobile screens.
+ */
 
 interface ActionButton {
     icon: React.ReactNode;
     name: string;
 }
 
-
 interface HeroSectionProps {
-    userInfo: UserInfo;
-    // appInfo: AppInfo;
-
+    userInfo: User;
+    appInfo: AppInfo;
 }
 
-
-const HeroSection = ({userInfo}:HeroSectionProps) => {
+/**
+ * @function HeroSection
+ * @description The top dashboard component that displays a personalized, time-sensitive greeting
+ * and a row of quick-access action buttons (e.g., Pay Bills, Transfer).
+ * The layout and component rendering are dynamically adjusted based on screen size (responsiveness).
+ */
+const HeroSection = ({userInfo, appInfo}:HeroSectionProps) => {
     const isLargeScreen = useMediaQuery(useTheme().breakpoints.down('md'));
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const responsiveDirections = isLargeScreen ? 'column' : 'row';
     const responsiveMinHeight = isLargeScreen ? '4rem' : '8rem';
     const responsiveDisplay = isLargeScreen ? 'none' : 'flex';
@@ -36,9 +61,8 @@ const HeroSection = ({userInfo}:HeroSectionProps) => {
         {icon: <UserGroupIcon size={'medium'}/>, name: "Payees"},
     ];
     const onClickHandlerActionButtons = (pathTo:string)=>{
-        // const absolutePath = "/"+appInfo.route+"/"+pathTo;
-        // navigate(absolutePath);
-        console.log("Quick action button clicked", pathTo);
+        const absolutePath = "/"+appInfo.route+"/"+pathTo;
+        navigate(absolutePath);
     }
     const greetingSelection = () => {
         const currentHour = new Date().getHours();
