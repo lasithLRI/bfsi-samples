@@ -1,0 +1,50 @@
+{
+  "user": {
+    "name": "James Smith",
+    "image": "resources/assets/images/profile/dp_image.webp",
+    "background":"resources/assets/images/background/bg-image.webp"
+  },
+  "name": {
+    "route": "accounts-central",
+    "applicationName": "Accounts Central"
+  },
+
+
+  "transactionTableHeaderData": [
+    {"ID":"id"},
+    {"Date": "date"},
+    {"Reference": "reference"},
+    {"Bank": "bank"},
+    {"Account": "account"},
+    {"Amount": "amount"}
+  ],
+  "standingOrdersTableHeaderData": [
+    {"ID":"id"},
+    {"Reference": "reference"},
+    {"Bank": "bank"},
+    {"Next Date": "nextDate"},
+    {"Status": "status"},
+    {"Amount": "amount"}
+  ],
+
+  "colors": [
+    {"primary": "#FF5100"},
+    {"secondaryColor": "#EAA340"},
+    {"button": "#FFFFFF"},
+    {"backgroundColor": "#FFF5EE"},
+    {"tableBackground":"#FFFFFF"},
+    {"innerButtonBackground":"#bdc3c7"},
+    {"bankColor1":"#D22B2B"},
+    {"bankColor2":"#097969"},
+    {"bankColor3":"#0047AB"},
+    {"bankBackground":"#E5E4E2"},
+    {"fontWhite": "#FFFFFF"},
+    {"formValidationError": "#c0392b"},
+    {"tableHeaderFontColor": "#6B7280"},
+    {"tableHeaderBackground": "#F6F6F7"},
+    {"tableBackgroundColor": "#FFFFF0"},
+    {"greenArrowColor": "#2ecc71"},
+    {"redArrowColor": "#c0392b"},
+    {"requiredStar": "#e74c3c"}
+  ]
+}

@@ -1,0 +1,11 @@
+.main-outer-layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  .product-content-outer {
+    width: 100%;
+    height: fit-content;
+  }
+}
