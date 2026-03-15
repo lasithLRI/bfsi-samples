@@ -41,8 +41,8 @@ services:
       test: ["CMD", "curl", "-k", "-f", "https://obiam:9446/carbon/admin/login.jsp"]
       interval: 10s
       timeout: 120s
-      start_period: 100s
-      retries: 5
+      start_period: 200s
+      retries: 10
     volumes:
       - "./wait-for-it.sh:/home/wso2carbon/wait-for-it.sh"
     ports:
@@ -52,35 +52,35 @@ services:
     networks:
       - ob-network
 
-  obam:
-    container_name: obam
-    image: docker.io/library/wso2am-ob:4.0.0
-    depends_on:
-      mysql:
-        condition: service_healthy
-      obiam:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-k", "-f", "https://obam:9443/carbon/admin/login.jsp"]
-      interval: 10s
-      timeout: 10s
-      start_period: 150s
-      retries: 5
-    volumes:
-      - "./wait-for-it.sh:/home/wso2carbon/wait-for-it.sh"
-    ports:
-      - "9443:9443"
-      - "8243:8243"
-      - "8280:8280"
-    entrypoint:
-      - "/home/wso2carbon/wait-for-it.sh"
-      - "obiam:9446"
-      - "-t"
-      - "300"
-      - "--"
-      - "./docker-entrypoint.sh"
-    networks:
-      - ob-network
+  # obam:
+  #   container_name: obam
+  #   image: docker.io/library/wso2am-ob:4.0.0
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #     obiam:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-k", "-f", "https://obam:9443/carbon/admin/login.jsp"]
+  #     interval: 10s
+  #     timeout: 10s
+  #     start_period: 150s
+  #     retries: 5
+  #   volumes:
+  #     - "./wait-for-it.sh:/home/wso2carbon/wait-for-it.sh"
+  #   ports:
+  #     - "9443:9443"
+  #     - "8243:8243"
+  #     - "8280:8280"
+  #   entrypoint:
+  #     - "/home/wso2carbon/wait-for-it.sh"
+  #     - "obiam:9446"
+  #     - "-t"
+  #     - "300"
+  #     - "--"
+  #     - "./docker-entrypoint.sh"
+  #   networks:
+  #     - ob-network
 
 volumes:
   mysql_data:

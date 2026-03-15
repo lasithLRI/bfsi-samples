@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext, type BasicUserInfo } from "@asgardeo/auth-react";
 import "./App.scss";
-import type {Config}  from "./hooks/config-interfaces.ts";
-import { loadConfigFile } from "./utility/config-loader.ts";
 import Home from "./pages/home-page/home.tsx";
 import AppThemeProvider from "./providers/app-theme-provider.tsx";
 import useConfigContext from "./hooks/use-config-context.ts";
@@ -10,9 +8,10 @@ import useConfigContext from "./hooks/use-config-context.ts";
 const App: React.FC = () => {
     const { state, signIn, getBasicUserInfo } = useAuthContext();
     const [user, setUser] = useState<BasicUserInfo | null>(null);
-    const [config, setConfig] = useState<Config | null>(null);
 
+    // ✅ Call once at the top, destructure everything together
     const {
+        isLoading,
         appInfo,
         userInfo,
         total,
@@ -44,13 +43,8 @@ const App: React.FC = () => {
         }
     }, [state.isAuthenticated, getBasicUserInfo]);
 
-    useEffect(() => {
-        loadConfigFile()
-            .then(setConfig)
-            .catch((err) => console.error("Config load error:", err));
-    }, []);
-
-    if (!config || !state.isAuthenticated || !user) {
+    // ✅ All conditional returns AFTER all hook calls
+    if (isLoading || !state.isAuthenticated || !user) {
         return <div>Loading...</div>;
     }
 

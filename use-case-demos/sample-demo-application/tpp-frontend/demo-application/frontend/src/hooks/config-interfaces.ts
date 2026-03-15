@@ -112,14 +112,21 @@ export interface CustomColors{
     [key: string]: string;
 }
 
-export interface Config {
+export interface LocalConfig {
     user: User;
     name: AppInfo;
-    banks: Bank[];
-    payees: Payee[];
     types: Type[];
     transactionTableHeaderData: TableConfigs[];
     standingOrdersTableHeaderData: TableConfigs[];
     colors: CustomColors[];
     accountNumbersToAdd: string[];
 }
+
+export interface ConfigResponse {
+    banks: Bank[];
+    payees: Payee[];
+    transactions: TransactionData[];
+    standingOrders: StandingOrders[];
+}
+
+export type Config = LocalConfig & ConfigResponse;

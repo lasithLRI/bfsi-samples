@@ -17,7 +17,7 @@ echo "CRLF fix applied to all shell scripts"
 
 lsof -ti:8000 | xargs kill -9 2>/dev/null || true
 
-python -m http.server 8000 &
+python3 -m http.server 8000 &
 SERVER_PID=$!
 
 cd "$MY_SQL"
@@ -41,20 +41,20 @@ docker build \
     -t wso2is-ob:4.0.0 .
 echo "IS server build complete"
 
-cd "$WSO2_AM_SERVER"
-docker build \
-    --build-arg BASE_PRODUCT_VERSION=4.5.0 \
-    --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
-    --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
-    --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
-    --no-cache -t wso2am-ob:4.0.0 .
-echo "AM server build complete"
+# cd "$WSO2_AM_SERVER"
+# docker build \
+#     --build-arg BASE_PRODUCT_VERSION=4.5.0 \
+#     --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
+#     --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
+#     --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
+#     --no-cache -t wso2am-ob:4.0.0 .
+# echo "AM server build complete"
 
 kill $SERVER_PID 2>/dev/null || true
 
 cd "$DOCKER_COMPOSE_DIRECTORY"
 # Explicitly fix CRLF on wait-for-it.sh (mounted into containers via volume)
-tr -d '\r' < "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh" > "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh.tmp" && mv "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh.tmp" "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh"
+# tr -d '\r' < "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh" > "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh.tmp" && mv "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh.tmp" "$DOCKER_COMPOSE_DIRECTORY/wait-for-it.sh"
 docker compose up -d
 echo "Docker compose started"
 

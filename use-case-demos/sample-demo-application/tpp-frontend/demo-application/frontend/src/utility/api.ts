@@ -23,7 +23,7 @@
  * HTTP error checking, and uses TypeScript generics for type-safe data retrieval.
  */
 // export const baseUrl = 'base url for config json file location';
-export const baseUrl = '/ob-demo-backend-1.0.0/configurations';
+export const baseUrl = '/ob-demo-backend-1.0.0/init';
 
 /**
  * Asynchronously fetches JSON data from a specific API endpoint.
@@ -54,4 +54,5 @@ interface ApiService {
 export const api: ApiService = {
     get: <T>(endpoint: string): Promise<T> => fetchData(endpoint),
 }
+
 

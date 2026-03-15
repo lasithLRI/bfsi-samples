@@ -140,6 +140,27 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- org.json.wso2 - used for JSONObject, JSONArray -->
+            <dependency>
+                <groupId>org.json.wso2</groupId>
+                <artifactId>json</artifactId>
+                <version>3.0.0.wso2v4</version>
+            </dependency>
+
+            <!-- httpclient - used by HttpTlsClient -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+            </dependency>
+
+            <!-- httpcore -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4.13</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

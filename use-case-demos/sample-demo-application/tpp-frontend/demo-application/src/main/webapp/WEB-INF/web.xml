@@ -43,6 +43,15 @@
         <url-pattern>/test</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.wso2.openbanking.demo.ApplicationSecurity.CorsFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- ==================== REACT FRONTEND ==================== -->
 
     <!-- Serve index.html as welcome file -->
