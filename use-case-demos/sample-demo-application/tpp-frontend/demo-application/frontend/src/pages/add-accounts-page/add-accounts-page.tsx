@@ -40,57 +40,56 @@ interface AddAccountsPageProps {
  * a new bank account. It lists available banks and, upon selection, redirects the
  * user to the specific bank's authorization flow (via `react-router` state).
  */
-const AddAccountsPage =
-    ({bankInformations}:AddAccountsPageProps)=>{
+// add-account.tsx - remove dependency on navigation state for bank data
+const AddAccountsPage = ({ bankInformations }: AddAccountsPageProps) => {
 
     const navigate = useNavigate();
     const location = useLocation();
     const navigationState = location.state as NavigationState;
-    const appName = navigationState?.name;
-    const [isRedirecting, setIsRedirecting] = useState(false);
-    const onAddAccountsHandler = (bankName:string)=>{
-        const target = bankInformations.find((bank) =>
-             bank.name === bankName
-        );
-            setIsRedirecting(true);
-            setTimeout(() => {
-                navigate("/" + target?.route + "/?type=account", {
-                    state: {
-                        formData: null,
-                        message: "confirmed payment information",
-                        bankInfo: target
-                    }
-                });
-            }, 1000);
-    }
-    if (isRedirecting){
-        return <RedirectionComponent />;
-    }
-    return (
-        <>
-            <ApplicationLayout name={appName}>
-                <PaymentAccountPageLayout title={"Add Account"}>
-                    <Box className="accounts-outer">
-                        <h3 style={{marginBottom:"1.5rem"}}>Select your Bank</h3>
-                        <div className="accounts-buttons-container">
-                            {bankInformations?.map((account, index) => (
-                                <Button key={index} onClick={()=>{onAddAccountsHandler(account.name)}} >
-                                    <Card>
-                                        <Box className={"account-button-outer"}>
-                                            <Box className={"logo-container"} sx={{marginLeft:'2rem'}}>
-                                                <img src={account.image} alt={`${account.name} logo`}/>
-                                            </Box>
-                                            <p>{account.name}</p>
-                                        </Box>
-                                    </Card>
-                                </Button>
-                            ))}
-                        </div>
-                    </Box>
-                </PaymentAccountPageLayout>
-            </ApplicationLayout>
-        </>
-    )
-}
+    const appName = navigationState?.name;  // ← still fine to get appName from state
 
-export default AddAccountsPage;
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
+    // ✅ bankInformations now comes from prop (already fetched), not stale nav state
+    const onAddAccountsHandler = (bankName: string) => {
+        const target = bankInformations.find((bank) => bank.name === bankName);
+        setIsRedirecting(true);
+        setTimeout(() => {
+            navigate("/" + target?.route + "/?type=account", {
+                state: {
+                    formData: null,
+                    message: "confirmed payment information",
+                    bankInfo: target
+                }
+            });
+        }, 1000);
+    };
+
+    if (isRedirecting) return <RedirectionComponent />;
+
+    return (
+        <ApplicationLayout name={appName}>
+            <PaymentAccountPageLayout title={"Add Account"}>
+                <Box className="accounts-outer">
+                    <h3 style={{ marginBottom: "1.5rem" }}>Select your Bank</h3>
+                    <div className="accounts-buttons-container">
+                        {bankInformations?.map((account, index) => (
+                            <Button key={index} onClick={() => onAddAccountsHandler(account.name)}>
+                                <Card>
+                                    <Box className={"account-button-outer"}>
+                                        <Box className={"logo-container"} sx={{ marginLeft: '2rem' }}>
+                                            <img src={account.image} alt={`${account.name} logo`} />
+                                        </Box>
+                                        <p>{account.name}</p>
+                                    </Box>
+                                </Card>
+                            </Button>
+                        ))}
+                    </div>
+                </Box>
+            </PaymentAccountPageLayout>
+        </ApplicationLayout>
+    );
+};
+
+export default AddAccountsPage
