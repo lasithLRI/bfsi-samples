@@ -1,6 +1,25 @@
+
+/**
+ * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import React, { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthContext, type BasicUserInfo } from "@asgardeo/auth-react";
-import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.scss";
 import Home from "./pages/home-page/home.tsx";
 import AppThemeProvider from "./providers/app-theme-provider.tsx";
@@ -44,56 +63,65 @@ const App: React.FC = () => {
         }
     }, [state.isAuthenticated, getBasicUserInfo]);
 
+    // While Asgardeo is initialising or processing the OAuth callback,
+    // render nothing — do NOT redirect, so the SDK can consume ?code=
+    if (state.isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    // Config or user not ready yet
     if (isLoading || !state.isAuthenticated || !user) {
         return <div>Loading...</div>;
     }
 
-    const base = appInfo.route; // e.g. "account-central"
-
-    const resolvedUserInfo = {
-        name: user?.givenName && user?.familyName
-            ? `${user.givenName} ${user.familyName}`
-            : user?.username || user?.displayName || "User",
-        image: userInfo.image,
-        background: userInfo.background,
-    };
-
     return (
         <AppThemeProvider color={colors}>
             <Routes>
+                {/* Root → home */}
+                <Route
+                    path="/"
+                    element={<Navigate to={`/${appInfo.route}`} replace />}
+                />
 
-                {/* Redirect root to app base route */}
-                <Route path="/" element={<Navigate to={`/${base}`} replace />} />
+                {/* Home dashboard */}
+                <Route
+                    path={`/${appInfo.route}`}
+                    element={
+                        <Home
+                            name={appInfo.applicationName}
+                            userInfo={{
+                                name:
+                                    user?.givenName && user?.familyName
+                                        ? `${user.givenName} ${user.familyName}`
+                                        : user?.username || user?.displayName || "User",
+                                image: userInfo.image,
+                                background: userInfo.background,
+                            }}
+                            total={total}
+                            chartData={chartInfo}
+                            banksWithAccounts={banksWithAccounts}
+                            transactions={transactions}
+                            standingOrderList={standingOrderList}
+                            appInfo={appInfo}
+                            banksList={banksList}
+                            overlayInformation={overlayInformation}
+                            transactionTableHeaderData={transactionTableHeaderData}
+                            standingOrdersTableHeaderData={standingOrdersTableHeaderData}
+                        />
+                    }
+                />
 
-                {/* Home */}
-                <Route path={`/${base}`} element={
-                    <Home
-                        name={appInfo.applicationName}
-                        userInfo={resolvedUserInfo}
-                        total={total}
-                        chartData={chartInfo}
-                        banksWithAccounts={banksWithAccounts}
-                        transactions={transactions}
-                        standingOrderList={standingOrderList}
-                        appInfo={appInfo}
-                        banksList={banksList}
-                        overlayInformation={overlayInformation}
-                        transactionTableHeaderData={transactionTableHeaderData}
-                        standingOrdersTableHeaderData={standingOrdersTableHeaderData}
-                    />
-                } />
+                {/* Add account */}
+                <Route
+                    path={`/${appInfo.route}/accounts`}
+                    element={<AddAccountsPage />}
+                />
 
-                {/* Add Account */}
-                <Route path={`/${base}/accounts`} element={
-                    <AddAccountsPage bankInformations={banksList} />
-                } />
-
-
-
-
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to={`/${base}`} replace />} />
-
+                {/* Catch-all → home (only reached after auth is complete) */}
+                <Route
+                    path="*"
+                    element={<Navigate to={`/${appInfo.route}`} replace />}
+                />
             </Routes>
         </AppThemeProvider>
     );

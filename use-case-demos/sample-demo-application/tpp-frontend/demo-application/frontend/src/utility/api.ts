@@ -16,13 +16,6 @@
  * under the License.
  */
 
-/**
- * @namespace api
- * @description A reusable service client for fetching JSON data from the configured
- * base URL (`/configurations`). It wraps the native `fetch` API, handles basic
- * HTTP error checking, and uses TypeScript generics for type-safe data retrieval.
- */
-// export const baseUrl = 'base url for config json file location';
 export const baseUrl = '/ob-demo-backend-1.0.0/init';
 
 /**
@@ -33,26 +26,33 @@ export const baseUrl = '/ob-demo-backend-1.0.0/init';
  * @returns {Promise<any>} A promise that resolves with the parsed JSON response body.
  * @throws {Error} Throws an error if the network request fails or the HTTP response status is not OK (200-299).
  */
-const fetchData = async (endpoint:string, options?:RequestInit)=>{
-
+const fetchData = async (endpoint: string, options?: RequestInit) => {
     const url = `${baseUrl}/${endpoint}`;
-    try{
-        const response = await fetch(url,options);
+    try {
+        const response = await fetch(url, options);
         if (!response.ok) {
             throw new Error(response.statusText);
         }
         return await response.json();
-    }catch (e) {
+    } catch (e) {
         console.error(`error in fetchData: ${e}`);
         throw e;
     }
-}
+};
 
 interface ApiService {
-    get: <T>(endpoint:string) => Promise<T>;
+    get: <T>(endpoint: string) => Promise<T>;
+    post: <T>(endpoint: string, body: unknown) => Promise<T>;
 }
+
 export const api: ApiService = {
     get: <T>(endpoint: string): Promise<T> => fetchData(endpoint),
-}
-
-
+    post: <T>(endpoint: string, body: unknown): Promise<T> =>
+        fetchData(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        }),
+};

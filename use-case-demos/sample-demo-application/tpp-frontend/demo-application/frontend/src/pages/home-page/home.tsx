@@ -54,7 +54,7 @@ interface AccountsCentralLayoutProps {
 
 const Home = ({
                   standingOrdersTableHeaderData, name, userInfo, total, chartData,
-                  banksWithAccounts, transactions, standingOrderList, appInfo, banksList,
+                  banksWithAccounts, transactions, standingOrderList, appInfo,
                   overlayInformation, transactionTableHeaderData
               }: AccountsCentralLayoutProps) => {
 
@@ -64,7 +64,6 @@ const Home = ({
         navigate(`/${appInfo.route}/accounts`, {
             state: {
                 name: appInfo.applicationName,
-                banksWithAccounts: banksList,
             }
         });
     };
@@ -82,10 +81,6 @@ const Home = ({
         }
     };
 
-    /**
-     * Single exit handler for every way the tour can end.
-     * Marks seenTour in sessionStorage and scrolls back to top.
-     */
     return (
         <>
             <ApplicationLayout name={name}>
@@ -123,7 +118,6 @@ const Home = ({
                     title={overlayInformation.overlayData.title}
                 />
             }
-
         </>
     );
 };

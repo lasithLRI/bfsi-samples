@@ -68,6 +68,7 @@ public final class AccountService {
         this.oauthService = new OAuthTokenService(client);
     }
 
+
     /**
      * Sets the OAuth access token used to authenticate API requests.
      *
@@ -78,57 +79,57 @@ public final class AccountService {
         this.accessToken = accessToken;
     }
 
-    /**
-     * Fetches accounts from the mock bank API and adds any new ones to the in-memory store.
-     * Accounts already present are skipped to avoid duplication.
-     * After accounts are stored, each new account is registered against the currentConsentId
-     * in BankInfoService so the consent can be revoked later.
-     *
-     * @throws IOException           if any HTTP request to the bank API fails.
-     * @throws BankInfoLoadException if the bank data cannot be loaded or accessed.
-     */
-    public void addMockBankAccountsInformation() throws IOException, BankInfoLoadException {
-        if (bankInfoService.getBanks() == null) {
-            bankInfoService.loadBanks();
-        }
-        String bankName = ConfigLoader.getMockBankName();
-        boolean bankExists = bankInfoService.isBankExists(bankName);
-        List<String> fetchedAccountIds = fetchAccountIds();
-        Set<String> existingAccountIds = getExistingAccountIds(bankName);
-        List<String> newAccountIds = fetchedAccountIds.stream()
-                .filter(id -> !existingAccountIds.contains(id))
-                .collect(Collectors.toList());
-
-        if (newAccountIds.isEmpty()) {
-            logger.info(
-                    "\n========== [AISP] ACCOUNTS — NO NEW ACCOUNTS ==========\n" +
-                            "  All fetched accounts are already stored. Nothing added.\n" +
-                            "========================================================"
-            );
-            return;
-        }
-
-        List<Account> newAccounts = fetchAccountsWithTransactions(newAccountIds, bankName);
-
-        if (bankExists) {
-            addAccountsToExistingBank(bankName, newAccounts);
-        } else {
-            addNewBank(bankName, newAccounts);
-        }
-
-        if (currentConsentId != null) {
-            for (Account account : newAccounts) {
-                bankInfoService.registerConsentForAccount(currentConsentId, account.getId());
-            }
-        } else {
-            logger.warn(
-                    "\n========== [AISP] ACCOUNTS — CONSENT ID MISSING ==========\n" +
-                            "  Accounts were stored but no ConsentId is available to register.\n" +
-                            "  Consent revocation will not be possible for these accounts.\n" +
-                            "==========================================================="
-            );
-        }
-    }
+//    /**
+//     * Fetches accounts from the mock bank API and adds any new ones to the in-memory store.
+//     * Accounts already present are skipped to avoid duplication.
+//     * After accounts are stored, each new account is registered against the currentConsentId
+//     * in BankInfoService so the consent can be revoked later.
+//     *
+//     * @throws IOException           if any HTTP request to the bank API fails.
+//     * @throws BankInfoLoadException if the bank data cannot be loaded or accessed.
+//     */
+//    public void addMockBankAccountsInformation() throws IOException, BankInfoLoadException {
+//        if (bankInfoService.getBanks() == null) {
+//            bankInfoService.loadBanks();
+//        }
+//        String bankName = ConfigLoader.getMockBankName();
+//        boolean bankExists = bankInfoService.isBankExists(bankName);
+//        List<String> fetchedAccountIds = fetchAccountIds();
+//        Set<String> existingAccountIds = getExistingAccountIds(bankName);
+//        List<String> newAccountIds = fetchedAccountIds.stream()
+//                .filter(id -> !existingAccountIds.contains(id))
+//                .collect(Collectors.toList());
+//
+//        if (newAccountIds.isEmpty()) {
+//            logger.info(
+//                    "\n========== [AISP] ACCOUNTS — NO NEW ACCOUNTS ==========\n" +
+//                            "  All fetched accounts are already stored. Nothing added.\n" +
+//                            "========================================================"
+//            );
+//            return;
+//        }
+//
+//        List<Account> newAccounts = fetchAccountsWithTransactions(newAccountIds, bankName);
+//
+//        if (bankExists) {
+//            addAccountsToExistingBank(bankName, newAccounts);
+//        } else {
+//            addNewBank(bankName, newAccounts);
+//        }
+//
+//        if (currentConsentId != null) {
+//            for (Account account : newAccounts) {
+//                bankInfoService.registerConsentForAccount(currentConsentId, account.getId());
+//            }
+//        } else {
+//            logger.warn(
+//                    "\n========== [AISP] ACCOUNTS — CONSENT ID MISSING ==========\n" +
+//                            "  Accounts were stored but no ConsentId is available to register.\n" +
+//                            "  Consent revocation will not be possible for these accounts.\n" +
+//                            "==========================================================="
+//            );
+//        }
+//    }
 
     /**
      * Initiates the account consent flow for the mock bank.
@@ -152,54 +153,54 @@ public final class AccountService {
         return oauthService.authorizeConsent(consentResponse, "accounts openid");
     }
 
-    /**
-     * Revokes the account access consent with the bank and, on success, removes
-     * the associated account from the in-memory store.
-     * A fresh client-credentials token is obtained internally using the accounts openid scope.
-     *
-     * @param consentId the ConsentId to revoke.
-     * @return true if the bank confirmed revocation and the account was removed,
-     *         false if the bank rejected the revocation request.
-     * @throws AuthorizationException if the token request fails due to an authorization error.
-     * @throws IOException            if the HTTP DELETE request to the bank fails.
-     */
-    public boolean revokeAccountConsent(String consentId) throws AuthorizationException, IOException {
-        String tokenJson = oauthService.getToken("accounts openid");
-        String accessToken = new org.json.JSONObject(tokenJson).getString("access_token");
-        String revokeUrl = ConfigLoader.getAccountBaseUrl()
-                + "/account-access-consents/" + consentId;
-
-        logger.info(
-                "\n========== [AISP] CONSENT REVOCATION REQUEST ==========\n" +
-                        "  ConsentId : {}\n" +
-                        "  URL       : {}\n" +
-                        "=======================================================",
-                consentId, revokeUrl
-        );
-
-        boolean bankConfirmed = client.deleteWithAuth(revokeUrl, accessToken);
-
-        if (bankConfirmed) {
-            logger.info(
-                    "\n========== [AISP] CONSENT REVOCATION — BANK CONFIRMED ==========\n" +
-                            "  ConsentId : {}\n" +
-                            "  Status    : Bank returned 2xx — removing account from application\n" +
-                            "================================================================",
-                    consentId
-            );
-            bankInfoService.revokeConsentAndRemoveAccount(consentId);
-        } else {
-            logger.warn(
-                    "\n========== [AISP] CONSENT REVOCATION — BANK REJECTED ==========\n" +
-                            "  ConsentId : {}\n" +
-                            "  Status    : Bank did not return 2xx — account NOT removed\n" +
-                            "===============================================================",
-                    consentId
-            );
-        }
-
-        return bankConfirmed;
-    }
+//    /**
+//     * Revokes the account access consent with the bank and, on success, removes
+//     * the associated account from the in-memory store.
+//     * A fresh client-credentials token is obtained internally using the accounts openid scope.
+//     *
+//     * @param consentId the ConsentId to revoke.
+//     * @return true if the bank confirmed revocation and the account was removed,
+//     *         false if the bank rejected the revocation request.
+//     * @throws AuthorizationException if the token request fails due to an authorization error.
+//     * @throws IOException            if the HTTP DELETE request to the bank fails.
+//     */
+//    public boolean revokeAccountConsent(String consentId) throws AuthorizationException, IOException {
+//        String tokenJson = oauthService.getToken("accounts openid");
+//        String accessToken = new org.json.JSONObject(tokenJson).getString("access_token");
+//        String revokeUrl = ConfigLoader.getAccountBaseUrl()
+//                + "/account-access-consents/" + consentId;
+//
+//        logger.info(
+//                "\n========== [AISP] CONSENT REVOCATION REQUEST ==========\n" +
+//                        "  ConsentId : {}\n" +
+//                        "  URL       : {}\n" +
+//                        "=======================================================",
+//                consentId, revokeUrl
+//        );
+//
+//        boolean bankConfirmed = client.deleteWithAuth(revokeUrl, accessToken);
+//
+//        if (bankConfirmed) {
+//            logger.info(
+//                    "\n========== [AISP] CONSENT REVOCATION — BANK CONFIRMED ==========\n" +
+//                            "  ConsentId : {}\n" +
+//                            "  Status    : Bank returned 2xx — removing account from application\n" +
+//                            "================================================================",
+//                    consentId
+//            );
+//            bankInfoService.revokeConsentAndRemoveAccount(consentId);
+//        } else {
+//            logger.warn(
+//                    "\n========== [AISP] CONSENT REVOCATION — BANK REJECTED ==========\n" +
+//                            "  ConsentId : {}\n" +
+//                            "  Status    : Bank did not return 2xx — account NOT removed\n" +
+//                            "===============================================================",
+//                    consentId
+//            );
+//        }
+//
+//        return bankConfirmed;
+//    }
 
     /**
      * Parses the ConsentId from the consent initiation response JSON.
@@ -457,5 +458,31 @@ public final class AccountService {
                 .put("Data", permissions)
                 .put("Risk", new JSONObject())
                 .toString();
+    }
+
+    /**
+     * Fetches accounts from the mock bank API and adds any new ones to the in-memory store.
+     * Accounts already present are skipped to avoid duplication.
+     */
+    public void addMockBankAccountsInformation() throws IOException, BankInfoLoadException {
+        if (bankInfoService.getBanks() == null) {
+            bankInfoService.loadBanks();
+        }
+        String bankName = ConfigLoader.getMockBankName();
+        boolean bankExists = bankInfoService.isBankExists(bankName);
+        List<String> fetchedAccountIds = fetchAccountIds();
+        Set<String> existingAccountIds = getExistingAccountIds(bankName);
+        List<String> newAccountIds = fetchedAccountIds.stream()
+                .filter(id -> !existingAccountIds.contains(id))
+                .collect(Collectors.toList());
+        if (newAccountIds.isEmpty()) {
+            return;
+        }
+        List<Account> newAccounts = fetchAccountsWithTransactions(newAccountIds, bankName);
+        if (bankExists) {
+            addAccountsToExistingBank(bankName, newAccounts);
+        } else {
+            addNewBank(bankName, newAccounts);
+        }
     }
 }
