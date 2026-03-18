@@ -1,4 +1,4 @@
-package com.wso2.openbanking.demo.http;
+ package com.wso2.openbanking.demo.http;
 
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.services.KeyReader;
@@ -125,38 +125,9 @@ public class SSLContextFactory {
      */
     private static TrustManager[] createTrustManagers(String trustStorePath, String trustStorePassword)
             throws SSLContextCreationException {
-        if (trustStorePath == null) {
-            return new TrustManager[0];
-        }
-
-        try {
-            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            char[] password = trustStorePassword != null ? trustStorePassword.toCharArray() : null;
-
-            try (InputStream is = SSLContextFactory.class.getResourceAsStream(trustStorePath)) {
-                if (is == null) {
-                    throw new FileNotFoundException("Trust store not found: " + trustStorePath);
-                }
-                trustStore.load(is, password);
-            }
-
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-                    TrustManagerFactory.getDefaultAlgorithm()
-            );
-            tmf.init(trustStore);
-
-            return tmf.getTrustManagers();
-
-        } catch (FileNotFoundException e) {
-            throw new SSLContextCreationException("Trust store file not found: " + e.getMessage(), e);
-        } catch (KeyStoreException e) {
-            throw new SSLContextCreationException("Failed to initialize trust store", e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new SSLContextCreationException("Trust manager algorithm not available", e);
-        } catch (CertificateException e) {
-            throw new SSLContextCreationException("Failed to load certificate into trust store", e);
-        } catch (IOException e) {
-            throw new SSLContextCreationException("Failed to read trust store", e);
-        }
+        // When running inside WSO2 Identity Server, do not load an isolated truststore 
+        // from the classpath. Return null to enforce inheriting the WSO2 IS JVM's
+        // global SSL trust context, which reliably includes client-truststore.jks.
+        return null;
     }
 }

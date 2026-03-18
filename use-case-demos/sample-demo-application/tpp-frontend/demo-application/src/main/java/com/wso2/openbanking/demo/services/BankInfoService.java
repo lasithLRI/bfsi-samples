@@ -335,13 +335,13 @@ public class BankInfoService {
     }
 
     /** Prepends a new transaction to the account's list and re-sorts by date. */
-//    void addTransactionToAccount(Account account, Transaction transaction) {
-//        List<Transaction> transactions = account.getTransactions();
-//        if (transactions == null) {
-//            transactions = new ArrayList<>();
-//            account.setTransactions(transactions);
-//        }
-//        transactions.add(0, transaction);
-//        transactions.sort(byDateDescending());
-//    }
+    void addTransactionToAccount(Account account, Transaction transaction) {
+        List<Transaction> transactions = account.getTransactions();
+        if (transactions == null) {
+            transactions = new ArrayList<>();
+            account.setTransactions(transactions);
+        }
+        transactions.add(0, transaction);
+        transactions.sort(byDateDescending());
+    }
 }

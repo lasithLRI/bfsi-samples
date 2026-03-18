@@ -40,7 +40,7 @@ public class HtmlResponseBuilder {
                 "        const state = params.get('state');\n" +
                 "        const sessionState = params.get('session_state');\n" +
                 "\n" +
-                "        fetch('https://tpp.local.ob/ob_demo_backend_war/init/processAuth?' +\n" +
+                "        fetch('https://obiam:9446/ob-demo-backend-1.0.0/init/processAuth?' +\n" +
                 "            'code=' + encodeURIComponent(code) +\n" +
                 "            '&state=' + encodeURIComponent(state) +\n" +
                 "            '&session_state=' + encodeURIComponent(sessionState) +\n" +
