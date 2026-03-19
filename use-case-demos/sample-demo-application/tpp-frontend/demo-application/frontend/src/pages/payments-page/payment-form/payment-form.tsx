@@ -20,7 +20,7 @@ import {Controller, useForm} from "react-hook-form";
 import {Box, Button, FormControl, MenuItem, OutlinedInput, Select} from "@oxygen-ui/react";
 import {NumericFormat} from "react-number-format";
 import {useState, useEffect, useRef} from "react";
-import {useNavigate} from "react-router-dom";
+
 import type {AppInfo, Bank, Payee} from "../../../hooks/config-interfaces.ts";
 import OverlayConfirmation from "../../../components/overlay-confirmation/overlay-confirmation.tsx";
 import '../payments-page.scss'
@@ -28,6 +28,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import {useTheme} from "@mui/material";
 import type {BanksWithAccounts} from "../../../hooks/use-config-context.ts";
 import { RedirectionComponent } from "../../../components/redirection-component.tsx";
+import { api } from "../../../utility/api.ts";
 
 export interface PaymentFormData {
     userAccount: string;
@@ -59,7 +60,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
 
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down('md'));
     const responsiveDirection = isSmallScreen ? 'column' : 'row';
-    const navigate = useNavigate();
     const {control, handleSubmit, formState: {errors}, reset} = useForm<PaymentFormData>({
         defaultValues: {
             userAccount: '',
@@ -86,30 +86,56 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
         };
     }, []);
 
+    // Load initial payment data
+    useEffect(() => {
+        api.get<any>('load-payment')
+            .then(data => {
+                console.log('Loaded payment data from /load-payment:', data);
+            })
+            .catch(err => {
+                console.error('Failed to load payment data', err);
+            });
+    }, []);
+
     const onSubmit = (data: PaymentFormData) => {
         setFormDataToSubmit(data);
         setIsConfirming(true);
     };
 
-    const handleConfirmedAndRedirect = () => {
+    const handleConfirmedAndRedirect = async () => {
         if (formDataToSubmit) {
             setIsConfirming(false);
+            setIsRedirecting(true);
             const bankName = formDataToSubmit.userAccount.split('-')[0];
             const target = banksList.find((bank) => bank.name === bankName);
             if (!target) {
                 console.log(`Bank "${bankName}" not found in banksList`);
+                setIsRedirecting(false);
                 return;
             }
-            setIsRedirecting(true);
-            timerRef.current = setTimeout(() => {
-                navigate("/" + target.route + "/login?type=payment", {
-                    state: {
-                        formData: formDataToSubmit,
-                        message: "payment",
-                        bankInfo: target,
-                    }
-                });
-            }, 1000);
+
+            try {
+                const payload = {
+                    userAccount: formDataToSubmit.userAccount, // Send the full BankName-AccountID expected by the backend
+                    payeeAccount: formDataToSubmit.payeeAccount,
+                    currency: formDataToSubmit.currency,
+                    amount: formDataToSubmit.amount.toString(),
+                    reference: formDataToSubmit.reference
+                };
+
+                const res = await api.post<any>('payment', payload);
+                if (res && res.redirect) {
+                    timerRef.current = setTimeout(() => {
+                        window.location.href = res.redirect;
+                    }, 1000);
+                } else {
+                    console.error("No redirect URL found in the response.", res);
+                    setIsRedirecting(false);
+                }
+            } catch (err) {
+                console.error("Payment API error:", err);
+                setIsRedirecting(false);
+            }
         }
     };
 

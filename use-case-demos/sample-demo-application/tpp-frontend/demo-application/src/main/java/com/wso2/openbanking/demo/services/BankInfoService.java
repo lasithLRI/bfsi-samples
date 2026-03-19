@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class BankInfoService {
@@ -264,13 +265,13 @@ public class BankInfoService {
     }
 
     /** Builds the data needed to populate the payment page — accounts, payees, and currencies. */
-//    public LoadPaymentPageResponse getPaymentPageInfo() {
-//        List<BankInfoInPayments> bankInfoInPayments = this.banks.stream()
-//                .flatMap(bank -> bank.getAccounts().stream()
-//                        .map(account -> new BankInfoInPayments(bank.getName(), account.getId())))
-//                .collect(Collectors.toList());
-//        return new LoadPaymentPageResponse(bankInfoInPayments, this.payees, this.currencies);
-//    }
+    public LoadPaymentPageResponse getPaymentPageInfo() {
+        List<BankInfoInPayments> bankInfoInPayments = this.banks.stream()
+                .flatMap(bank -> bank.getAccounts().stream()
+                        .map(account -> new BankInfoInPayments(bank.getName(), account.getId())))
+                .collect(Collectors.toList());
+        return new LoadPaymentPageResponse(bankInfoInPayments, this.payees, this.currencies);
+    }
 
     /**
      * Returns the list of banks available for the add-account flow.

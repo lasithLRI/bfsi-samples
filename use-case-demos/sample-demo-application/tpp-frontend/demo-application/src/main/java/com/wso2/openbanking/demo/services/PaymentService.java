@@ -30,12 +30,15 @@ public class PaymentService {
 
     private final BankInfoService bankInfoService;
     private final OAuthTokenService oauthService;
+    private final HttpTlsClient client;
     private Payment currentPayment;
+    private String currentConsentId;
 
     /** Initialises the service and creates an OAuthTokenService for the payment flow. */
     public PaymentService(BankInfoService bankInfoService, HttpTlsClient client)
             throws GeneralSecurityException, IOException {
         this.bankInfoService = bankInfoService;
+        this.client = client;
         this.oauthService = new OAuthTokenService(client);
     }
 
@@ -49,7 +52,10 @@ public class PaymentService {
             String token = oauthService.getToken("payments openid");
             String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payment-consents";
             String consentBody = createPaymentConsentBody(payment);
-            String consentResponse = oauthService.initializeConsent(token, consentBody, paymentUrl);
+            String consentResponse = oauthService.initializePaymentConsent(token, consentBody, paymentUrl);
+            
+            this.currentConsentId = new JSONObject(consentResponse).getJSONObject("Data").getString("ConsentId");
+            
             return oauthService.authorizeConsent(consentResponse, "payments openid");
         } catch (IOException e) {
             throw new AuthorizationException("Failed to contact payment consent endpoint", e);
@@ -59,14 +65,20 @@ public class PaymentService {
     }
 
     /**
-     * Applies the current pending payment to the user's account balance
-     * and records it as a transaction. Clears currentPayment when done.
+     * Submits the payment to the Open Banking API, applies it to the user's account balance,
+     * and records it as a transaction. Clears currentPayment and currentConsentId when done.
      */
-    public void addPaymentToAccount() throws PaymentException {
-        if (currentPayment == null) {
+    public void addPaymentToAccount(String accessToken) throws PaymentException {
+        if (currentPayment == null || currentConsentId == null) {
             return;
         }
         try {
+            String paymentUrl = ConfigLoader.getPaymentBaseUrl() + "/payments";
+            String paymentBody = createPaymentSubmissionBody(currentPayment, currentConsentId);
+            String response = client.postPayments(paymentUrl, paymentBody, accessToken);
+            
+            System.out.println("Payment Submission Response: " + response);
+
             String[] userAccount = parseAccountIdentifier(currentPayment.getUserAccount());
             String bankName = userAccount[0];
             String accountNumber = userAccount[1];
@@ -75,8 +87,11 @@ public class PaymentService {
             updateAccountBalance(bankName, accountNumber, paymentAmount, transaction);
         } catch (NumberFormatException e) {
             throw new PaymentException("Invalid payment amount: " + currentPayment.getAmount(), e);
+        } catch (IOException e) {
+            throw new PaymentException("Failed to submit payment to bank endpoint", e);
         } finally {
             currentPayment = null;
+            currentConsentId = null;
         }
     }
 
@@ -121,6 +136,22 @@ public class PaymentService {
         );
         return new JSONObject()
                 .put("Data", new JSONObject().put("Initiation", initiation))
+                .put("Risk", new JSONObject())
+                .toString(4);
+    }
+
+    /** Builds the full payment submission request body as a JSON string. */
+    private String createPaymentSubmissionBody(Payment payment, String consentId) {
+        String[] userAccount = parseAccountIdentifier(payment.getUserAccount());
+        String[] payeeAccount = parseAccountIdentifier(payment.getPayeeAccount());
+        JSONObject initiation = buildInitiation(
+                userAccount, payeeAccount,
+                payment.getAmount(), payment.getCurrency(), payment.getReference()
+        );
+        return new JSONObject()
+                .put("Data", new JSONObject()
+                        .put("ConsentId", consentId)
+                        .put("Initiation", initiation))
                 .put("Risk", new JSONObject())
                 .toString(4);
     }

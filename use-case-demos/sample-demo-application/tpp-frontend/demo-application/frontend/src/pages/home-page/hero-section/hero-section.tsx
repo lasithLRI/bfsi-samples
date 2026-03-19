@@ -34,6 +34,7 @@ import QuickActionButton from "../../../components/quick-action-button/quick-act
 interface ActionButton {
     icon: React.ReactNode;
     name: string;
+    route: string;
 }
 
 interface HeroSectionProps {
@@ -55,13 +56,15 @@ const HeroSection = ({userInfo, appInfo}:HeroSectionProps) => {
     const responsiveDisplay = isLargeScreen ? 'none' : 'flex';
     const responsivePadding = isLargeScreen ? '1rem' : '4rem';
     const actionButtons: ActionButton[] = [
-        {icon: <BoltIcon size={'medium'}/>, name: "Pay Bills"},
-        {icon: <ArrowLeftArrowRightIcon size={'medium'}/>, name: "Transfer"},
-        {icon: <ClockAsteriskIcon size={'medium'}/>, name: "Schedule"},
-        {icon: <UserGroupIcon size={'medium'}/>, name: "Payees"},
+        {icon: <BoltIcon size={'medium'}/>, name: "Pay Bills", route: "payments"},
+        {icon: <ArrowLeftArrowRightIcon size={'medium'}/>, name: "Transfer", route: "payments"},
+        {icon: <ClockAsteriskIcon size={'medium'}/>, name: "Schedule", route: "standing-orders"},
+        {icon: <UserGroupIcon size={'medium'}/>, name: "Payees", route: "payments"},
     ];
-    const onClickHandlerActionButtons = (pathTo:string)=>{
-        const absolutePath = "/"+appInfo.route+"/"+pathTo;
+    const onClickHandlerActionButtons = (pathToOrName:string)=>{
+        const button = actionButtons.find(b => b.name === pathToOrName);
+        const routePath = button ? button.route : "payments";
+        const absolutePath = "/"+appInfo.route+"/"+routePath;
         navigate(absolutePath);
     }
     const greetingSelection = () => {

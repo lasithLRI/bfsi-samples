@@ -4,10 +4,9 @@ import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.models.ConfigResponse;
-import com.wso2.openbanking.demo.services.AccountService;
-import com.wso2.openbanking.demo.services.AuthService;
-import com.wso2.openbanking.demo.services.BankInfoService;
-import com.wso2.openbanking.demo.services.HttpTlsClient;
+import com.wso2.openbanking.demo.models.LoadPaymentPageResponse;
+import com.wso2.openbanking.demo.models.Payment;
+import com.wso2.openbanking.demo.services.*;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.HtmlResponseBuilder;
 
@@ -27,6 +26,7 @@ public class ApiController {
     private final BankInfoService bankInfoService;
     private final AccountService accountService;
     private final AuthService authService;
+    private final PaymentService paymentService;
 
 //    public ApiController(BankInfoService bankInfoService) {
 //        this.bankInfoService = bankInfoService;
@@ -44,9 +44,8 @@ public class ApiController {
         );
 
         this.accountService = new AccountService(bankInfoService, httpClient);
-        this.authService = new AuthService(accountService);
-
-
+        this.paymentService=new PaymentService(bankInfoService,httpClient);
+        this.authService = new AuthService(accountService, paymentService);
     }
 
     @GET
@@ -110,6 +109,22 @@ public class ApiController {
         Map<String, String> response = new HashMap<>();
         response.put("redirect", url);
         return response;
+    }
+
+    @GET
+    @Path("/load-payment")
+    @Produces(MediaType.APPLICATION_JSON)
+    public LoadPaymentPageResponse getLoadPaymentData() {
+        return bankInfoService.getPaymentPageInfo();
+    }
+
+    @POST
+    @Path("/payment")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response makePayment(Payment payment) throws Exception {
+        String redirectUrl = paymentService.processPaymentRequest(payment);
+        authService.setRequestStatus("payments");
+        return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
     @GET

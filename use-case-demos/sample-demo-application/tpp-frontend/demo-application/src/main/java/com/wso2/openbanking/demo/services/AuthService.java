@@ -2,6 +2,7 @@ package com.wso2.openbanking.demo.services;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
+import com.wso2.openbanking.demo.exceptions.PaymentException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.JwtUtils;
@@ -16,12 +17,14 @@ import java.io.IOException;
 public class AuthService {
 
     private final AccountService accountService;
+    private final PaymentService paymentService;
     private final HttpTlsClient client;
     private String requestStatus = "accounts";
 
-    public AuthService(AccountService accountService)
+    public AuthService(AccountService accountService, PaymentService paymentService)
             throws SSLContextCreationException {
         this.accountService = accountService;
+        this.paymentService = paymentService;
         this.client = new HttpTlsClient(
                 ConfigLoader.getCertificatePath(),
                 ConfigLoader.getKeyPath(),
@@ -83,7 +86,7 @@ public class AuthService {
             if ("accounts".equals(requestStatus)) {
                 accountService.addMockBankAccountsInformation();
             } else if ("payments".equals(requestStatus)) {
-//                paymentService.addPaymentToAccount();
+                paymentService.addPaymentToAccount(accessToken);
             }
         } catch (IOException e) {
             throw new AuthorizationException(
@@ -91,6 +94,9 @@ public class AuthService {
         } catch (BankInfoLoadException e) {
             throw new AuthorizationException(
                     "Failed to load bank data after successful authorization", e);
+        } catch (PaymentException e) {
+            throw new AuthorizationException(
+                    "Failed to add payment after successful authorization", e);
         }
     }
 }

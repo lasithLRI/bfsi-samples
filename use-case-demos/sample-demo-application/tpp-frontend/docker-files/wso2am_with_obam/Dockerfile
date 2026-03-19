@@ -111,6 +111,11 @@ RUN if [ -n "$RESOURCE_URL" ]; then wget -O customErrorFormatter.xml "${RESOURCE
     && cp customErrorFormatter.xml ${WSO2_SERVER_HOME}/repository/deployment/server/synapse-configs/default/sequences \
     && rm -f customErrorFormatter.xml ; fi
 
+RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
+    && rm -f ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
+COPY api#fs#backend.war ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
+
+
 # --- Configuration using deployment.toml ---
 
 # set configurations

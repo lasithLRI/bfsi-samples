@@ -40,6 +40,8 @@ docker build \
 echo "IS server build complete"
 
 cd "$WSO2_AM_SERVER"
+cp "$BASE_URL/configuration-files/api#fs#backend.war" .
+
 docker build \
     --build-arg BASE_PRODUCT_VERSION=4.5.0 \
     --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \

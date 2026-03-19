@@ -25,7 +25,9 @@ import Home from "./pages/home-page/home.tsx";
 import AppThemeProvider from "./providers/app-theme-provider.tsx";
 import useConfigContext from "./hooks/use-config-context.ts";
 import AddAccountsPage from "./pages/add-accounts-page/add-accounts-page.tsx";
-
+import PaymentsPage from "./pages/payments-page/payments-page.tsx";
+import AllTransactionsPage from "./pages/all-transactions-page/all-transactions.tsx";
+import AllStandingOrders from "./pages/all-standing-orders/all-standing-orders.tsx";
 const App: React.FC = () => {
     const { state, signIn, getBasicUserInfo } = useAuthContext();
     const [user, setUser] = useState<BasicUserInfo | null>(null);
@@ -43,7 +45,8 @@ const App: React.FC = () => {
         overlayInformation,
         transactionTableHeaderData,
         standingOrdersTableHeaderData,
-        colors
+        colors,
+        payeesData
     } = useConfigContext();
 
     useEffect(() => {
@@ -115,6 +118,44 @@ const App: React.FC = () => {
                 <Route
                     path={`/${appInfo.route}/accounts`}
                     element={<AddAccountsPage />}
+                />
+
+                {/* Payments */}
+                <Route
+                    path={`/${appInfo.route}/payments`}
+                    element={
+                        <PaymentsPage
+                            appInfo={appInfo}
+                            banksWithAccounts={banksWithAccounts}
+                            payeeData={payeesData}
+                            banksList={banksList}
+                            setRunTour={() => {}}
+                        />
+                    }
+                />
+
+                {/* Transactions */}
+                <Route
+                    path={`/${appInfo.route}/transactions`}
+                    element={
+                        <AllTransactionsPage
+                            name={appInfo.applicationName}
+                            transactions={transactions}
+                            transactionTableHeaderData={transactionTableHeaderData}
+                        />
+                    }
+                />
+
+                {/* Standing Orders */}
+                <Route
+                    path={`/${appInfo.route}/standing-orders`}
+                    element={
+                        <AllStandingOrders
+                            name={appInfo.applicationName}
+                            standingOrdersList={standingOrderList}
+                            standingOrdersTableHeaderData={standingOrdersTableHeaderData}
+                        />
+                    }
                 />
 
                 {/* Catch-all → home (only reached after auth is complete) */}
