@@ -318,7 +318,7 @@ public class BankInfoService {
         };
     }
 
-    List<Bank> getBanks() { return banks; }
+    public List<Bank> getBanks() { return banks; }
     void addBank(Bank bank) { this.banks.add(bank); }
 
     /** Returns true if a bank with the given name already exists in the loaded data. */
@@ -344,5 +344,54 @@ public class BankInfoService {
         }
         transactions.add(0, transaction);
         transactions.sort(byDateDescending());
+    }
+
+    /** Groups all accounts by ConsentId to render in the UI for deletion. */
+    public List<Map<String, Object>> getAccountsGroupedByConsent() {
+        if (this.banks == null) return Collections.emptyList();
+        Map<String, Map<String, Object>> consentGroupMap = new LinkedHashMap<>();
+        for (Bank bank : this.banks) {
+            if (bank.getAccounts() == null) continue;
+            for (Account account : bank.getAccounts()) {
+                String consentId = account.getConsentId();
+                if (consentId == null || consentId.isEmpty()) continue;
+                consentGroupMap.putIfAbsent(consentId, new HashMap<>());
+                Map<String, Object> group = consentGroupMap.get(consentId);
+                group.putIfAbsent("consentId", consentId);
+                group.putIfAbsent("bankName", bank.getName());
+                
+                @SuppressWarnings("unchecked")
+                List<Map<String, String>> accountsList = (List<Map<String, String>>) group.computeIfAbsent("accounts", k -> new ArrayList<>());
+                Map<String, String> accountInfo = new HashMap<>();
+                accountInfo.put("id", account.getId());
+                accountInfo.put("name", account.getName());
+                accountsList.add(accountInfo);
+            }
+        }
+        return new ArrayList<>(consentGroupMap.values());
+    }
+
+    /** Retrieves the access token associated with a consentId, useful for revocation. */
+    public String getAccessTokenForConsent(String consentId) {
+        if (this.banks == null) return null;
+        for (Bank bank : this.banks) {
+            if (bank.getAccounts() == null) continue;
+            for (Account account : bank.getAccounts()) {
+                if (consentId.equals(account.getConsentId())) {
+                    return account.getAccessToken();
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Removes all accounts tied to the specified consent ID. */
+    public void deleteAccountsByConsentId(String consentId) {
+        if (this.banks == null) return;
+        for (Bank bank : this.banks) {
+            if (bank.getAccounts() != null) {
+                bank.getAccounts().removeIf(account -> consentId.equals(account.getConsentId()));
+            }
+        }
     }
 }

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import HomePageLayout from "../../layouts/home-page-layout/home-page-layout.tsx";
 import type {
@@ -35,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import OverlayConfirmation from "../../components/overlay-confirmation/overlay-confirmation.tsx";
 import TableComponent from "../../components/table-component.tsx";
 import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
+import { DeleteAccountModal } from "./delete-account-modal.tsx";
 
 interface AccountsCentralLayoutProps {
     children?: React.ReactNode;
@@ -50,15 +51,17 @@ interface AccountsCentralLayoutProps {
     overlayInformation: OverlayDataProp;
     transactionTableHeaderData?: TableConfigs[];
     standingOrdersTableHeaderData?: TableConfigs[];
+    onRefetch: () => void;  // ← add this
 }
 
 const Home = ({
                   standingOrdersTableHeaderData, name, userInfo, total, chartData,
                   banksWithAccounts, transactions, standingOrderList, appInfo,
-                  overlayInformation, transactionTableHeaderData
+                  overlayInformation, transactionTableHeaderData, onRefetch,
               }: AccountsCentralLayoutProps) => {
 
     const navigate = useNavigate();
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const addAccount = () => {
         navigate(`/${appInfo.route}/accounts`, {
@@ -76,9 +79,15 @@ const Home = ({
     const onButtonHandler = (buttonName: string, title?: string) => {
         if (buttonName === "Add Account") {
             addAccount();
+        } else if (buttonName === "Delete Account") {
+            setOpenDeleteModal(true);
         } else if (buttonName === "View More") {
             viewMore(title);
         }
+    };
+
+    const handleAccountDeletedSuccess = () => {
+        onRefetch();
     };
 
     return (
@@ -89,7 +98,7 @@ const Home = ({
                         <InfographicsContent total={total} chartInfo={chartData} />
                     </Grid>
                     <Grid className={'accounts-container'}>
-                        <CustomTitle title={"Connected Banks"} buttonName={"Add Account"} buttonType={"contained"}
+                        <CustomTitle title={"Connected Banks"} buttonName={"Accounts"} buttonType={"contained"}
                                      onPress={onButtonHandler} />
                         <ConnectedBanksAccounts bankAndAccountsInfo={banksWithAccounts} />
                     </Grid>
@@ -118,6 +127,12 @@ const Home = ({
                     title={overlayInformation.overlayData.title}
                 />
             }
+
+            <DeleteAccountModal 
+                open={openDeleteModal} 
+                onClose={() => setOpenDeleteModal(false)}
+                onSuccess={handleAccountDeletedSuccess}
+            />
         </>
     );
 };

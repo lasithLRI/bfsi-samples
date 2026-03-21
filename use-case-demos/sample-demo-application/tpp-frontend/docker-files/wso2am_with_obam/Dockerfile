@@ -100,6 +100,14 @@ RUN if [ -n "$WSO2_OB_KEYSTORES_URL" ]; then \
     yes | keytool -importkeystore -srckeystore ${USER_HOME}/public-certs.jks -destkeystore ${WSO2_SERVER_HOME}/repository/resources/security/client-truststore.jks -srcstorepass wso2carbon -deststorepass wso2carbon && \
     rm -f ${USER_HOME}/public-certs.jks ; fi
 
+
+# Adding custom error sequence
+RUN if [ -n "$RESOURCE_URL" ]; then \
+    wget -O ${WSO2_SERVER_HOME}/repository/deployment/server/synapse-configs/default/sequences/customErrorFormatter.xml \
+        "${RESOURCE_URL}/configuration-files/customErrorFormatter.xml" ; fi
+
+
+
 # Adding database connector
 RUN if [ -n "$RESOURCE_URL" ]; then \
     wget -O ${USER_HOME}/mysql-connector-java-5.1.44.jar "${RESOURCE_URL}/configuration-files/mysql-connector-java-5.1.44.jar" && \
@@ -107,14 +115,29 @@ RUN if [ -n "$RESOURCE_URL" ]; then \
     rm -f ${USER_HOME}/mysql-connector-java-5.1.44.jar ; fi
 
 # Adding custom error sequence
-RUN if [ -n "$RESOURCE_URL" ]; then wget -O customErrorFormatter.xml "${RESOURCE_URL}/configuration-files/customErrorFormatter.xml"  \
-    && cp customErrorFormatter.xml ${WSO2_SERVER_HOME}/repository/deployment/server/synapse-configs/default/sequences \
-    && rm -f customErrorFormatter.xml ; fi
+# RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
 
+# RUN if [ -n "$RESOURCE_URL" ]; then \
+#     wget -O ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war \
+#         "${RESOURCE_URL}/configuration-files/api#fs#backend.war" ; fi
+
+# RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
+#     && rm -f ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
+# COPY api#fs#backend.war ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
+
+
+# RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
+#     && rm -f ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
+# COPY api#fs#backend.war ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
+
+
+# ✅ Remove old backend webapp and download fresh from resource server
 RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
     && rm -f ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
-COPY api#fs#backend.war ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
 
+RUN if [ -n "$RESOURCE_URL" ]; then \
+    wget -O ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war \
+        "${RESOURCE_URL}/configuration-files/api-fs-backend.war" ; fi
 
 # --- Configuration using deployment.toml ---
 

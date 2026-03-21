@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
  *
@@ -28,6 +27,7 @@ import AddAccountsPage from "./pages/add-accounts-page/add-accounts-page.tsx";
 import PaymentsPage from "./pages/payments-page/payments-page.tsx";
 import AllTransactionsPage from "./pages/all-transactions-page/all-transactions.tsx";
 import AllStandingOrders from "./pages/all-standing-orders/all-standing-orders.tsx";
+
 const App: React.FC = () => {
     const { state, signIn, getBasicUserInfo } = useAuthContext();
     const [user, setUser] = useState<BasicUserInfo | null>(null);
@@ -46,7 +46,8 @@ const App: React.FC = () => {
         transactionTableHeaderData,
         standingOrdersTableHeaderData,
         colors,
-        payeesData
+        payeesData,
+        refetch
     } = useConfigContext();
 
     useEffect(() => {
@@ -66,13 +67,10 @@ const App: React.FC = () => {
         }
     }, [state.isAuthenticated, getBasicUserInfo]);
 
-    // While Asgardeo is initialising or processing the OAuth callback,
-    // render nothing — do NOT redirect, so the SDK can consume ?code=
     if (state.isLoading) {
         return <div>Loading...</div>;
     }
 
-    // Config or user not ready yet
     if (isLoading || !state.isAuthenticated || !user) {
         return <div>Loading...</div>;
     }
@@ -110,6 +108,7 @@ const App: React.FC = () => {
                             overlayInformation={overlayInformation}
                             transactionTableHeaderData={transactionTableHeaderData}
                             standingOrdersTableHeaderData={standingOrdersTableHeaderData}
+                            onRefetch={refetch}
                         />
                     }
                 />
@@ -158,7 +157,7 @@ const App: React.FC = () => {
                     }
                 />
 
-                {/* Catch-all → home (only reached after auth is complete) */}
+                {/* Catch-all → home */}
                 <Route
                     path="*"
                     element={<Navigate to={`/${appInfo.route}`} replace />}

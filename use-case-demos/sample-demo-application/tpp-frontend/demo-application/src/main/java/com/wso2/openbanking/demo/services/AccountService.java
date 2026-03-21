@@ -26,6 +26,7 @@ public class AccountService {
     private final HttpTlsClient client;
     private final OAuthTokenService oauthService;
     private String accessToken;
+    private String currentConsentId;
 
     private static final DateTimeFormatter ISO_DATETIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -86,6 +87,7 @@ public class AccountService {
         String token = oauthService.getToken("accounts openid");
 
         String consentResponse = oauthService.initializeConsent(token, consentBody, addAccountUrl);
+        currentConsentId = new JSONObject(consentResponse).getJSONObject("Data").getString("ConsentId");
 
         String redirectUrl = oauthService.authorizeConsent(consentResponse, "accounts openid");
 
@@ -155,8 +157,11 @@ public class AccountService {
             List<Transaction> transactions = fetchAccountTransactions(accountId, bankName);
             Account account = new Account(accountId, accountName, balance, transactions);
             account.setBank(bankName);
+            account.setConsentId(currentConsentId);
+            account.setAccessToken(accessToken);
             accounts.add(account);
         }
+        currentConsentId = null;
         return accounts;
     }
 
@@ -269,5 +274,36 @@ public class AccountService {
                 .put("Data", permissions)
                 .put("Risk", new JSONObject())
                 .toString();
+    }
+
+    /**
+     * Revokes the ASPSP consent by making a DELETE call to the Gateway using a fresh
+     * client credentials token, then clears the local in-memory data.
+     *
+     * NOTE: We use oauthService.getToken() here (client credentials grant) instead of
+     * the stored user access token, because the bank expects the same client identity
+     * that originally created the consent to revoke it.
+     */
+    public boolean revokeConsentAndRemoveAccounts(String consentId) throws Exception {
+        System.out.println("[DELETE] Attempting to revoke consentId: " + consentId);
+
+        String tokenResponse = oauthService.getToken("accounts openid");
+        String token = new JSONObject(tokenResponse).getString("access_token");
+
+        System.out.println("[DELETE] Fresh token obtained: "
+                + token.substring(0, Math.min(token.length(), 20)) + "***");
+
+        String revokeUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents/" + consentId;
+        System.out.println("[DELETE] Calling revoke URL: " + revokeUrl);
+
+        boolean success = client.deleteWithAuth(revokeUrl, token);
+        System.out.println("[DELETE] API revocation success: " + success);
+
+        if (success) {
+            bankInfoService.deleteAccountsByConsentId(consentId);
+            return true;
+        }
+
+        return false;
     }
 }

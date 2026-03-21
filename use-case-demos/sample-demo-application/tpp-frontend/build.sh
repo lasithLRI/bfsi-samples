@@ -15,19 +15,48 @@ find "$BASE_URL" -name "*.sh" | while read f; do
 done
 echo "CRLF fix applied to all shell scripts"
 
+# Kill any existing server on port 8000
 lsof -ti:8000 | xargs kill -9 2>/dev/null || true
 
+# Start HTTP server from BASE_URL so Docker can fetch all configuration files
+cd "$BASE_URL"
 python -m http.server 8000 &
 SERVER_PID=$!
+sleep 2
+echo "HTTP server started (PID: $SERVER_PID) serving: $BASE_URL"
 
+# Verify key files are reachable before starting builds
+echo "Verifying HTTP server can serve required files..."
+curl -sf "http://localhost:8000/configuration-files/keystores/private-keys.jks" -o /dev/null \
+    && echo "  private-keys.jks reachable" \
+    || echo "  WARNING: private-keys.jks not found - check configuration-files/keystores/"
+curl -sf "http://localhost:8000/configuration-files/keystores/public-certs.jks" -o /dev/null \
+    && echo "  public-certs.jks reachable" \
+    || echo "  WARNING: public-certs.jks not found - check configuration-files/keystores/"
+curl -sf "http://localhost:8000/configuration-files/trust_certs.zip" -o /dev/null \
+    && echo "  trust_certs.zip reachable" \
+    || echo "  WARNING: trust_certs.zip not found - check configuration-files/"
+curl -sf "http://localhost:8000/configuration-files/customErrorFormatter.xml" -o /dev/null \
+    && echo "  customErrorFormatter.xml reachable" \
+    || echo "  WARNING: customErrorFormatter.xml not found - check configuration-files/"
+
+# Build MySQL image
 cd "$MY_SQL"
 docker build -t ob_database .
 echo "MySQL build complete"
 
+# Build demo backend WAR
 cd "$DEMO_BACKEND"
 mvn clean package -DskipTests
+cp "target/ob-demo-backend-1.0.0.war" "$BASE_URL/configuration-files/api-fs-backend.war"
 echo "Demo backend WAR build complete"
 
+# Verify WAR is reachable
+curl -sf "http://localhost:8000/configuration-files/api-fs-backend.war" -o /dev/null \
+    && echo "  api-fs-backend.war reachable" \
+    || echo "  WARNING: api-fs-backend.war not found - check configuration-files/"
+
+# Build IS server image (context must be BASE_URL so all files are accessible)
 cd "$BASE_URL"
 docker build \
     --build-arg BASE_PRODUCT_VERSION=7.1.0 \
@@ -39,26 +68,29 @@ docker build \
     -t wso2is-ob:4.0.0 .
 echo "IS server build complete"
 
-cd "$WSO2_AM_SERVER"
-cp "$BASE_URL/configuration-files/api#fs#backend.war" .
-
+# Build AM server image (context must be BASE_URL so all files are accessible)
+cd "$BASE_URL"
 docker build \
     --build-arg BASE_PRODUCT_VERSION=4.5.0 \
     --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
     --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
     --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
-    --no-cache -t wso2am-ob:4.0.0 .
+    --no-cache \
+    -f "$WSO2_AM_SERVER/Dockerfile" \
+    -t wso2am-ob:4.0.0 .
 echo "AM server build complete"
 
+# Stop the HTTP server now that all builds are done
 kill $SERVER_PID 2>/dev/null || true
+echo "HTTP server stopped"
 
-# ── Pre-create the network so compose never errors on a missing network ──────
+# Pre-create the network so compose never errors on a missing network
 docker network create ob-network 2>/dev/null || true
 echo "ob-network ensured"
 
 cd "$DOCKER_COMPOSE_DIRECTORY"
 
-# ── Verify the compose file is present before attempting up ──────────────────
+# Verify the compose file is present before attempting up
 if [ ! -f "docker-compose.yml" ] && [ ! -f "compose.yml" ]; then
     echo "ERROR: No docker-compose.yml found in $DOCKER_COMPOSE_DIRECTORY"
     exit 1

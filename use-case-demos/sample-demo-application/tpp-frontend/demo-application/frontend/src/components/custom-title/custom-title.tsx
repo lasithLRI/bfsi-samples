@@ -16,7 +16,10 @@
  * under the License.
  */
 
-import {Box, Button} from "@oxygen-ui/react";
+import {Box, Button, Menu, MenuItem} from "@oxygen-ui/react";
+// @ts-ignore
+import { ChevronDownIcon } from "@oxygen-ui/react-icons";
+import React, { useState } from "react";
 
 interface TitleProps {
     title: string;
@@ -45,6 +48,46 @@ const CustomTitle = ({title,buttonName,buttonType, onPress}:TitleProps)=>{
         onboardingClass = "view-all-standing-orders"
     }else{
         onboardingClass = ""
+    }
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const openMenu = Boolean(anchorEl);
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleMenuClick = (action: string) => {
+        handleClose();
+        onPress?.(action, title);
+    };
+
+    if (buttonName === "Accounts") {
+        return (
+            <Box className={"title-container"}>
+                <p>{title}</p>
+                <Button 
+                    className="add-account-btn"
+                    variant={buttonType} 
+                    onClick={handleClick}
+                    endIcon={<ChevronDownIcon />}
+                >
+                    {buttonName}
+                </Button>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={openMenu}
+                    onClose={handleClose}
+                >
+                    <MenuItem onClick={() => handleMenuClick("Add Account")}>Add Account</MenuItem>
+                    <MenuItem onClick={() => handleMenuClick("Delete Account")}>Delete Account</MenuItem>
+                </Menu>
+            </Box>
+        );
     }
 
     return(

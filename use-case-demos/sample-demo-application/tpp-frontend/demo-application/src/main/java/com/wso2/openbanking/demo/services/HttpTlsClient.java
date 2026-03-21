@@ -373,11 +373,41 @@ public final class HttpTlsClient {
      * @throws IOException if the HTTP call fails.
      */
     public boolean deleteWithAuth(String url, String token) throws IOException {
+        String fapiId = ConfigLoader.getFapiFinancialId();
+        if (logger.isInfoEnabled()) {
+            logger.info(
+                    "\n========== [AISP] CONSENT REVOCATION OUTBOUND REQUEST ==========\n" +
+                            "  Method : DELETE\n" +
+                            "  URL    : {}\n" +
+                            "  Headers:\n" +
+                            "    {}: {}\n" +
+                            "    {}: Bearer {}***\n" +
+                            "    {}: {}\n" +
+                            "=================================================================",
+                    url,
+                    HEADER_FAPI_ID,       fapiId,
+                    HEADER_AUTHORIZATION, truncateToken(token),
+                    HEADER_ACCEPT,        MEDIA_JSON
+            );
+        }
+
         int statusCode = HttpConnection.delete(url, sslContext)
-                .addHeader(HEADER_FAPI_ID, ConfigLoader.getFapiFinancialId())
+                .addHeader(HEADER_FAPI_ID, fapiId)
                 .addHeader(HEADER_AUTHORIZATION, BEARER_PREFIX + token)
                 .addHeader(HEADER_ACCEPT, MEDIA_JSON)
                 .executeAndGetStatus();
+
+        if (logger.isInfoEnabled()) {
+            logger.info(
+                    "\n========== [AISP] CONSENT REVOCATION INBOUND RESPONSE ==========\n" +
+                            "  Method : DELETE\n" +
+                            "  URL    : {}\n" +
+                            "  Status : {}\n" +
+                            "=================================================================",
+                    url, statusCode
+            );
+        }
+
         return statusCode >= 200 && statusCode < 300;
     }
 

@@ -162,7 +162,17 @@ public class HttpConnection {
         if (body != null) {
             writeBody(connection);
         }
-        return connection.getResponseCode();
+        int status = connection.getResponseCode();
+        if (status >= 400) {
+            try {
+                System.out.println("========== HTTP ERROR RESPONSE BODY ==========");
+                System.out.println(readResponse(connection));
+                System.out.println("==============================================");
+            } catch (Exception e) {
+                System.out.println("Failed to read error body: " + e.getMessage());
+            }
+        }
+        return status;
     }
 
     /**

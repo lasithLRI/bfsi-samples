@@ -27,9 +27,14 @@ export const baseUrl = '/ob-demo-backend-1.0.0/init';
  * @throws {Error} Throws an error if the network request fails or the HTTP response status is not OK (200-299).
  */
 const fetchData = async (endpoint: string, options?: RequestInit) => {
-    const url = `${baseUrl}/${endpoint}`;
+    // Append a timestamp uniquely for GET requests to bypass browser caching
+    const url = new URL(`${window.location.origin}${baseUrl}/${endpoint}`);
+    if (!options || !options.method || options.method === 'GET') {
+        url.searchParams.append('t', new Date().getTime().toString());
+    }
+    
     try {
-        const response = await fetch(url, options);
+        const response = await fetch(url.toString(), options);
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -43,6 +48,8 @@ const fetchData = async (endpoint: string, options?: RequestInit) => {
 interface ApiService {
     get: <T>(endpoint: string) => Promise<T>;
     post: <T>(endpoint: string, body: unknown) => Promise<T>;
+    delete: <T>(endpoint: string) => Promise<T>;  // add this
+
 }
 
 export const api: ApiService = {
@@ -55,4 +62,7 @@ export const api: ApiService = {
             },
             body: JSON.stringify(body),
         }),
+
+    delete: <T>(endpoint: string): Promise<T> =>   // add this
+        fetchData(endpoint, { method: "DELETE" }),
 };

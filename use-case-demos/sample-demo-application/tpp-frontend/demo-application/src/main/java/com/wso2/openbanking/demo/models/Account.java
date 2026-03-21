@@ -13,6 +13,24 @@ public class Account {
     private List<StandingOrder> standingOrders;
     private String bank;
     private String account;
+    private String consentId;
+    private String accessToken;
+
+    public String getConsentId() {
+        return consentId;
+    }
+
+    public void setConsentId(String consentId) {
+        this.consentId = consentId;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     public String getBank() {
         return bank;

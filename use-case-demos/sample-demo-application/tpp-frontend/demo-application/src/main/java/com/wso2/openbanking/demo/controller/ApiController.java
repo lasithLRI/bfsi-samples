@@ -3,19 +3,17 @@ package com.wso2.openbanking.demo.controller;
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
-import com.wso2.openbanking.demo.models.ConfigResponse;
-import com.wso2.openbanking.demo.models.LoadPaymentPageResponse;
-import com.wso2.openbanking.demo.models.Payment;
+import com.wso2.openbanking.demo.models.*;
 import com.wso2.openbanking.demo.services.*;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.HtmlResponseBuilder;
+import org.json.JSONArray;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Path("")
 public class ApiController {
@@ -143,6 +141,98 @@ public class ApiController {
             return Response.ok().build();
         } catch (AuthorizationException e) {
             return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
+
+//    @GET
+//    @Path("/get-delete-account-info")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getDeleteAccountInfo() {
+//        try {
+//            return Response.ok(bankInfoService.getAccountsGroupedByConsent()).build();
+//        } catch (Exception e) {
+//            return Response.serverError().entity(e.getMessage()).build();
+//        }
+//    }
+
+    @POST
+    @Path("/delete-accounts")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteAccounts(Map<String, String> requestBody) {
+        try {
+            boolean success = accountService.revokeConsentAndRemoveAccounts(requestBody.get("consentId"));
+            if (success) {
+                return Response.ok(Collections.singletonMap("status", "success")).build();
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Failed to revoke consent").build();
+            }
+        } catch (Exception e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
+
+    @DELETE
+    @Path("/revoke-consent")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response revokeConsent(@QueryParam("consentId") String consentId) {
+        try {
+            if (consentId == null || consentId.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\":\"consentId is required\"}")
+                        .build();
+            }
+            boolean success = accountService.revokeConsentAndRemoveAccounts(consentId);
+            if (success) {
+                return Response.ok("{\"status\":\"revoked\"}").build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\":\"Consent not found or revocation failed\"}")
+                        .build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/get-delete-account-info")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDeleteAccountInfo() {
+        try {
+            List<Map<String, Object>> groups = new ArrayList<>();
+            if (bankInfoService.getBanks() != null) {
+                // Group accounts by consentId
+                Map<String, List<Account>> byConsent = new LinkedHashMap<>();
+                for (Bank bank : bankInfoService.getBanks()) {
+                    for (Account acc : bank.getAccounts()) {
+                        byConsent
+                                .computeIfAbsent(acc.getConsentId(), k -> new ArrayList<>())
+                                .add(acc);
+                    }
+                }
+                for (Map.Entry<String, List<Account>> entry : byConsent.entrySet()) {
+                    Map<String, Object> group = new LinkedHashMap<>();
+                    group.put("consentId", entry.getKey());
+                    group.put("bankName", entry.getValue().get(0).getBank());
+                    List<Map<String, String>> accounts = new ArrayList<>();
+                    for (Account acc : entry.getValue()) {
+                        Map<String, String> a = new LinkedHashMap<>();
+                        a.put("id", acc.getId());
+                        a.put("name", acc.getName());
+                        accounts.add(a);
+                    }
+                    group.put("accounts", accounts);
+                    groups.add(group);
+                }
+            }
+            return Response.ok(new JSONArray(groups).toString()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                    .build();
         }
     }
 }
