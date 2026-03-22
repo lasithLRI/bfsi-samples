@@ -123,13 +123,24 @@ const useConfigContext = () => {
         });
     }, [processedBanks, configData]);
 
-    /**
-     * Revokes a consent by ID, then refreshes config to reflect removed accounts in UI.
-     * Returns true on success, false on failure.
-     */
-    const revokeConsent = async (consentId: string): Promise<boolean> => {
+    const getAffectedAccounts = async (
+        accountId: string,
+        bankName: string
+    ): Promise<{ id: string; name: string }[]> => {
         try {
-            await api.delete(`revoke-consent?consentId=${consentId}`);
+            const result = await api.get<{ affectedAccounts: { id: string; name: string }[] }>(
+                `revoke-consent/preview?accountId=${accountId}&bankName=${bankName}`
+            );
+            return result.affectedAccounts;
+        } catch (error) {
+            console.error("Failed to fetch affected accounts:", error);
+            return [];
+        }
+    };
+
+    const revokeConsent = async (accountId: string, bankName: string): Promise<boolean> => {
+        try {
+            await api.delete(`revoke-consent?accountId=${accountId}&bankName=${bankName}`);
             refetch();
             return true;
         } catch (error) {
@@ -157,8 +168,9 @@ const useConfigContext = () => {
         colors: configData?.colors ?? [],
         accountsNumbersToAdd: configData?.accountNumbersToAdd ?? [],
         banksInformation: processedBanks,
+        getAffectedAccounts,
         revokeConsent,
-        refetch// ← expose this for any component to use
+        refetch
     };
 };
 

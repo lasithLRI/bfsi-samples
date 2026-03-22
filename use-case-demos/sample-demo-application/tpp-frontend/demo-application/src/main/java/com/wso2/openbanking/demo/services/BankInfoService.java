@@ -371,19 +371,19 @@ public class BankInfoService {
         return new ArrayList<>(consentGroupMap.values());
     }
 
-    /** Retrieves the access token associated with a consentId, useful for revocation. */
-    public String getAccessTokenForConsent(String consentId) {
-        if (this.banks == null) return null;
-        for (Bank bank : this.banks) {
-            if (bank.getAccounts() == null) continue;
-            for (Account account : bank.getAccounts()) {
-                if (consentId.equals(account.getConsentId())) {
-                    return account.getAccessToken();
-                }
-            }
-        }
-        return null;
-    }
+//    /** Retrieves the access token associated with a consentId, useful for revocation. */
+//    public String getAccessTokenForConsent(String consentId) {
+//        if (this.banks == null) return null;
+//        for (Bank bank : this.banks) {
+//            if (bank.getAccounts() == null) continue;
+//            for (Account account : bank.getAccounts()) {
+//                if (consentId.equals(account.getConsentId())) {
+//                    return account.getAccessToken();
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
     /** Removes all accounts tied to the specified consent ID. */
     public void deleteAccountsByConsentId(String consentId) {

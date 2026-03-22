@@ -154,40 +154,66 @@ public class ApiController {
 //            return Response.serverError().entity(e.getMessage()).build();
 //        }
 //    }
+//
+//    @POST
+//    @Path("/delete-accounts")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response deleteAccounts(Map<String, String> requestBody) {
+//        try {
+//            boolean success = accountService.revokeConsentAndRemoveAccounts(requestBody.get("consentId"));
+//            if (success) {
+//                return Response.ok(Collections.singletonMap("status", "success")).build();
+//            } else {
+//                return Response.status(Response.Status.BAD_REQUEST).entity("Failed to revoke consent").build();
+//            }
+//        } catch (Exception e) {
+//            return Response.serverError().entity(e.getMessage()).build();
+//        }
+//    }
 
-    @POST
-    @Path("/delete-accounts")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAccounts(Map<String, String> requestBody) {
-        try {
-            boolean success = accountService.revokeConsentAndRemoveAccounts(requestBody.get("consentId"));
-            if (success) {
-                return Response.ok(Collections.singletonMap("status", "success")).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Failed to revoke consent").build();
-            }
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
-        }
-    }
+//    @DELETE
+//    @Path("/revoke-consent")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response revokeConsent(@QueryParam("consentId") String consentId) {
+//        try {
+//            if (consentId == null || consentId.isEmpty()) {
+//                return Response.status(Response.Status.BAD_REQUEST)
+//                        .entity("{\"error\":\"consentId is required\"}")
+//                        .build();
+//            }
+//            boolean success = accountService.revokeConsentAndRemoveAccounts(consentId);
+//            if (success) {
+//                return Response.ok("{\"status\":\"revoked\"}").build();
+//            } else {
+//                return Response.status(Response.Status.NOT_FOUND)
+//                        .entity("{\"error\":\"Consent not found or revocation failed\"}")
+//                        .build();
+//            }
+//        } catch (Exception e) {
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
+//                    .build();
+//        }
+//    }
 
     @DELETE
     @Path("/revoke-consent")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response revokeConsent(@QueryParam("consentId") String consentId) {
+    public Response revokeConsent(@QueryParam("accountId") String accountId,
+                                  @QueryParam("bankName") String bankName) {
         try {
-            if (consentId == null || consentId.isEmpty()) {
+            if (accountId == null || accountId.isEmpty() || bankName == null || bankName.isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"error\":\"consentId is required\"}")
+                        .entity("{\"error\":\"accountId and bankName are required\"}")
                         .build();
             }
-            boolean success = accountService.revokeConsentAndRemoveAccounts(consentId);
+            boolean success = accountService.revokeAccountConsent(accountId, bankName);
             if (success) {
                 return Response.ok("{\"status\":\"revoked\"}").build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .entity("{\"error\":\"Consent not found or revocation failed\"}")
+                        .entity("{\"error\":\"Account not found or revocation failed\"}")
                         .build();
             }
         } catch (Exception e) {

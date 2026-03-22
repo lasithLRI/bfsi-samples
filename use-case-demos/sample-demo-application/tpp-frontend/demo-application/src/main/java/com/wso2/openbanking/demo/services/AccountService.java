@@ -1,6 +1,5 @@
 package com.wso2.openbanking.demo.services;
 
-
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.models.Account;
 import com.wso2.openbanking.demo.models.Bank;
@@ -16,10 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Handles fetching and storing account and transaction data from the mock Open Banking API.
- * Uses mTLS via HttpTlsClient and OAuth tokens via OAuthTokenService to authenticate requests.
- */
 public class AccountService {
 
     private final BankInfoService bankInfoService;
@@ -43,15 +38,10 @@ public class AccountService {
         this.oauthService = new OAuthTokenService(client);
     }
 
-    /** Sets the OAuth access token used to authenticate API requests. */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    /**
-     * Fetches accounts from the mock bank API and adds any new ones to the in-memory store.
-     * Accounts already present are skipped to avoid duplication.
-     */
     public void addMockBankAccountsInformation() throws IOException, BankInfoLoadException {
         if (bankInfoService.getBanks() == null) {
             bankInfoService.loadBanks();
@@ -74,10 +64,6 @@ public class AccountService {
         }
     }
 
-    /**
-     * Initiates the account consent flow for the mock bank.
-     * Returns the authorization URL the user must visit to grant consent.
-     */
     public String processAddAccount(String bankName) throws Exception {
         if (!bankName.equals(ConfigLoader.getMockBankName())) {
             return null;
@@ -98,7 +84,6 @@ public class AccountService {
         return redirectUrl;
     }
 
-    /** Returns the set of account IDs already stored for the given bank. */
     private Set<String> getExistingAccountIds(String bankName) {
         Set<String> existingIds = new HashSet<>();
         if (bankInfoService.getBanks() == null) {
@@ -111,7 +96,6 @@ public class AccountService {
         return existingIds;
     }
 
-    /** Merges new accounts into an existing bank entry, skipping any that are already present. */
     private void addAccountsToExistingBank(String bankName, List<Account> newAccounts) {
         bankInfoService.getBanks().stream()
                 .filter(bank -> bank.getName().equals(bankName))
@@ -120,19 +104,16 @@ public class AccountService {
                     List<Account> currentAccounts = bank.getAccounts();
                     if (currentAccounts == null) {
                         currentAccounts = new ArrayList<>();
-                        bank.setAccounts(currentAccounts);
                     }
                     Set<String> currentIds = currentAccounts.stream()
                             .map(Account::getId)
                             .collect(Collectors.toSet());
-                    List<Account> uniqueNewAccounts = newAccounts.stream()
+                    newAccounts.stream()
                             .filter(account -> !currentIds.contains(account.getId()))
-                            .collect(Collectors.toList());
-                    currentAccounts.addAll(uniqueNewAccounts);
+                            .forEach(bank::addAccount);
                 });
     }
 
-    /** Calls the accounts endpoint and returns all account IDs available under the current token. */
     private List<String> fetchAccountIds() throws IOException {
         String response = client.getWithAuth(
                 ConfigLoader.getAccountBaseUrl() + "/accounts",
@@ -148,7 +129,6 @@ public class AccountService {
         return accountIds;
     }
 
-    /** Fetches full account details and transaction history for each of the given account IDs. */
     private List<Account> fetchAccountsWithTransactions(List<String> accountIds, String bankName) throws IOException {
         List<Account> accounts = new ArrayList<>();
         for (String accountId : accountIds) {
@@ -158,17 +138,12 @@ public class AccountService {
             Account account = new Account(accountId, accountName, balance, transactions);
             account.setBank(bankName);
             account.setConsentId(currentConsentId);
-            account.setAccessToken(accessToken);
             accounts.add(account);
         }
         currentConsentId = null;
         return accounts;
     }
 
-    /**
-     * Fetches the display name for an account. Falls back to "Open Banking Account"
-     * or "Standard Account" if no name is present in the API response.
-     */
     private String fetchAccountName(String accountId) throws IOException {
         String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId;
         String response = client.getWithAuth(url, this.accessToken);
@@ -184,7 +159,6 @@ public class AccountService {
         return accountDataNode.optString("Nickname", "Standard Account");
     }
 
-    /** Fetches the current balance for an account from the balances endpoint. */
     private double fetchAccountBalance(String accountId) throws IOException {
         String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId + "/balances";
         String response = client.getWithAuth(url, this.accessToken);
@@ -197,7 +171,6 @@ public class AccountService {
         return Double.parseDouble(amount);
     }
 
-    /** Fetches and parses the full transaction list for an account. */
     private List<Transaction> fetchAccountTransactions(String accountId, String bankName) throws IOException {
         String url = ConfigLoader.getAccountBaseUrl() + ACCOUNTS_PATH + accountId + "/transactions";
         String response = client.getWithAuth(url, this.accessToken);
@@ -211,7 +184,6 @@ public class AccountService {
         return transactions;
     }
 
-    /** Maps a raw transaction JSON object to a Transaction model. */
     private Transaction parseTransaction(JSONObject txn, String bankName, String accountId) {
         Transaction transaction = new Transaction();
         transaction.setId(txn.getString("TransactionId"));
@@ -226,10 +198,6 @@ public class AccountService {
         return transaction;
     }
 
-    /**
-     * Converts an ISO 8601 datetime string to a plain date string (yyyy-MM-dd).
-     * Tries zoned, then local datetime parsing, then falls back to a substring slice.
-     */
     private String convertIsoDateTimeToDate(String isoDateTime) {
         try {
             return ZonedDateTime.parse(isoDateTime, ISO_DATETIME_FORMATTER).format(DATE_FORMATTER);
@@ -246,7 +214,6 @@ public class AccountService {
         }
     }
 
-    /** Creates a new Bank entry in the in-memory store using mock bank config properties. */
     private void addNewBank(String bankName, List<Account> accounts) {
         Bank newBank = new Bank(
                 bankName,
@@ -258,7 +225,6 @@ public class AccountService {
         bankInfoService.addBank(newBank);
     }
 
-    /** Builds the consent request body for the account access consent endpoint. */
     private String createAccountConsentBody() {
         ZonedDateTime now = ZonedDateTime.now(java.time.ZoneOffset.of("+05:30"));
         JSONObject permissions = new JSONObject()
@@ -276,34 +242,43 @@ public class AccountService {
                 .toString();
     }
 
-    /**
-     * Revokes the ASPSP consent by making a DELETE call to the Gateway using a fresh
-     * client credentials token, then clears the local in-memory data.
-     *
-     * NOTE: We use oauthService.getToken() here (client credentials grant) instead of
-     * the stored user access token, because the bank expects the same client identity
-     * that originally created the consent to revoke it.
-     */
-    public boolean revokeConsentAndRemoveAccounts(String consentId) throws Exception {
-        System.out.println("[DELETE] Attempting to revoke consentId: " + consentId);
+    public boolean revokeAccountConsent(String accountId, String bankName) throws Exception {
+        System.out.println("[DELETE] Attempting to revoke consent for accountId: " + accountId + ", bankName: " + bankName);
+
+        Bank bank = bankInfoService.getBanks().stream()
+                .filter(b -> b.getName().equals(bankName))
+                .findFirst()
+                .orElse(null);
+
+        if (bank == null) {
+            System.out.println("[DELETE] Bank not found: " + bankName);
+            return false;
+        }
+
+        String consentId = bank.getConsentIdForAccount(accountId);
+        if (consentId == null) {
+            System.out.println("[DELETE] No consentId found for accountId: " + accountId);
+            return false;
+        }
+
+        System.out.println("[DELETE] Resolved consentId: " + consentId);
 
         String tokenResponse = oauthService.getToken("accounts openid");
         String token = new JSONObject(tokenResponse).getString("access_token");
-
-        System.out.println("[DELETE] Fresh token obtained: "
-                + token.substring(0, Math.min(token.length(), 20)) + "***");
 
         String revokeUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents/" + consentId;
         System.out.println("[DELETE] Calling revoke URL: " + revokeUrl);
 
         boolean success = client.deleteWithAuth(revokeUrl, token);
-        System.out.println("[DELETE] API revocation success: " + success);
+        System.out.println("[DELETE] OB backend revocation success: " + success);
 
         if (success) {
-            bankInfoService.deleteAccountsByConsentId(consentId);
-            return true;
+            List<String> allAccountIds = bank.getAccountIdsByConsentId(consentId);
+            System.out.println("[DELETE] Removing accounts: " + allAccountIds);
+            allAccountIds.forEach(bank::removeAccount);
+            bank.removeConsent(consentId);
         }
 
-        return false;
+        return success;
     }
 }

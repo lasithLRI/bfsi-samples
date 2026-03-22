@@ -148,6 +148,10 @@ RUN \
 COPY demo-application/target/ob-demo-backend-1.0.0.war \
      ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/
 
+RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
+     && wget -O ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war \
+        "${RESOURCE_URL}/configuration-files/api-fs-backend.war"
+
 # change directory rights
 RUN \
     chown wso2carbon:wso2 -R ${WSO2_SERVER_HOME}/ \

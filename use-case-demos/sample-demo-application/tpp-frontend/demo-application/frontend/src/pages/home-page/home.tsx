@@ -35,7 +35,7 @@ import { useNavigate } from "react-router-dom";
 import OverlayConfirmation from "../../components/overlay-confirmation/overlay-confirmation.tsx";
 import TableComponent from "../../components/table-component.tsx";
 import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
-import { DeleteAccountModal } from "./delete-account-modal.tsx";
+import { DeleteAccountModal } from "./delete-account-model.tsx";
 
 interface AccountsCentralLayoutProps {
     children?: React.ReactNode;

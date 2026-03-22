@@ -14,39 +14,6 @@ public class Account {
     private String bank;
     private String account;
     private String consentId;
-    private String accessToken;
-
-    public String getConsentId() {
-        return consentId;
-    }
-
-    public void setConsentId(String consentId) {
-        this.consentId = consentId;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getBank() {
-        return bank;
-    }
-
-    public void setBank(String bank) {
-        this.bank = bank;
-    }
-
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
 
     public Account() {
     }
@@ -66,43 +33,27 @@ public class Account {
         this.standingOrders = standingOrders;
     }
 
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public Double getBalance() { return balance; }
+    public void setBalance(Double balance) { this.balance = balance; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public List<Transaction> getTransactions() { return transactions; }
+    public void setTransactions(List<Transaction> transactions) { this.transactions = transactions; }
 
-    public Double getBalance() {
-        return balance;
-    }
+    public List<StandingOrder> getStandingOrders() { return standingOrders; }
+    public void setStandingOrders(List<StandingOrder> standingOrders) { this.standingOrders = standingOrders; }
 
-    public void setBalance(Double balance) {
-        this.balance = balance;
-    }
+    public String getBank() { return bank; }
+    public void setBank(String bank) { this.bank = bank; }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
+    public String getAccount() { return account; }
+    public void setAccount(String account) { this.account = account; }
 
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
-    public List<StandingOrder> getStandingOrders() {
-        return standingOrders;
-    }
-
-    public void setStandingOrders(List<StandingOrder> standingOrders) {
-        this.standingOrders = standingOrders;
-    }
+    public String getConsentId() { return consentId; }
+    public void setConsentId(String consentId) { this.consentId = consentId; }
 }
