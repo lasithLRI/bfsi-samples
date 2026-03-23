@@ -132,12 +132,7 @@ RUN if [ -n "$RESOURCE_URL" ]; then \
 
 
 # ✅ Remove old backend webapp and download fresh from resource server
-RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
-    && rm -f ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
 
-RUN if [ -n "$RESOURCE_URL" ]; then \
-    wget -O ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war \
-        "${RESOURCE_URL}/configuration-files/api-fs-backend.war" ; fi
 
 # --- Configuration using deployment.toml ---
 
@@ -203,6 +198,14 @@ RUN \
 RUN \
     chown wso2carbon:wso2 -R ${WSO2_SERVER_HOME}/ \
     && chown wso2carbon:wso2 /etc/motd
+
+
+RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
+    && rm -f ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
+
+RUN if [ -n "$RESOURCE_URL" ]; then \
+    wget -O ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war \
+        "${RESOURCE_URL}/configuration-files/api-fs-backend.war" ; fi
 
 # Fix CRLF line endings in entrypoint script (caused by Windows-style line endings)
 RUN sed -i 's/\r//' /home/wso2carbon/docker-entrypoint.sh
