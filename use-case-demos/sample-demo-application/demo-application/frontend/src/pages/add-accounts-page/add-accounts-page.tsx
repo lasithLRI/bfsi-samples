@@ -51,13 +51,10 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
         try {
             const callbackUrl = `${window.location.origin}${normalizedBasePath}/callback`;
             const apiBaseUrl = `${window.location.origin}${normalizedBasePath}`;
-            console.log(apiBaseUrl);
 
             const response = await fetch(`${apiBaseUrl}/init/add-accounts`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({bankName, callbackUrl})
             });
 
@@ -83,17 +80,15 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
         return <RedirectionComponent/>;
     }
 
-    // 3rd bank (index 2) → "Accounts to Add" column (clickable)
     const accountsToAdd = bankInformations.length > 2 ? [bankInformations[2]] : [];
-
-    // 1st and 2nd banks (index 0, 1) → "Already Added Accounts" column (non-clickable)
     const alreadyAddedAccounts = bankInformations.slice(0, 2);
 
     return (
-        <>
+
             <ApplicationLayout name={appName} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Add Account"}>
                     <Box className="accounts-outer">
+
                         {apiError && (
                             <div className="api-error-message"
                                  style={{color: "#d32f2f", marginBottom: "1rem"}}>
@@ -101,13 +96,16 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
                             </div>
                         )}
 
-                        <Box style={{display: 'flex', flexDirection: 'row', gap: '2rem', width: '100%', padding: '0 2rem', alignItems: 'flex-start'}}>
-
-                            {/* Column 1: Accounts to Add */}
-                            <Box style={{display: 'flex', flexDirection: 'column', flex: 1}}>
-                                <h3 style={{marginBottom: '1.5rem'}}>Accounts to Add</h3>
-                                <div className="accounts-buttons-container">
-                                    {accountsToAdd.map((account, index) => (
+                        {/* Section 1: Accounts to Add */}
+                        <Box style={{width: '100%', marginBottom: '2.5rem'}}>
+                            <h3 style={{marginBottom: '1.5rem', marginTop: 0, textAlign: 'center'}}>Accounts to Add</h3>
+                            <div className="accounts-buttons-container" style={{alignItems: 'center'}}>
+                                {accountsToAdd.length === 0 ? (
+                                    <p style={{color: 'var(--oxygen-palette-text-secondary)'}}>
+                                        No accounts available to add.
+                                    </p>
+                                ) : (
+                                    accountsToAdd.map((account, index) => (
                                         <Button
                                             key={index}
                                             onClick={() => onAddAccountsHandler(account.name)}
@@ -124,41 +122,53 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
                                                 </Box>
                                             </Card>
                                         </Button>
-                                    ))}
-                                </div>
-                            </Box>
-
-                            {/* Column 2: Already Added Accounts */}
-                            <Box style={{display: 'flex', flexDirection: 'column', flex: 1}}>
-                                <h3 style={{marginBottom: '1.5rem'}}>Already Added Accounts</h3>
-                                <Box style={{display: 'flex', flexDirection: 'row', gap: '1rem', flexWrap: 'wrap'}}>
-                                    {alreadyAddedAccounts.map((account, index) => (
-                                        <Button
-                                            key={index}
-                                            disabled
-                                            style={{opacity: 0.45, cursor: 'not-allowed', padding: 0, border: 'none', background: 'none'}}
-                                        >
-                                            <Card>
-                                                <Box className={"account-button-outer"} style={{width: 'auto', minWidth: '10rem'}}>
-                                                    <Box className={"logo-container"} sx={{marginLeft: '2rem'}}>
-                                                        <img
-                                                            src={getImageUrl(account.image)}
-                                                            alt={`${account.name} logo`}
-                                                        />
-                                                    </Box>
-                                                    <p>{account.name}</p>
-                                                </Box>
-                                            </Card>
-                                        </Button>
-                                    ))}
-                                </Box>
-                            </Box>
-
+                                    ))
+                                )}
+                            </div>
                         </Box>
+
+                        {/* Section 2: Already Added Accounts */}
+                        <Box style={{width: '100%'}}>
+                            <h3 style={{marginBottom: '1.5rem', marginTop: 0,textAlign: 'center'}}>Already Added Accounts</h3>
+                            <Box style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                gap: '1rem',
+                                flexWrap: 'wrap',
+                                justifyContent: 'center'
+                            }}>
+                                {alreadyAddedAccounts.map((account, index) => (
+                                    <Button
+                                        key={index}
+                                        disabled
+                                        style={{
+                                            opacity: 0.45,
+                                            cursor: 'not-allowed',
+                                            padding: 0,
+                                            border: 'none',
+                                            background: 'none'
+                                        }}
+                                    >
+                                        <Card>
+                                            <Box className={"account-button-outer"}>
+                                                <Box className={"logo-container"} sx={{marginLeft: '2rem'}}>
+                                                    <img
+                                                        src={getImageUrl(account.image)}
+                                                        alt={`${account.name} logo`}
+                                                    />
+                                                </Box>
+                                                <p>{account.name}</p>
+                                            </Box>
+                                        </Card>
+                                    </Button>
+                                ))}
+                            </Box>
+                        </Box>
+
                     </Box>
                 </PaymentAccountPageLayout>
             </ApplicationLayout>
-        </>
+
     );
 };
 
