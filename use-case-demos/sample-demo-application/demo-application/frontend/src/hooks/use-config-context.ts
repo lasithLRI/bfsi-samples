@@ -86,6 +86,12 @@ const useConfigContext = () => {
         }
     });
 
+    const disconnectBank = () => {
+        sessionStorage.removeItem(ACCOUNTS_SESSION_KEY);
+        sessionStorage.removeItem("openbanking_consent_id");
+        setConnectedBankCount(2);
+    };
+
     const handleOverlayClose = () => {
         setOverlayInformation({
             flag: false,
@@ -259,7 +265,8 @@ const useConfigContext = () => {
         colors: configData?.colors,
         accountsNumbersToAdd: configData?.accountNumbersToAdd,
         banksInfomation: processedBanks,
-        isLoading: isLoading as any
+        isLoading: isLoading as any,
+        disconnectBank
     };
 };
 

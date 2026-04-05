@@ -50,12 +50,13 @@ interface AccountsCentralLayoutProps {
     overlayInformation: OverlayDataProp;
     transactionTableHeaderData?: TableConfigs[];
     standingOrdersTableHeaderData?: TableConfigs[];
+    onBankRemoved: () => void;
 }
 
 const Home = ({
                   standingOrdersTableHeaderData, name, userInfo, total, chartData,
                   banksWithAccounts, transactions, standingOrderList, appInfo, banksList,
-                  overlayInformation, transactionTableHeaderData
+                  overlayInformation, transactionTableHeaderData,onBankRemoved
               }: AccountsCentralLayoutProps) => {
 
     const navigate = useNavigate();
@@ -93,7 +94,7 @@ const Home = ({
                     <Grid className={'accounts-container'}>
                         <CustomTitle title={"Connected Banks"} buttonName={"Add Account"} buttonType={"contained"}
                                      onPress={onButtonHandler} />
-                        <ConnectedBanksAccounts bankAndAccountsInfo={banksWithAccounts} />
+                        <ConnectedBanksAccounts bankAndAccountsInfo={banksWithAccounts} onBankRemoved={onBankRemoved} />
                     </Grid>
                     <Grid className={'transactions-container'}>
                         <CustomTitle title={"Latest Transactions"} buttonName={"View More"} buttonType={"outlined"}

@@ -30,7 +30,7 @@ export const ErrorMessage = ({error}: {error: any}) => {
     return <p className={"error-message-payments"}>{error.message}</p>;
 };
 
-const PaymentForm = ({banksWithAllAccounts, payeeData}: PaymentFormProps) => {
+const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormProps) => {
 
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down('md'));
     const responsiveDirection = isSmallScreen ? 'column' : 'row';
@@ -48,6 +48,9 @@ const PaymentForm = ({banksWithAllAccounts, payeeData}: PaymentFormProps) => {
     const [isConfirming, setIsConfirming] = useState(false);
     const [formDataToSubmit, setFormDataToSubmit] = useState<PaymentFormData | null>(null);
     const [isRedirecting, setIsRedirecting] = useState(false);
+
+    // 1st and 2nd banks (index 0, 1) are already added — their accounts are shown but disabled
+    const disabledBankNames = new Set(banksList.slice(0, 2).map((b) => b.name));
 
     const onSubmit = (data: PaymentFormData) => {
         setFormDataToSubmit(data);
@@ -133,7 +136,9 @@ const PaymentForm = ({banksWithAllAccounts, payeeData}: PaymentFormProps) => {
                             {banksWithAllAccounts.map((bankWithAccounts) =>
                                 bankWithAccounts.accounts.map((account) => (
                                     <MenuItem key={`${bankWithAccounts.bank.name}-${account.id}`}
-                                              value={`${bankWithAccounts.bank.name}-${account.id}`}>
+                                              value={`${bankWithAccounts.bank.name}-${account.id}`}
+                                              disabled={disabledBankNames.has(bankWithAccounts.bank.name)}
+                                              style={disabledBankNames.has(bankWithAccounts.bank.name) ? {opacity: 0.45} : {}}>
                                         {bankWithAccounts.bank.name}-{account.id}
                                     </MenuItem>
                                 ))

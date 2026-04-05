@@ -47,7 +47,8 @@ const App: React.FC = () => {
         transactionTableHeaderData,
         standingOrdersTableHeaderData,
         colors,
-        payeesData
+        payeesData,
+        disconnectBank
     } = useConfigContext();
 
     useEffect(() => {
@@ -109,6 +110,7 @@ const App: React.FC = () => {
                             overlayInformation={overlayInformation}
                             transactionTableHeaderData={transactionTableHeaderData}
                             standingOrdersTableHeaderData={standingOrdersTableHeaderData}
+                            onBankRemoved={disconnectBank}
                         />
                     }
                 />

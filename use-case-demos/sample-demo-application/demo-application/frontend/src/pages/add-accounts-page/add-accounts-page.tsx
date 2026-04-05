@@ -32,6 +32,12 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
     const rootBasePath = routeIndex >= 0 ? currentPathName.substring(0, routeIndex) : currentPathName;
     const normalizedBasePath = rootBasePath === "/" ? "" : rootBasePath;
 
+    const getImageUrl = (imagePath: string) => {
+        if (!imagePath) return "";
+        const cleaned = imagePath.replace(/^\.\//, "");
+        return `${window.location.origin}${normalizedBasePath}/${cleaned}`;
+    };
+
     const onAddAccountsHandler = async (bankName: string) => {
         const target = bankInformations.find((bank) => bank.name === bankName);
         if (!target) {
@@ -77,35 +83,78 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
         return <RedirectionComponent/>;
     }
 
+    // 3rd bank (index 2) → "Accounts to Add" column (clickable)
+    const accountsToAdd = bankInformations.length > 2 ? [bankInformations[2]] : [];
+
+    // 1st and 2nd banks (index 0, 1) → "Already Added Accounts" column (non-clickable)
+    const alreadyAddedAccounts = bankInformations.slice(0, 2);
+
     return (
         <>
             <ApplicationLayout name={appName} onStartTour={undefined}>
                 <PaymentAccountPageLayout title={"Add Account"}>
                     <Box className="accounts-outer">
-                        <h3 style={{marginBottom: "1.5rem"}}>Select your Bank</h3>
-                        <div className="accounts-buttons-container">
-                            {apiError && (
-                                <div className="api-error-message"
-                                     style={{color: "#d32f2f", marginBottom: "1rem"}}>
-                                    {apiError}
+                        {apiError && (
+                            <div className="api-error-message"
+                                 style={{color: "#d32f2f", marginBottom: "1rem"}}>
+                                {apiError}
+                            </div>
+                        )}
+
+                        <Box style={{display: 'flex', flexDirection: 'row', gap: '2rem', width: '100%', padding: '0 2rem', alignItems: 'flex-start'}}>
+
+                            {/* Column 1: Accounts to Add */}
+                            <Box style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+                                <h3 style={{marginBottom: '1.5rem'}}>Accounts to Add</h3>
+                                <div className="accounts-buttons-container">
+                                    {accountsToAdd.map((account, index) => (
+                                        <Button
+                                            key={index}
+                                            onClick={() => onAddAccountsHandler(account.name)}
+                                        >
+                                            <Card>
+                                                <Box className={"account-button-outer"}>
+                                                    <Box className={"logo-container"} sx={{marginLeft: '2rem'}}>
+                                                        <img
+                                                            src={getImageUrl(account.image)}
+                                                            alt={`${account.name} logo`}
+                                                        />
+                                                    </Box>
+                                                    <p>{account.name}</p>
+                                                </Box>
+                                            </Card>
+                                        </Button>
+                                    ))}
                                 </div>
-                            )}
-                            {bankInformations?.map((account, index) => (
-                                <Button
-                                    key={index}
-                                    onClick={() => onAddAccountsHandler(account.name)}
-                                >
-                                    <Card>
-                                        <Box className={"account-button-outer"}>
-                                            <Box className={"logo-container"} sx={{marginLeft: '2rem'}}>
-                                                <img src={account.image} alt={`${account.name} logo`}/>
-                                            </Box>
-                                            <p>{account.name}</p>
-                                        </Box>
-                                    </Card>
-                                </Button>
-                            ))}
-                        </div>
+                            </Box>
+
+                            {/* Column 2: Already Added Accounts */}
+                            <Box style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+                                <h3 style={{marginBottom: '1.5rem'}}>Already Added Accounts</h3>
+                                <Box style={{display: 'flex', flexDirection: 'row', gap: '1rem', flexWrap: 'wrap'}}>
+                                    {alreadyAddedAccounts.map((account, index) => (
+                                        <Button
+                                            key={index}
+                                            disabled
+                                            style={{opacity: 0.45, cursor: 'not-allowed', padding: 0, border: 'none', background: 'none'}}
+                                        >
+                                            <Card>
+                                                <Box className={"account-button-outer"} style={{width: 'auto', minWidth: '10rem'}}>
+                                                    <Box className={"logo-container"} sx={{marginLeft: '2rem'}}>
+                                                        <img
+                                                            src={getImageUrl(account.image)}
+                                                            alt={`${account.name} logo`}
+                                                        />
+                                                    </Box>
+                                                    <p>{account.name}</p>
+                                                </Box>
+                                            </Card>
+                                        </Button>
+                                    ))}
+                                </Box>
+                            </Box>
+
+                        </Box>
                     </Box>
                 </PaymentAccountPageLayout>
             </ApplicationLayout>

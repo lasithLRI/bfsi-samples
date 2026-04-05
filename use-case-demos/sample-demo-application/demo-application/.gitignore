@@ -2,7 +2,7 @@ target
 dist
 node
 node_modules
-resources
+src/main/resources
 src/main/webapp/assets
 src/main/webapp/configurations
 src/main/webapp/fonts
