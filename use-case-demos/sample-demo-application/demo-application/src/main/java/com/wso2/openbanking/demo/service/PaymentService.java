@@ -42,7 +42,7 @@ public final class PaymentService {
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static final Random RANDOM = new Random();
-    private final BankInfoService bankInfoService;
+//    private final BankInfoService bankInfoService;
     private final OAuthTokenService oauthService;
     private final HttpTlsClient client;
     private Payment currentPayment;
@@ -51,8 +51,8 @@ public final class PaymentService {
     private String lastPaymentBankName;
 
 
-    private PaymentService(BankInfoService bankInfoService, HttpTlsClient client, OAuthTokenService oauthService) {
-        this.bankInfoService = bankInfoService;
+    private PaymentService( HttpTlsClient client, OAuthTokenService oauthService) {
+//        this.bankInfoService = bankInfoService;
         this.client = client;
         this.oauthService = oauthService;
     }
@@ -61,11 +61,11 @@ public final class PaymentService {
      * Static factory — handles GeneralSecurityException/IOException before construction.
      * Use this instead of new PaymentService(...).
      */
-    public static PaymentService create(BankInfoService bankInfoService,
+    public static PaymentService create(
                                         HttpTlsClient client)
             throws GeneralSecurityException, IOException {
         OAuthTokenService oauthService = new OAuthTokenService(client);
-        return new PaymentService(bankInfoService, client, oauthService);
+        return new PaymentService(client, oauthService);
     }
 
     /**
@@ -144,21 +144,21 @@ public final class PaymentService {
      * @param transaction     The transaction parameter
      * @throws PaymentException When an error occurs during the operation
      */
-    private void updateAccountBalance(String bankName, String accountNumber,
-                                      double amount, Transaction transaction) throws PaymentException {
-        Optional<Account> accountOpt = bankInfoService.findAccount(bankName, accountNumber);
-        if (!accountOpt.isPresent()) {
-            throw new PaymentException("Account not found - Bank: " + bankName + ", Account: " + accountNumber);
-        }
-        Account account = accountOpt.get();
-        double currentBalance = account.getBalance();
-        if (currentBalance < amount) {
-            throw new PaymentException(
-                    "Insufficient balance. Required: " + amount + ", Available: " + currentBalance);
-        }
-        account.setBalance(currentBalance - amount);
-        bankInfoService.addTransactionToAccount(account, transaction);
-    }
+//    private void updateAccountBalance(String bankName, String accountNumber,
+//                                      double amount, Transaction transaction) throws PaymentException {
+//        Optional<Account> accountOpt = bankInfoService.findAccount(bankName, accountNumber);
+//        if (!accountOpt.isPresent()) {
+//            throw new PaymentException("Account not found - Bank: " + bankName + ", Account: " + accountNumber);
+//        }
+//        Account account = accountOpt.get();
+//        double currentBalance = account.getBalance();
+//        if (currentBalance < amount) {
+//            throw new PaymentException(
+//                    "Insufficient balance. Required: " + amount + ", Available: " + currentBalance);
+//        }
+//        account.setBalance(currentBalance - amount);
+//        bankInfoService.addTransactionToAccount(account, transaction);
+//    }
 
     /**
      * Executes the createPaymentConsentBody operation and modify the payload if necessary.

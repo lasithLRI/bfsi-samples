@@ -42,7 +42,7 @@ import static org.reflections.Reflections.log;
 /** AccountService implementation. */
 public final class AccountService {
 
-    private final BankInfoService bankInfoService;
+//    private final BankInfoService bankInfoService;
     private final HttpTlsClient client;
     private final OAuthTokenService oauthService;
     private String accessToken;
@@ -61,10 +61,9 @@ public final class AccountService {
      * Private constructor — never throws, so EI_EXPOSE_REP2 is not triggered.
      * All fields assigned cleanly with no exception risk after assignment.
      */
-    private AccountService(BankInfoService bankInfoService,
-                           HttpTlsClient client,
+    private AccountService(HttpTlsClient client,
                            OAuthTokenService oauthService) {
-        this.bankInfoService = bankInfoService;
+//        this.bankInfoService = bankInfoService;
         this.client = client;
         this.oauthService = oauthService;
     }
@@ -73,12 +72,12 @@ public final class AccountService {
      * Static factory method — handles all throwing logic before construction.
      * Use this instead of new AccountService(...).
      */
-    public static AccountService create(BankInfoService bankInfoService,
+    public static AccountService create(
                                         HttpTlsClient client)
             throws BankInfoLoadException {
         try {
             OAuthTokenService oauthService = new OAuthTokenService(client);
-            return new AccountService(bankInfoService, client, oauthService);
+            return new AccountService( client, oauthService);
         } catch (GeneralSecurityException | IOException e) {
             throw new BankInfoLoadException(
                     "Failed to initialize OAuth token service: " + e.getMessage(), e);
@@ -114,35 +113,35 @@ public final class AccountService {
         return oauthService.authorizeConsent(consentResponse, "accounts openid");
     }
 
-    private Set<String> getExistingAccountIds(String bankName) {
-        Set<String> existingIds = new HashSet<>();
-        if (bankInfoService.getBanks() == null) {
-            return existingIds;
-        }
-        bankInfoService.getBanks().stream()
-                .filter(bank -> bank.getName().equals(bankName))
-                .flatMap(bank -> bank.getAccounts().stream())
-                .forEach(account -> existingIds.add(account.getId()));
-        return existingIds;
-    }
-
-    private void addAccountsToExistingBank(String bankName, List<Account> newAccounts) {
-        bankInfoService.getBanks().stream()
-                .filter(bank -> bank.getName().equals(bankName))
-                .findFirst()
-                .ifPresent(bank -> {
-                    List<Account> currentAccounts = bank.getAccounts();
-                    if (currentAccounts == null) {
-                        currentAccounts = new ArrayList<>();
-                    }
-                    Set<String> currentIds = currentAccounts.stream()
-                            .map(Account::getId)
-                            .collect(Collectors.toSet());
-                    newAccounts.stream()
-                            .filter(account -> !currentIds.contains(account.getId()))
-                            .forEach(bank::addAccount);
-                });
-    }
+//    private Set<String> getExistingAccountIds(String bankName) {
+//        Set<String> existingIds = new HashSet<>();
+//        if (bankInfoService.getBanks() == null) {
+//            return existingIds;
+//        }
+//        bankInfoService.getBanks().stream()
+//                .filter(bank -> bank.getName().equals(bankName))
+//                .flatMap(bank -> bank.getAccounts().stream())
+//                .forEach(account -> existingIds.add(account.getId()));
+//        return existingIds;
+//    }
+//
+//    private void addAccountsToExistingBank(String bankName, List<Account> newAccounts) {
+//        bankInfoService.getBanks().stream()
+//                .filter(bank -> bank.getName().equals(bankName))
+//                .findFirst()
+//                .ifPresent(bank -> {
+//                    List<Account> currentAccounts = bank.getAccounts();
+//                    if (currentAccounts == null) {
+//                        currentAccounts = new ArrayList<>();
+//                    }
+//                    Set<String> currentIds = currentAccounts.stream()
+//                            .map(Account::getId)
+//                            .collect(Collectors.toSet());
+//                    newAccounts.stream()
+//                            .filter(account -> !currentIds.contains(account.getId()))
+//                            .forEach(bank::addAccount);
+//                });
+//    }
 
     private List<String> fetchAccountIds() throws IOException {
         String response = client.getWithAuth(
@@ -170,7 +169,7 @@ public final class AccountService {
             accounts.add(account);
         }
 
-        bankInfoService.replaceAccountsForBank(ConfigLoader.getMockBankName(), accounts);
+//        bankInfoService.replaceAccountsForBank(ConfigLoader.getMockBankName(), accounts);
 
         currentConsentId = null;
         return accounts;
@@ -265,7 +264,7 @@ public final class AccountService {
                 ConfigLoader.getMockBankSecondaryColor(),
                 accounts
         );
-        bankInfoService.addBank(newBank);
+//        bankInfoService.addBank(newBank);
     }
 
     private String createAccountConsentBody() {
@@ -285,35 +284,35 @@ public final class AccountService {
                 .toString();
     }
 
-    public boolean revokeAccountConsent(String accountId, String bankName) throws Exception {
-        log.info("[DELETE] Attempting to revoke consent for accountId: {}, bankName: {}",
-                accountId, bankName);
-        Bank bank = bankInfoService.getBanks().stream()
-                .filter(b -> b.getName().equals(bankName))
-                .findFirst()
-                .orElse(null);
-        if (bank == null) {
-            log.warn("[DELETE] Bank not found: {}", bankName);
-            return false;
-        }
-        String consentId = bank.getConsentIdForAccount(accountId);
-        if (consentId == null) {
-            log.warn("[DELETE] No consentId found for accountId: {}", accountId);
-            return false;
-        }
-        log.info("[DELETE] Resolved consentId: {}", consentId);
+    public boolean revokeAccountConsent(String accountId, String bankName, String consentId) throws Exception {
+        log.info("[DELETE] Attempting to revoke consent for accountId: {}, bankName: {}, {}",
+                accountId, bankName, consentId);
+//        Bank bank = bankInfoService.getBanks().stream()
+//                .filter(b -> b.getName().equals(bankName))
+//                .findFirst()
+//                .orElse(null);
+//        if (bank == null) {
+//            log.warn("[DELETE] Bank not found: {}", bankName);
+//            return false;
+//        }
+//        String consentId = bank.getConsentIdForAccount(accountId);
+//        if (consentId == null) {
+//            log.warn("[DELETE] No consentId found for accountId: {}", accountId);
+//            return false;
+//        }
+//        log.info("[DELETE] Resolved consentId: {}", consentId);
         String tokenResponse = oauthService.getToken("accounts openid");
         String token = new JSONObject(tokenResponse).getString("access_token");
         String revokeUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents/" + consentId;
         log.info("[DELETE] Calling revoke URL: {}", revokeUrl);
         boolean success = client.deleteWithAuth(revokeUrl, token);
         log.info("[DELETE] OB backend revocation success: {}", success);
-        if (success) {
-            List<String> allAccountIds = bank.getAccountIdsByConsentId(consentId);
-            log.info("[DELETE] Removing accounts: {}", allAccountIds);
-            allAccountIds.forEach(bank::removeAccount);
-            bank.removeConsent(consentId);
-        }
+//        if (success) {
+//            List<String> allAccountIds = bank.getAccountIdsByConsentId(consentId);
+//            log.info("[DELETE] Removing accounts: {}", allAccountIds);
+//            allAccountIds.forEach(bank::removeAccount);
+//            bank.removeConsent(consentId);
+//        }
         return success;
     }
 }

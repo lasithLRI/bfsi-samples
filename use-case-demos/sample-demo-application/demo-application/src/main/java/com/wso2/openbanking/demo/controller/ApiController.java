@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -24,23 +24,18 @@ import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.models.*;
 import com.wso2.openbanking.demo.service.AccountService;
 import com.wso2.openbanking.demo.service.AuthService;
-import com.wso2.openbanking.demo.service.BankInfoService;
 import com.wso2.openbanking.demo.service.HttpTlsClient;
 import com.wso2.openbanking.demo.service.PaymentService;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
-import com.wso2.openbanking.demo.utils.HtmlResponseBuilder;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -58,14 +53,11 @@ import static org.reflections.Reflections.log;
 @Path("")
 public final class ApiController {
 
-    private final BankInfoService bankInfoService;
     private final AccountService accountService;
     private final AuthService authService;
     private final PaymentService paymentService;
 
     public ApiController() throws BankInfoLoadException {
-
-        this.bankInfoService = new BankInfoService();
 
         try {
             HttpTlsClient httpClient = new HttpTlsClient(
@@ -75,68 +67,14 @@ public final class ApiController {
                     ConfigLoader.getTruststorePassword()
             );
 
-            this.accountService = AccountService.create(bankInfoService, httpClient);
-            this.paymentService = PaymentService.create(bankInfoService, httpClient);
+            this.accountService = AccountService.create(httpClient);
+            this.paymentService = PaymentService.create(httpClient);
             this.authService = AuthService.create(accountService, paymentService);
 
         } catch (SSLContextCreationException | GeneralSecurityException | IOException e) {
             throw new BankInfoLoadException("Failed to initialize API controller: " + e.getMessage(), e);
-        }
-    }
-
-
-    /**
-     * Executes the getData operation and modify the payload if necessary.
-     */
-    @GET
-    @Path("/data")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getData() {
-        return "Server works";
-    }
-
-    /**
-     * Executes the initializeApplication operation and modify the payload if necessary.
-     */
-    @GET
-    @Path("/initialize")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response initializeApplication() {
-        try {
-            bankInfoService.loadBanks();
-            ConfigResponse config = bankInfoService.getConfigurations();
-            return Response.ok(config).build();
         } catch (BankInfoLoadException e) {
-            return Response.serverError().entity(e.getMessage()).build();
-        }
-    }
-
-    /**
-     * Executes the getBankData operation and modify the payload if necessary.
-     */
-    @GET
-    @Path("/bank")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getBankData() {
-        try {
-            bankInfoService.loadBanks();
-            return Response.ok(bankInfoService.getConfigurations()).build();
-        } catch (BankInfoLoadException e) {
-            return Response.serverError().entity(e.getMessage()).build();
-        }
-    }
-
-    /**
-     * Executes the getAddAccountBanks operation and modify the payload if necessary.
-     */
-    @GET
-    @Path("/accounts")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAddAccountBanks() {
-        try {
-            return Response.ok(bankInfoService.getAddAccountBanksInformation()).build();
-        } catch (BankInfoLoadException e) {
-            return Response.serverError().entity(e.getMessage()).build();
+            throw new RuntimeException(e);
         }
     }
 
@@ -166,16 +104,6 @@ public final class ApiController {
     }
 
     /**
-     * Executes the getLoadPaymentData operation and modify the payload if necessary.
-     */
-    @GET
-    @Path("/load-payment")
-    @Produces(MediaType.APPLICATION_JSON)
-    public LoadPaymentPageResponse getLoadPaymentData() {
-        return bankInfoService.getPaymentPageInfo();
-    }
-
-    /**
      * Executes the makePayment operation and modify the payload if necessary.
      *
      * @param payment         The payment parameter
@@ -185,21 +113,9 @@ public final class ApiController {
     @Path("/payment")
     @Produces(MediaType.APPLICATION_JSON)
     public Response makePayment(Payment payment) throws Exception {
-        bankInfoService.loadBanks();
         String redirectUrl = paymentService.processPaymentRequest(payment);
         authService.setRequestStatus("payments");
         return Response.ok(createRedirectResponse(redirectUrl)).build();
-    }
-
-    /**
-     * Executes the redirectedPath operation and modify the payload if necessary.
-     */
-    @GET
-    @Path("/redirected")
-    @Produces("text/html")
-    public Response redirectedPath() {
-        String html = HtmlResponseBuilder.buildAuthRedirectPage();
-        return Response.ok(html).build();
     }
 
     /**
@@ -282,14 +198,15 @@ public final class ApiController {
     @Path("/revoke-consent")
     @Produces(MediaType.APPLICATION_JSON)
     public Response revokeConsent(@QueryParam("accountId") String accountId,
-                                  @QueryParam("bankName") String bankName) {
+                                  @QueryParam("bankName") String bankName,
+                                  @QueryParam("consentId") String consentId) {
         try {
             if (accountId == null || accountId.isEmpty() || bankName == null || bankName.isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\":\"accountId and bankName are required\"}")
                         .build();
             }
-            boolean success = accountService.revokeAccountConsent(accountId, bankName);
+            boolean success = accountService.revokeAccountConsent(accountId, bankName,consentId);
             if (success) {
                 return Response.ok("{\"status\":\"revoked\"}").build();
             } else {
@@ -304,75 +221,12 @@ public final class ApiController {
         }
     }
 
-    /**
-     * Executes the getDeleteAccountInfo operation and modify the payload if necessary.
-     */
-//    @GET
-//    @Path("/get-delete-account-info")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getDeleteAccountInfo() {
-//        try {
-//            List<Map<String, Object>> groups = new ArrayList<>();
-//            List<Bank> banks = Optional.ofNullable(bankInfoService.getBanks())
-//                    .orElse(Collections.emptyList());
-//
-//            Map<String, List<Account>> byConsent = new LinkedHashMap<>();
-//            for (Bank bank : banks) {
-//                if (bank == null) {
-//                    continue;
-//                }
-//                List<Account> accounts = Optional.ofNullable(bank.getAccounts())
-//                        .orElse(Collections.emptyList());
-//                for (Account acc : accounts) {
-//                    if (acc == null || acc.getConsentId() == null) {
-//                        continue;
-//                    }
-//                    byConsent.computeIfAbsent(acc.getConsentId(), k -> new ArrayList<>())
-//                            .add(acc);
-//                }
-//            }
-//
-//            for (Map.Entry<String, List<Account>> entry : byConsent.entrySet()) {
-//                List<Account> consentAccounts = entry.getValue();
-//                if (consentAccounts.isEmpty()) {
-//                    continue;
-//                }
-//
-//                Map<String, Object> group = new LinkedHashMap<>();
-//                group.put("consentId", entry.getKey());
-//                group.put("bankName", consentAccounts.get(0).getBank());
-//
-//                List<Map<String, String>> accountList = new ArrayList<>();
-//                for (Account acc : consentAccounts) {
-//                    Map<String, String> a = new LinkedHashMap<>();
-//                    a.put("id", acc.getId());
-//                    a.put("name", acc.getName());
-//                    accountList.add(a);
-//                }
-//                group.put("accounts", accountList);
-//                groups.add(group);
-//            }
-//
-//            return Response.ok(new JSONArray(groups).toString()).build();
-//
-//        } catch (IllegalStateException e) {
-//            log.error("Failed to build delete account info response", e);
-//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                    .entity("{\"error\":\"Unable to retrieve account information\"}")
-//                    .build();
-//        }
-//    }
-
     @GET
     @Path("/get-delete-account-info")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDeleteAccountInfo() {
         try {
-            Map<String, Object> group = bankInfoService.getConsentGroupForMockBank();
-            if (group == null) {
-                return Response.ok("[]").build();
-            }
-            return Response.ok(new JSONArray(List.of(group)).toString()).build();
+            return Response.ok().build();
         } catch (Exception e) {
             log.error("Failed to build delete account info response", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

@@ -106,7 +106,7 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
                     .filter(g => selectedConsentIds.includes(g.consentId))
                     .map(g =>
                         fetch(
-                            `${BACKEND_BASE}/revoke-consent?accountId=${encodeURIComponent(g.accounts[0].id)}&bankName=${encodeURIComponent(bankName)}`,
+                            `${BACKEND_BASE}/revoke-consent?accountId=${encodeURIComponent(g.accounts[0].id)}&bankName=${encodeURIComponent(bankName)}&consentId=${encodeURIComponent(g.consentId)}`,
                             {method: "DELETE"}
                         )
                     )
