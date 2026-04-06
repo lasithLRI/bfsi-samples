@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -23,6 +23,7 @@ import com.wso2.openbanking.demo.service.KeyReader;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -33,6 +34,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Objects;
 
 import javax.net.ssl.KeyManager;
@@ -42,7 +44,18 @@ import javax.net.ssl.TrustManager;
 
 /** SSLContextFactory implementation. */
 public class SSLContextFactory {
+    private SSLContextFactory() {
+        /* This utility class should not be instantiated */
+    }
 
+    /**
+     * Creates and initializes a TLS SSLContext using the provided certificate and private key.
+     *
+     * @param certPath path to the PEM-encoded certificate file
+     * @param keyPath  path to the PEM-encoded private key file
+     * @return an initialized {@link SSLContext} configured with the provided credentials
+     * @throws SSLContextCreationException if the TLS algorithm is unavailable or SSL context initialization fails
+     */
     public static SSLContext create(String certPath, String keyPath)
             throws SSLContextCreationException {
         try {
@@ -60,6 +73,14 @@ public class SSLContextFactory {
         }
     }
 
+    /**
+     * Creates an array of {@link KeyManager}s from the provided certificate and private key files.
+     *
+     * @param certPath path to the PEM-encoded X.509 certificate file
+     * @param keyPath  path to the PEM-encoded private key file
+     * @return an array of {@link KeyManager}s initialized with the provided credentials
+     * @throws SSLContextCreationException if any key material file is missing, unparseable, or fails to load into the key store
+     */
     private static KeyManager[] createKeyManagers(String certPath, String keyPath)
             throws SSLContextCreationException {
         try {
@@ -99,16 +120,12 @@ public class SSLContextFactory {
             throw new SSLContextCreationException("Key manager algorithm not available", e);
         } catch (UnrecoverableKeyException e) {
             throw new SSLContextCreationException("Failed to recover key from key store", e);
-        } catch (Exception e) {
+        } catch (IOException | InvalidKeySpecException e) {
             throw new SSLContextCreationException("Failed to read key material", e);
         }
     }
 
-    @SuppressFBWarnings(value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS",
-            justification = "Null return is intentional — callers check for null to detect missing truststore")
-    private static TrustManager[] createTrustManagers()
-            throws SSLContextCreationException {
-
+    private static TrustManager[] createTrustManagers(){
         return null;
     }
 }

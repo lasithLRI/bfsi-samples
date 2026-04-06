@@ -74,6 +74,12 @@ public final class ApiController {
         }
     }
 
+    /**
+     * Initiates the account addition flow and returns a redirect URL.
+     *
+     * @param requestBody a map containing the request parameters for adding an account
+     * @return a 200 OK response containing the redirect URL for the account addition flow
+     */
     @POST
     @Path("/add-accounts")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -90,6 +96,12 @@ public final class ApiController {
         return response;
     }
 
+    /**
+     * Processes a payment request and returns a redirect URL.
+     *
+     * @param payment the payment object containing the payment details
+     * @return a 200 OK response containing the redirect URL for the payment flow
+     */
     @POST
     @Path("/payment")
     @Produces(MediaType.APPLICATION_JSON)
@@ -99,6 +111,12 @@ public final class ApiController {
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
+    /**
+     * Handles the OAuth authorization callback and returns a status response based on the request type.
+     *
+     * @param code the authorization code received from the OAuth callback
+     * @return a 200 OK response with account or payment status, or a 500 error response if authorization fails
+     */
     @GET
     @Path("/processAuth")
     @Produces(MediaType.APPLICATION_JSON)
@@ -109,37 +127,7 @@ public final class ApiController {
             String status = authService.getRequestStatus();
 
             if ("accounts".equals(status)) {
-                List<Account> accounts = authService.getLastFetchedAccounts();
-
-                List<Map<String, Object>> accountsList = new ArrayList<>();
-                for (Account acc : accounts) {
-                    List<Map<String, Object>> txnList = new ArrayList<>();
-                    if (acc.getTransactions() != null) {
-                        for (Transaction txn : acc.getTransactions()) {
-                            Map<String, Object> t = new LinkedHashMap<>();
-                            t.put("id",                txn.getId());
-                            t.put("date",              txn.getDate());
-                            t.put("reference",         txn.getReference());
-                            t.put("account",           txn.getAccount());
-                            t.put("amount",            txn.getAmount());
-                            t.put("currency",          txn.getCurrency());
-                            t.put("creditDebitStatus", txn.getCreditDebitStatus());
-                            txnList.add(t);
-                        }
-                    }
-                    Map<String, Object> a = new LinkedHashMap<>();
-                    a.put("id",           acc.getId());
-                    a.put("name",         acc.getName());
-                    a.put("balance",      acc.getBalance());
-                    a.put("consentId",    acc.getConsentId());
-                    a.put("transactions", txnList);
-                    accountsList.add(a);
-                }
-
-                Map<String, Object> response = new LinkedHashMap<>();
-                response.put("type",     "accounts");
-                response.put("status",   "success");
-                response.put("accounts", accountsList);
+                Map<String, Object> response = getStringObjectMap();
 
                 return Response.ok(new JSONObject(response).toString())
                         .type(MediaType.APPLICATION_JSON)
@@ -172,6 +160,49 @@ public final class ApiController {
         }
     }
 
+    private Map<String, Object> getStringObjectMap() {
+        List<Account> accounts = authService.getLastFetchedAccounts();
+
+        List<Map<String, Object>> accountsList = new ArrayList<>();
+        for (Account acc : accounts) {
+            List<Map<String, Object>> txnList = new ArrayList<>();
+            if (acc.getTransactions() != null) {
+                for (Transaction txn : acc.getTransactions()) {
+                    Map<String, Object> t = new LinkedHashMap<>();
+                    t.put("id",                txn.getId());
+                    t.put("date",              txn.getDate());
+                    t.put("reference",         txn.getReference());
+                    t.put("account",           txn.getAccount());
+                    t.put("amount",            txn.getAmount());
+                    t.put("currency",          txn.getCurrency());
+                    t.put("creditDebitStatus", txn.getCreditDebitStatus());
+                    txnList.add(t);
+                }
+            }
+            Map<String, Object> a = new LinkedHashMap<>();
+            a.put("id",           acc.getId());
+            a.put("name",         acc.getName());
+            a.put("balance",      acc.getBalance());
+            a.put("consentId",    acc.getConsentId());
+            a.put("transactions", txnList);
+            accountsList.add(a);
+        }
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("type",     "accounts");
+        response.put("status",   "success");
+        response.put("accounts", accountsList);
+        return response;
+    }
+
+    /**
+     * Revokes the consent for a linked bank account.
+     *
+     * @param accountId the unique identifier of the account whose consent is to be revoked
+     * @param bankName  the name of the bank associated with the account
+     * @param consentId the unique identifier of the consent to be revoked
+     * @return a 200 OK response if revocation succeeds, 400 if required params are missing, 404 if account is not found, or 500 on error
+     */
     @DELETE
     @Path("/revoke-consent")
     @Produces(MediaType.APPLICATION_JSON)

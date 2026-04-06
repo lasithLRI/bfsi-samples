@@ -82,6 +82,13 @@ public final class JwtTokenService {
         return buildJwt(header.toJson(), payload.toJson());
     }
 
+    /**
+     * Creates a signed JWT request object containing the authorization claims for the given consent ID.
+     *
+     * @param consentId the consent ID to include in the request object payload
+     * @return a signed JWT string representing the request object
+     * @throws GeneralSecurityException if JWT signing fails
+     */
     public String createRequestObject(String consentId)
             throws GeneralSecurityException {
         long currentTime = getCurrentTimeSeconds();
@@ -109,6 +116,14 @@ public final class JwtTokenService {
         return buildJwt(header.toJson(), payload.toJson());
     }
 
+    /**
+     * Builds a signed JWT string from the given header and payload JSON.
+     *
+     * @param headerJson  the JSON string representing the JWT header
+     * @param payloadJson the JSON string representing the JWT payload
+     * @return a signed JWT string in the format {@code header.payload.signature}
+     * @throws GeneralSecurityException if signing the JWT fails
+     */
     private String buildJwt(String headerJson, String payloadJson)
             throws GeneralSecurityException {
         String encodedHeader  = base64UrlEncode(headerJson.getBytes(StandardCharsets.UTF_8));
@@ -117,6 +132,13 @@ public final class JwtTokenService {
         return signingInput + "." + signData(signingInput);
     }
 
+    /**
+     * Signs the given data using RSA-PSS and returns the Base64URL-encoded signature.
+     *
+     * @param data the string to be signed
+     * @return the Base64URL-encoded RSA-PSS signature
+     * @throws GeneralSecurityException if the signing algorithm is unavailable or signing fails
+     */
     private String signData(String data) throws GeneralSecurityException {
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
         signature.setParameter(new PSSParameterSpec(

@@ -42,15 +42,20 @@ public class CorsFilter implements Filter {
     private static final String ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
     private static final String ALLOWED_HEADERS = "Content-Type, Authorization, X-Requested-With";
 
-    /**
-     * Executes the init operation and modify the payload if necessary.
-     *
-     * @param filterConfig    The filterConfig parameter
-     */
+
     @Override
     public void init(FilterConfig filterConfig) {
     }
 
+    /**
+     * Applies CORS headers to each response and short-circuits preflight OPTIONS requests.
+     *
+     * @param servletRequest  the incoming servlet request
+     * @param servletResponse the outgoing servlet response
+     * @param filterChain     the filter chain to pass the request and response to the next filter
+     * @throws IOException      if an I/O error occurs during filtering
+     * @throws ServletException if a servlet error occurs during filtering
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {

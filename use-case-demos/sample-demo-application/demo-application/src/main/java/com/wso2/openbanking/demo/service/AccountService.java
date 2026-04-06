@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -80,6 +80,12 @@ public final class AccountService {
         return fetchAccountsWithTransactions(fetchedAccountIds);
     }
 
+    /**
+     * Initiates the account access consent flow and returns an authorization URL.
+     *
+     * @return the OAuth authorization URL for the user to grant account access consent
+     * @throws Exception if token retrieval, consent initialization, or authorization fails
+     */
     public String processAddAccount() throws Exception {
         String addAccountUrl = ConfigLoader.getAccountBaseUrl() + "/account-access-consents";
         String consentBody = createAccountConsentBody();
@@ -102,6 +108,13 @@ public final class AccountService {
         return accountIds;
     }
 
+    /**
+     * Fetches account details, balance, and transactions for each of the given account IDs.
+     *
+     * @param accountIds the list of account IDs to fetch data for
+     * @return a list of {@link Account} objects populated with name, balance, transaction, bank name, and consent ID
+     * @throws IOException if any API call to fetch account details fails
+     */
     private List<Account> fetchAccountsWithTransactions(List<String> accountIds) throws IOException {
         List<Account> accounts = new ArrayList<>();
         for (String accountId : accountIds) {
@@ -188,6 +201,11 @@ public final class AccountService {
         }
     }
 
+    /**
+     * Creates the JSON request body for an account access consent with predefined permissions and date ranges.
+     *
+     * @return a JSON string representing the account consent request body
+     */
     private String createAccountConsentBody() {
         ZonedDateTime now = ZonedDateTime.now(java.time.ZoneOffset.of("+05:30"));
         JSONObject permissions = new JSONObject()
@@ -205,6 +223,15 @@ public final class AccountService {
                 .toString();
     }
 
+    /**
+     * Revokes the account access consent for the given account by calling the consent revocation endpoint.
+     *
+     * @param accountId the unique identifier of the account whose consent is to be revoked
+     * @param bankName  the name of the bank associated with the account
+     * @param consentId the unique identifier of the consent to be revoked
+     * @return {@code true} if revocation was successful, {@code false} otherwise
+     * @throws Exception if token retrieval or the revocation API call fails
+     */
     public boolean revokeAccountConsent(String accountId, String bankName, String consentId) throws Exception {
         log.info("[DELETE] Attempting to revoke consent for accountId: {}, bankName: {}, {}",
                 accountId, bankName, consentId);

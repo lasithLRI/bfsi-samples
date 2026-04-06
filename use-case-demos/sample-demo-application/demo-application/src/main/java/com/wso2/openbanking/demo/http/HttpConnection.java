@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -49,72 +49,29 @@ public class HttpConnection {
         this.body = null;
     }
 
-    /**
-     * Executes the post operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param sslContext      The sslContext parameter
-     */
     public static HttpConnection post(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "POST");
     }
 
-    /**
-     * Executes the get operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param sslContext      The sslContext parameter
-     */
     public static HttpConnection get(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "GET");
     }
 
-    /**
-     * Executes the delete operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param sslContext      The sslContext parameter
-     */
     public static HttpConnection delete(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "DELETE");
     }
 
-    /**
-     * Executes the addHeader operation and modify the payload if necessary.
-     *
-     * @param key             The key parameter
-     * @param value           The value parameter
-     */
+
     public HttpConnection addHeader(String key, String value) {
         this.headers.put(key, value);
         return this;
     }
 
-    /**
-     * Executes the withBody operation and modify the payload if necessary.
-     *
-     * @param body            The body parameter
-     */
     public HttpConnection withBody(String body) {
         this.body = body;
         return this;
     }
 
-    /**
-     * Executes the followRedirects operation and modify the payload if necessary.
-     *
-     * @param follow          The follow parameter
-     */
-    public HttpConnection followRedirects(boolean follow) {
-        this.followRedirects = follow;
-        return this;
-    }
-
-    /**
-     * Executes the execute operation and modify the payload if necessary.
-     *
-     * @throws IOException    When an error occurs during the operation
-     */
     public String execute() throws IOException {
         HttpsURLConnection connection = createConnection();
         if (body != null) {
@@ -123,28 +80,6 @@ public class HttpConnection {
         return readResponse(connection);
     }
 
-    /**
-     * Executes the executeAndGetRedirect operation and modify the payload if necessary.
-     *
-     * @throws IOException    When an error occurs during the operation
-     */
-    public String executeAndGetRedirect() throws IOException {
-        HttpsURLConnection connection = createConnection();
-        int responseCode = connection.getResponseCode();
-        if (responseCode >= 300 && responseCode <= 399) {
-            String redirectUrl = connection.getHeaderField("Location");
-            if (redirectUrl != null) {
-                return redirectUrl;
-            }
-        }
-        throw new IOException("Expected a redirect response but got HTTP " + responseCode);
-    }
-
-    /**
-     * Executes the executeAndGetStatus operation and modify the payload if necessary.
-     *
-     * @throws IOException    When an error occurs during the operation
-     */
     public int executeAndGetStatus() throws IOException {
         HttpsURLConnection connection = createConnection();
         if (body != null) {
@@ -154,11 +89,6 @@ public class HttpConnection {
         return connection.getResponseCode();
     }
 
-    /**
-     * Executes the createConnection operation and modify the payload if necessary.
-     *
-     * @throws IOException    When an error occurs during the operation
-     */
     private HttpsURLConnection createConnection() throws IOException {
         URL urlObj = new URL(url);
         HttpsURLConnection connection = (HttpsURLConnection) urlObj.openConnection();
@@ -175,12 +105,6 @@ public class HttpConnection {
         return connection;
     }
 
-    /**
-     * Executes the writeBody operation and modify the payload if necessary.
-     *
-     * @param connection      The connection parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     private void writeBody(HttpsURLConnection connection) throws IOException {
         if (body == null) {
             return;
@@ -191,12 +115,6 @@ public class HttpConnection {
         }
     }
 
-    /**
-     * Executes the readResponse operation and modify the payload if necessary.
-     *
-     * @param connection      The connection parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     private String readResponse(HttpsURLConnection connection) throws IOException {
         int responseCode = connection.getResponseCode();
         InputStream is = (responseCode >= 200 && responseCode < 300)

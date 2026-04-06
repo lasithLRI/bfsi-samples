@@ -25,12 +25,14 @@ import static org.apache.cxf.common.util.UrlUtils.urlEncode;
 /** AuthUrlBuilder implementation. */
 public class AuthUrlBuilder {
 
+
     /**
-     * Executes the build operation and modify the payload if necessary.
+     * Builds an OAuth authorization URL with the required query parameters.
      *
-     * @param requestObjectJwt The requestObjectJwt parameter
-     * @param clientId        The clientId parameter
-     * @param scope           The scope parameter
+     * @param requestObjectJwt the signed JWT request object to be included as the {@code request} parameter
+     * @param clientId         the OAuth client ID
+     * @param scope            the requested OAuth scopes
+     * @return the fully constructed authorization URL as a string
      */
     public static String build(String requestObjectJwt, String clientId, String scope) {
         StringBuilder url = new StringBuilder(ConfigLoader.getAuthorizeUrl());

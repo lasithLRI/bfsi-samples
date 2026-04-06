@@ -48,8 +48,6 @@ public final class HttpTlsClient {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private static final int TOKEN_LOG_PREFIX_LENGTH = 20;
-
     private final SSLContext sslContext;
 
     public HttpTlsClient(String certPath, String keyPath)
