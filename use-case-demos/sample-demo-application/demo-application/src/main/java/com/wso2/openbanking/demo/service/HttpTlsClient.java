@@ -52,19 +52,11 @@ public final class HttpTlsClient {
 
     private final SSLContext sslContext;
 
-    public HttpTlsClient(String certPath, String keyPath,
-                         String trustStorePath, String trustStorePassword)
+    public HttpTlsClient(String certPath, String keyPath)
             throws SSLContextCreationException {
-        this.sslContext = SSLContextFactory.create(certPath, keyPath, trustStorePath, trustStorePassword);
+        this.sslContext = SSLContextFactory.create(certPath, keyPath);
     }
 
-    /**
-     * Executes the postJwt operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param body            The body parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     public String postJwt(String url, String body) throws IOException {
         return HttpConnection.post(url, sslContext)
                 .addHeader(HEADER_CONTENT_TYPE, MEDIA_FORM_URLENCODED)
@@ -73,13 +65,6 @@ public final class HttpTlsClient {
                 .execute();
     }
 
-    /**
-     * Executes the postAccessToken operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param body            The body parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     public String postAccessToken(String url, String body) throws IOException {
         return HttpConnection.post(url, sslContext)
                 .addHeader(HEADER_CONTENT_TYPE, MEDIA_FORM_URLENCODED)
@@ -88,95 +73,33 @@ public final class HttpTlsClient {
                 .execute();
     }
 
-    /**
-     * Executes the postConsentInit operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param body            The body parameter
-     * @param token           The token parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     public String postConsentInit(String url, String body, String token) throws IOException {
         String fapiId = ConfigLoader.getFapiFinancialId();
-
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [AISP] CONSENT INITIATION OUTBOUND REQUEST ==========\n" +
-                            "  Method : POST\n" +
-                            "  URL    : {}\n" +
-                            "  Headers:\n" +
-                            "    {}: Bearer {}***\n" +
-                            "    {}: {}\n" +
-                            "    {}: {}\n" +
-                            "  Body   :\n{}\n" +
-                            "=================================================================",
-                    url,
-                    HEADER_AUTHORIZATION, truncateToken(token),
-                    HEADER_FAPI_ID,       fapiId,
-                    HEADER_CONTENT_TYPE,  MEDIA_JSON,
-                    body
-            );
+            logger.info("Consent initiation request send {}", url);
         }
-
         String response = HttpConnection.post(url, sslContext)
                 .addHeader(HEADER_AUTHORIZATION, BEARER_PREFIX + token)
                 .addHeader(HEADER_FAPI_ID, fapiId)
                 .addHeader(HEADER_CONTENT_TYPE, MEDIA_JSON)
                 .withBody(body)
                 .execute();
-
         if (logger.isInfoEnabled()) {
             logger.info(
-                    "\n========== [AISP] CONSENT INITIATION INBOUND RESPONSE ==========\n" +
-                            "  Method : POST\n" +
-                            "  URL    : {}\n" +
-                            "  Body   :\n{}\n" +
-                            "=================================================================",
-                    url, response
-            );
+                    "Consent initiation response received {}", url);
         }
-
         return response;
     }
 
-    public String postConsentAuthRequest(String requestObjectJwt, String clientId, String scope)
-            throws IOException {
-        String authUrl = AuthUrlBuilder.build(requestObjectJwt, clientId, scope);
-        System.out.println(authUrl);
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-//        return HttpConnection.get(authUrl, sslContext)
-//                .followRedirects(false)
-//                .executeAndGetRedirect();
-        return authUrl;
+    public String postConsentAuthRequest(String requestObjectJwt, String clientId, String scope) {
+        return AuthUrlBuilder.build(requestObjectJwt, clientId, scope);
     }
 
-    /**
-     * Executes the getWithAuth operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param token           The token parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     public String getWithAuth(String url, String token) throws IOException {
         String fapiId = ConfigLoader.getFapiFinancialId();
 
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [AISP] OUTBOUND REQUEST ==========\n" +
-                            "  Method : GET\n" +
-                            "  URL    : {}\n" +
-                            "  Headers:\n" +
-                            "    {}: {}\n" +
-                            "    {}: Bearer {}***\n" +
-                            "    {}: {}\n" +
-                            "    {}: {}\n" +
-                            "==============================================",
-                    url,
-                    HEADER_FAPI_ID,       fapiId,
-                    HEADER_AUTHORIZATION, truncateToken(token),
-                    HEADER_ACCEPT,        MEDIA_JSON,
-                    HEADER_CONTENT_TYPE,  MEDIA_JSON_UTF8
-            );
+            logger.info("Request send, {}", url);
         }
 
         String response = HttpConnection.get(url, sslContext)
@@ -187,50 +110,17 @@ public final class HttpTlsClient {
                 .execute();
 
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [AISP] INBOUND RESPONSE ==========\n" +
-                            "  Method : GET\n" +
-                            "  URL    : {}\n" +
-                            "  Body   :\n{}\n" +
-                            "==============================================",
-                    url, response
-            );
+            logger.info("Responce received from bank,{}", url);
         }
-
         return response;
     }
 
-    /**
-     * Executes the postPaymentConsentInit operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param body            The body parameter
-     * @param token           The token parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     public String postPaymentConsentInit(String url, String body, String token) throws IOException {
         String idempotencyKey = UUID.randomUUID().toString();
         String fapiId = ConfigLoader.getFapiFinancialId();
 
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [PISP] OUTBOUND REQUEST ==========\n" +
-                            "  Method : POST\n" +
-                            "  URL    : {}\n" +
-                            "  Headers:\n" +
-                            "    {}: Bearer {}***\n" +
-                            "    {}: {}\n" +
-                            "    {}: {}\n" +
-                            "    {}: {}\n" +
-                            "  Body   :\n{}\n" +
-                            "==============================================",
-                    url,
-                    HEADER_AUTHORIZATION, truncateToken(token),
-                    HEADER_FAPI_ID,       fapiId,
-                    HEADER_CONTENT_TYPE,  MEDIA_JSON,
-                    HEADER_IDEMPOTENCY,   idempotencyKey,
-                    body
-            );
+            logger.info("Payment consent request send, {}", url);
         }
 
         String response = HttpConnection.post(url, sslContext)
@@ -242,52 +132,18 @@ public final class HttpTlsClient {
                 .execute();
 
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [PISP] INBOUND RESPONSE ==========\n" +
-                            "  Method : POST\n" +
-                            "  URL    : {}\n" +
-                            "  Body   :\n{}\n" +
-                            "==============================================",
-                    url, response
-            );
+            logger.info("Payment consent responce received, {}", url);
         }
 
         return response;
     }
 
-    /**
-     * Executes the postPayments operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param body            The body parameter
-     * @param token           The token parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     public String postPayments(String url, String body, String token) throws IOException {
         String idempotencyKey = UUID.randomUUID().toString();
         String fapiId = ConfigLoader.getFapiFinancialId();
 
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [PISP] PAYMENT SUBMISSION OUTBOUND REQUEST ==========\n" +
-                            "  Method : POST\n" +
-                            "  URL    : {}\n" +
-                            "  Headers:\n" +
-                            "    {}: Bearer {}***\n" +
-                            "    {}: {}\n" +
-                            "    {}: {}\n" +
-                            "    {}: {}\n" +
-                            "    {}: {}\n" +
-                            "  Body   :\n{}\n" +
-                            "=================================================================",
-                    url,
-                    HEADER_AUTHORIZATION, truncateToken(token),
-                    HEADER_FAPI_ID,       fapiId,
-                    HEADER_ACCEPT,        MEDIA_JSON,
-                    HEADER_CONTENT_TYPE,  MEDIA_JSON_UTF8,
-                    HEADER_IDEMPOTENCY,   idempotencyKey,
-                    body
-            );
+            logger.info("Payment request send, {}", url);
         }
 
         String response = HttpConnection.post(url, sslContext)
@@ -300,43 +156,16 @@ public final class HttpTlsClient {
                 .execute();
 
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [PISP] PAYMENT SUBMISSION INBOUND RESPONSE ==========\n" +
-                            "  Method : POST\n" +
-                            "  URL    : {}\n" +
-                            "  Body   :\n{}\n" +
-                            "=================================================================",
-                    url, response
-            );
+            logger.info("Payment submission response recived,{}", url);
         }
 
         return response;
     }
 
-    /**
-     * Executes the deleteWithAuth operation and modify the payload if necessary.
-     *
-     * @param url             The url parameter
-     * @param token           The token parameter
-     * @throws IOException    When an error occurs during the operation
-     */
     public boolean deleteWithAuth(String url, String token) throws IOException {
         String fapiId = ConfigLoader.getFapiFinancialId();
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [AISP] CONSENT REVOCATION OUTBOUND REQUEST ==========\n" +
-                            "  Method : DELETE\n" +
-                            "  URL    : {}\n" +
-                            "  Headers:\n" +
-                            "    {}: {}\n" +
-                            "    {}: Bearer {}***\n" +
-                            "    {}: {}\n" +
-                            "=================================================================",
-                    url,
-                    HEADER_FAPI_ID,       fapiId,
-                    HEADER_AUTHORIZATION, truncateToken(token),
-                    HEADER_ACCEPT,        MEDIA_JSON
-            );
+            logger.info("Consent revocation request send,{}", url);
         }
 
         int statusCode = HttpConnection.delete(url, sslContext)
@@ -346,31 +175,10 @@ public final class HttpTlsClient {
                 .executeAndGetStatus();
 
         if (logger.isInfoEnabled()) {
-            logger.info(
-                    "\n========== [AISP] CONSENT REVOCATION INBOUND RESPONSE ==========\n" +
-                            "  Method : DELETE\n" +
-                            "  URL    : {}\n" +
-                            "  Status : {}\n" +
-                            "=================================================================",
-                    url, statusCode
-            );
+            logger.info("Consent revocation response received,{}",url);
         }
 
         return statusCode >= 200 && statusCode < 300;
-    }
-
-    /**
-     * Executes the truncateToken operation and modify the payload if necessary.
-     *
-     * @param token           The token parameter
-     */
-    private String truncateToken(String token) {
-        if (token == null) {
-            return "null";
-        }
-        return token.length() > TOKEN_LOG_PREFIX_LENGTH
-                ? token.substring(0, TOKEN_LOG_PREFIX_LENGTH)
-                : token;
     }
 
 }

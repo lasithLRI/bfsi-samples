@@ -66,117 +66,61 @@ public class RequestObjectPayload {
         private String scope;
         private String consentId;
 
-        /**
-         * Executes the iss operation and modify the payload if necessary.
-         *
-         * @param iss             The iss parameter
-         */
         public Builder iss(String iss) {
             this.iss = iss;
             return this;
         }
 
-        /**
-         * Executes the responseType operation and modify the payload if necessary.
-         *
-         * @param responseType    The responseType parameter
-         */
         public Builder responseType(String responseType) {
             this.responseType = responseType;
             return this;
         }
 
-        /**
-         * Executes the redirectUri operation and modify the payload if necessary.
-         *
-         * @param redirectUri     The redirectUri parameter
-         */
         public Builder redirectUri(String redirectUri) {
             this.redirectUri = redirectUri;
             return this;
         }
 
-        /**
-         * Executes the state operation and modify the payload if necessary.
-         *
-         * @param state           The state parameter
-         */
         public Builder state(String state) {
             this.state = state;
             return this;
         }
 
-        /**
-         * Executes the nonce operation and modify the payload if necessary.
-         *
-         * @param nonce           The nonce parameter
-         */
         public Builder nonce(String nonce) {
             this.nonce = nonce;
             return this;
         }
 
-        /**
-         * Executes the aud operation and modify the payload if necessary.
-         *
-         * @param aud             The aud parameter
-         */
         public Builder aud(String aud) {
             this.aud = aud;
             return this;
         }
 
-        /**
-         * Executes the nbf operation and modify the payload if necessary.
-         *
-         * @param nbf             The nbf parameter
-         */
         public Builder nbf(long nbf) {
             this.nbf = nbf;
             return this;
         }
 
-        /**
-         * Executes the exp operation and modify the payload if necessary.
-         *
-         * @param exp             The exp parameter
-         */
         public Builder exp(long exp) {
             this.exp = exp;
             return this;
         }
 
-        /**
-         * Executes the scope operation and modify the payload if necessary.
-         *
-         * @param scope           The scope parameter
-         */
         public Builder scope(String scope) {
             this.scope = scope;
             return this;
         }
 
-        /**
-         * Executes the consentId operation and modify the payload if necessary.
-         *
-         * @param consentId       The consentId parameter
-         */
         public Builder consentId(String consentId) {
             this.consentId = consentId;
             return this;
         }
 
-        /**
-         * Executes the build operation and modify the payload if necessary.
-         */
         public RequestObjectPayload build() {
             return new RequestObjectPayload(this);
         }
     }
 
-    /**
-     * Executes the toJson operation and modify the payload if necessary.
-     */
     public String toJson() {
         JSONObject intentId = new JSONObject()
                 .put("value", consentId)

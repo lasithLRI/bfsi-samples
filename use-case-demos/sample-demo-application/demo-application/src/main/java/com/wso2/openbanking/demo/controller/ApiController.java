@@ -47,7 +47,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.reflections.Reflections.log;
 
 /** ApiController implementation. */
 @Path("")
@@ -62,38 +61,26 @@ public final class ApiController {
         try {
             HttpTlsClient httpClient = new HttpTlsClient(
                     ConfigLoader.getCertificatePath(),
-                    ConfigLoader.getKeyPath(),
-                    ConfigLoader.getTruststorePath(),
-                    ConfigLoader.getTruststorePassword()
+                    ConfigLoader.getKeyPath()
+
             );
 
             this.accountService = AccountService.create(httpClient);
             this.paymentService = PaymentService.create(httpClient);
-            this.authService = AuthService.create(accountService, paymentService);
+            this.authService = AuthService.create(accountService, paymentService, httpClient);
 
         } catch (SSLContextCreationException | GeneralSecurityException | IOException e) {
             throw new BankInfoLoadException("Failed to initialize API controller: " + e.getMessage(), e);
-        } catch (BankInfoLoadException e) {
-            throw new RuntimeException(e);
         }
     }
 
-    /**
-     * Executes the selectAccountToAdd operation and modify the payload if necessary.
-     *
-     * @param requestBody     The requestBody parameter
-     * @throws Exception      When an error occurs during the operation
-     */
     @POST
     @Path("/add-accounts")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectAccountToAdd(Map<String, String> requestBody) throws Exception {
-        String redirectUrl = accountService.processAddAccount(requestBody.get("bankName"));
-        System.out.println("sofmnfkomvfmob==============================");
+        String redirectUrl = accountService.processAddAccount();
         authService.setRequestStatus("accounts");
-
-
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
@@ -103,12 +90,6 @@ public final class ApiController {
         return response;
     }
 
-    /**
-     * Executes the makePayment operation and modify the payload if necessary.
-     *
-     * @param payment         The payment parameter
-     * @throws Exception      When an error occurs during the operation
-     */
     @POST
     @Path("/payment")
     @Produces(MediaType.APPLICATION_JSON)
@@ -118,15 +99,10 @@ public final class ApiController {
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
-    /**
-     * Executes the processAuth operation and modify the payload if necessary.
-     *
-     * @param code The authorization code returned from the OAuth callback
-     */
     @GET
     @Path("/processAuth")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response processAuth(@QueryParam("code") String code) {
+    public Response processAuth(@QueryParam("code") String code) throws IOException {
         try {
             authService.processAuthorizationCallback(code);
 
@@ -191,6 +167,8 @@ public final class ApiController {
                     .entity("{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}")
                     .type(MediaType.APPLICATION_JSON)
                     .build();
+        } catch (IOException e) {
+            throw new IOException(e);
         }
     }
 
@@ -217,20 +195,6 @@ public final class ApiController {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
-        }
-    }
-
-    @GET
-    @Path("/get-delete-account-info")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getDeleteAccountInfo() {
-        try {
-            return Response.ok().build();
-        } catch (Exception e) {
-            log.error("Failed to build delete account info response", e);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"Unable to retrieve account information\"}")
                     .build();
         }
     }

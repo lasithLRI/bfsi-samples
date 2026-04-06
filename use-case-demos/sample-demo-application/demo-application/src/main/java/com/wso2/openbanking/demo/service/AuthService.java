@@ -19,11 +19,9 @@
 package com.wso2.openbanking.demo.service;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
-import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.exceptions.PaymentException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.models.Account;
-import com.wso2.openbanking.demo.models.Transaction;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.JwtUtils;
 import org.json.JSONException;
@@ -41,8 +39,6 @@ public final class AuthService {
     private final HttpTlsClient client;
     private String requestStatus = "accounts";
     private List<Account> lastFetchedAccounts = new ArrayList<>();
-    private Transaction lastPaymentTransaction;
-    private String lastPaymentBankName;
     private boolean lastPaymentSuccess = false;
 
     private AuthService(AccountService accountService,
@@ -54,46 +50,20 @@ public final class AuthService {
     }
 
     public static AuthService create(AccountService accountService,
-                                     PaymentService paymentService)
+                                     PaymentService paymentService,HttpTlsClient client)
             throws SSLContextCreationException {
-        HttpTlsClient client = new HttpTlsClient(
-                ConfigLoader.getCertificatePath(),
-                ConfigLoader.getKeyPath(),
-                ConfigLoader.getTruststorePath(),
-                ConfigLoader.getTruststorePassword()
-        );
         return new AuthService(accountService, paymentService, client);
     }
 
-    /**
-     * Executes the setRequestStatus operation and modify the payload if necessary.
-     *
-     * @param status          The status parameter
-     */
     public void setRequestStatus(String status) {
         this.requestStatus = status;
     }
 
-    /**
-     * Executes the processAuthorizationCallback operation and modify the payload if necessary.
-     *
-     * @param code            The code parameter
-     * @throws AuthorizationException When an error occurs during the operation
-     */
-    public void processAuthorizationCallback(String code) throws AuthorizationException {
+    public void processAuthorizationCallback(String code) throws AuthorizationException, IOException {
         String accessToken = exchangeCodeForToken(code);
-        System.out.println(code);
-        System.out.println(accessToken);
-        System.out.println("===============================****************");
         handleAuthorizationSuccess(accessToken);
     }
 
-    /**
-     * Executes the exchangeCodeForToken operation and modify the payload if necessary.
-     *
-     * @param code            The code parameter
-     * @throws AuthorizationException When an error occurs during the operation
-     */
     private String exchangeCodeForToken(String code) throws AuthorizationException {
         try {
             String clientAssertion = JwtTokenService.getInstance().createClientAssertion(JwtUtils.generateJti());
@@ -109,12 +79,6 @@ public final class AuthService {
         }
     }
 
-    /**
-     * Executes the buildTokenRequestBody operation and modify the payload if necessary.
-     *
-     * @param code            The code parameter
-     * @param clientAssertion The clientAssertion parameter
-     */
     private String buildTokenRequestBody(String code, String clientAssertion) {
         return "grant_type=authorization_code" +
                 "&code=" + code +
@@ -125,33 +89,22 @@ public final class AuthService {
                 "&redirect_uri=" + ConfigLoader.getRedirectUri();
     }
 
-    /**
-     * Executes the parseAccessToken operation and modify the payload if necessary.
-     *
-     * @param response        The response parameter
-     */
     private String parseAccessToken(String response) {
         return new JSONObject(response).getString("access_token");
     }
 
-    /**
-     * Executes the handleAuthorizationSuccess operation and modify the payload if necessary.
-     *
-     * @param accessToken     The accessToken parameter
-     * @throws AuthorizationException When an error occurs during the operation
-     */
-    private void handleAuthorizationSuccess(String accessToken) throws AuthorizationException {
+    private void handleAuthorizationSuccess(String accessToken) throws AuthorizationException, IOException {
         accountService.setAccessToken(accessToken);
         try {
             if ("accounts".equals(requestStatus)) {
-                lastFetchedAccounts = accountService.addMockBankAccountsInformation();
+                lastFetchedAccounts = accountService.createBankInContext();
             } else if ("payments".equals(requestStatus)) {
                 lastPaymentSuccess = paymentService.processPaymentAuthorization(accessToken);
             }
         } catch (PaymentException e) {
             throw new AuthorizationException("Failed to add payment after successful authorization", e);
-        } catch (BankInfoLoadException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new IOException(e);
         }
     }
 
@@ -162,14 +115,6 @@ public final class AuthService {
 
     public List<Account> getLastFetchedAccounts() {
         return lastFetchedAccounts;
-    }
-
-    public Transaction getLastPaymentTransaction() {
-        return lastPaymentTransaction;
-    }
-
-    public String getLastPaymentBankName() {
-        return lastPaymentBankName;
     }
 
     public boolean isLastPaymentSuccess() {

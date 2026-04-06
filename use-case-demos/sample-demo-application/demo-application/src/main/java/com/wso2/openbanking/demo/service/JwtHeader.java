@@ -33,9 +33,6 @@ public class JwtHeader {
         this.typ = typ;
     }
 
-    /**
-     * Executes the toJson operation and modify the payload if necessary.
-     */
     public String toJson() {
         return new JSONObject()
                 .put("alg", alg)

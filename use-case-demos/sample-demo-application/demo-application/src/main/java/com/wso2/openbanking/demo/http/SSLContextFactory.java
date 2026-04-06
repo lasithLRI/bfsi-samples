@@ -43,12 +43,11 @@ import javax.net.ssl.TrustManager;
 /** SSLContextFactory implementation. */
 public class SSLContextFactory {
 
-    public static SSLContext create(String certPath, String keyPath,
-                                    String trustStorePath, String trustStorePassword)
+    public static SSLContext create(String certPath, String keyPath)
             throws SSLContextCreationException {
         try {
             KeyManager[] keyManagers = createKeyManagers(certPath, keyPath);
-            TrustManager[] trustManagers = createTrustManagers(trustStorePath, trustStorePassword);
+            TrustManager[] trustManagers = createTrustManagers();
 
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(keyManagers, trustManagers, null);
@@ -107,9 +106,9 @@ public class SSLContextFactory {
 
     @SuppressFBWarnings(value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS",
             justification = "Null return is intentional — callers check for null to detect missing truststore")
-    private static TrustManager[] createTrustManagers(String trustStorePath, String trustStorePassword)
+    private static TrustManager[] createTrustManagers()
             throws SSLContextCreationException {
-        
+
         return null;
     }
 }

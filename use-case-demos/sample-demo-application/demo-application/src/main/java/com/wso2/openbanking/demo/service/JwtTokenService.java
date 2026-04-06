@@ -117,12 +117,6 @@ public final class JwtTokenService {
         return signingInput + "." + signData(signingInput);
     }
 
-    /**
-     * Executes the signData operation and modify the payload if necessary.
-     *
-     * @param data            The data parameter
-     * @throws GeneralSecurityException When an error occurs during the operation
-     */
     private String signData(String data) throws GeneralSecurityException {
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
         signature.setParameter(new PSSParameterSpec(
@@ -146,18 +140,10 @@ public final class JwtTokenService {
         return KeyReader.loadPrivateKeyFromStream(keyStream);
     }
 
-    /**
-     * Executes the base64UrlEncode operation and modify the payload if necessary.
-     *
-     * @param bytes           The bytes parameter
-     */
     private String base64UrlEncode(byte[] bytes) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
-    /**
-     * Executes the getCurrentTimeSeconds operation and modify the payload if necessary.
-     */
     private long getCurrentTimeSeconds() {
         return System.currentTimeMillis() / 1000;
     }

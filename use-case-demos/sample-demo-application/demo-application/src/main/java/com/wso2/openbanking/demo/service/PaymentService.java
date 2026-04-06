@@ -38,29 +38,17 @@ import java.util.UUID;
 /** PaymentService implementation. */
 public final class PaymentService {
 
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     private static final Random RANDOM = new Random();
-//    private final BankInfoService bankInfoService;
     private final OAuthTokenService oauthService;
     private final HttpTlsClient client;
     private Payment currentPayment;
     private String currentConsentId;
-    private Transaction lastTransaction;
-    private String lastPaymentBankName;
-
 
     private PaymentService( HttpTlsClient client, OAuthTokenService oauthService) {
-//        this.bankInfoService = bankInfoService;
         this.client = client;
         this.oauthService = oauthService;
     }
 
-    /**
-     * Static factory — handles GeneralSecurityException/IOException before construction.
-     * Use this instead of new PaymentService(...).
-     */
     public static PaymentService create(
                                         HttpTlsClient client)
             throws GeneralSecurityException, IOException {
@@ -68,12 +56,6 @@ public final class PaymentService {
         return new PaymentService(client, oauthService);
     }
 
-    /**
-     * Executes the processPaymentRequest operation and modify the payload if necessary.
-     *
-     * @param payment         The payment parameter
-     * @throws AuthorizationException When an error occurs during the operation
-     */
     public String processPaymentRequest(Payment payment) throws AuthorizationException {
         this.currentPayment = new Payment(payment);
         try {
@@ -92,12 +74,6 @@ public final class PaymentService {
         }
     }
 
-    /**
-     * Executes the addPaymentToAccount operation and modify the payload if necessary.
-     *
-     * @param accessToken     The accessToken parameter
-     * @throws PaymentException When an error occurs during the operation
-     */
     public boolean processPaymentAuthorization(String accessToken) throws PaymentException {
         try {
             if (currentPayment == null || currentConsentId == null) {
@@ -115,56 +91,6 @@ public final class PaymentService {
         }
     }
 
-    /**
-     * Executes the createPaymentTransaction operation and modify the payload if necessary.
-     *
-     * @param payment         The payment parameter
-     * @param bankName        The bankName parameter
-     * @param accountNumber   The accountNumber parameter
-     */
-    private Transaction createPaymentTransaction(Payment payment, String bankName, String accountNumber) {
-        Transaction transaction = new Transaction();
-        transaction.setId(generateTransactionId());
-        transaction.setDate(LocalDate.now().format(DATE_FORMATTER));
-        transaction.setReference(payment.getReference());
-        transaction.setAmount(payment.getAmount());
-        transaction.setCurrency(payment.getCurrency());
-        transaction.setCreditDebitStatus("c");
-
-        transaction.setAccount(accountNumber);
-        return transaction;
-    }
-
-    /**
-     * Executes the updateAccountBalance operation and modify the payload if necessary.
-     *
-     * @param bankName        The bankName parameter
-     * @param accountNumber   The accountNumber parameter
-     * @param amount          The amount parameter
-     * @param transaction     The transaction parameter
-     * @throws PaymentException When an error occurs during the operation
-     */
-//    private void updateAccountBalance(String bankName, String accountNumber,
-//                                      double amount, Transaction transaction) throws PaymentException {
-//        Optional<Account> accountOpt = bankInfoService.findAccount(bankName, accountNumber);
-//        if (!accountOpt.isPresent()) {
-//            throw new PaymentException("Account not found - Bank: " + bankName + ", Account: " + accountNumber);
-//        }
-//        Account account = accountOpt.get();
-//        double currentBalance = account.getBalance();
-//        if (currentBalance < amount) {
-//            throw new PaymentException(
-//                    "Insufficient balance. Required: " + amount + ", Available: " + currentBalance);
-//        }
-//        account.setBalance(currentBalance - amount);
-//        bankInfoService.addTransactionToAccount(account, transaction);
-//    }
-
-    /**
-     * Executes the createPaymentConsentBody operation and modify the payload if necessary.
-     *
-     * @param payment         The payment parameter
-     */
     private String createPaymentConsentBody(Payment payment) {
         String[] userAccount = parseAccountIdentifier(payment.getUserAccount());
         String[] payeeAccount = parseAccountIdentifier(payment.getPayeeAccount());
@@ -178,12 +104,6 @@ public final class PaymentService {
                 .toString(4);
     }
 
-    /**
-     * Executes the createPaymentSubmissionBody operation and modify the payload if necessary.
-     *
-     * @param payment         The payment parameter
-     * @param consentId       The consentId parameter
-     */
     private String createPaymentSubmissionBody(Payment payment, String consentId) {
         String[] userAccount = parseAccountIdentifier(payment.getUserAccount());
         String[] payeeAccount = parseAccountIdentifier(payment.getPayeeAccount());
@@ -199,15 +119,6 @@ public final class PaymentService {
                 .toString(4);
     }
 
-    /**
-     * Executes the buildInitiation operation and modify the payload if necessary.
-     *
-     * @param userAccount     The userAccount parameter
-     * @param payeeAccount    The payeeAccount parameter
-     * @param amount          The amount parameter
-     * @param currency        The currency parameter
-     * @param reference       The reference parameter
-     */
     private JSONObject buildInitiation(String[] userAccount, String[] payeeAccount,
                                        String amount, String currency, String reference) {
         JSONObject initiation = new JSONObject();
@@ -224,23 +135,12 @@ public final class PaymentService {
         return initiation;
     }
 
-    /**
-     * Executes the buildAmount operation and modify the payload if necessary.
-     *
-     * @param amount          The amount parameter
-     * @param currency        The currency parameter
-     */
     private JSONObject buildAmount(String amount, String currency) {
         return new JSONObject()
                 .put("Amount", formatAmount(amount))
                 .put("Currency", currency);
     }
 
-    /**
-     * Executes the buildCreditorAccount operation and modify the payload if necessary.
-     *
-     * @param payeeAccount    The payeeAccount parameter
-     */
     private JSONObject buildCreditorAccount(String[] payeeAccount) {
         return new JSONObject()
                 .put("SchemeName", "OB.SortCodeAccountNumber")
@@ -249,11 +149,6 @@ public final class PaymentService {
                 .put("SecondaryIdentification", "0002");
     }
 
-    /**
-     * Executes the buildDebtorAccount operation and modify the payload if necessary.
-     *
-     * @param userAccount     The userAccount parameter
-     */
     private JSONObject buildDebtorAccount(String[] userAccount) {
         return new JSONObject()
                 .put("SchemeName", "OB.SortCodeAccountNumber")
@@ -262,28 +157,11 @@ public final class PaymentService {
                 .put("SecondaryIdentification", userAccount[1] + "001");
     }
 
-    /**
-     * Executes the generateTransactionId operation and modify the payload if necessary.
-     */
-    private String generateTransactionId() {
-        return String.format("T%08d", RANDOM.nextInt(100_000_000));
-    }
-
-    /**
-     * Executes the parseAccountIdentifier operation and modify the payload if necessary.
-     *
-     * @param accountIdentifier The accountIdentifier parameter
-     */
     private String[] parseAccountIdentifier(String accountIdentifier) {
         String[] parts = accountIdentifier.split("-", 2);
         return new String[]{parts[0], parts.length > 1 ? parts[1] : ""};
     }
 
-    /**
-     * Executes the formatAmount operation and modify the payload if necessary.
-     *
-     * @param amount          The amount parameter
-     */
     private String formatAmount(String amount) {
         try {
             return String.format("%.2f", Double.parseDouble(amount));
@@ -292,26 +170,15 @@ public final class PaymentService {
         }
     }
 
-    /**
-     * Executes the generateInstructionId operation and modify the payload if necessary.
-     */
     private String generateInstructionId() {
         return "INST-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
     }
 
-    /**
-     * Executes the generateEndToEndId operation and modify the payload if necessary.
-     */
     private String generateEndToEndId() {
 
         return "E2E-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
     }
 
-    /**
-     * Executes the hexCharToDigit operation and modify the payload if necessary.
-     *
-     * @param c               The c parameter
-     */
     private int hexCharToDigit(char c) {
         if (c >= '0' && c <= '9') {
             return c - '0';
@@ -320,11 +187,6 @@ public final class PaymentService {
         return letterValue % 10;
     }
 
-    /**
-     * Executes the generateNumericId operation and modify the payload if necessary.
-     *
-     * @param length          The length parameter
-     */
     private String generateNumericId(int length) {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         StringBuilder numericId = new StringBuilder();
@@ -338,13 +200,5 @@ public final class PaymentService {
             numericId.append(RANDOM.nextInt(10));
         }
         return numericId.substring(0, length);
-    }
-
-    public Transaction getLastTransaction() {
-        return lastTransaction;
-    }
-
-    public String getLastPaymentBankName() {
-        return lastPaymentBankName;
     }
 }

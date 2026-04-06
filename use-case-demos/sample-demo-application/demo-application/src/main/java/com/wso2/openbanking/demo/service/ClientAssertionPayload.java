@@ -44,9 +44,6 @@ public class ClientAssertionPayload {
         this.aud = aud;
     }
 
-    /**
-     * Executes the toJson operation and modify the payload if necessary.
-     */
     public String toJson() {
         return new JSONObject()
                 .put("iss", iss)

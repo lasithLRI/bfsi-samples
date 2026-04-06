@@ -19,7 +19,6 @@
 package com.wso2.openbanking.demo.service;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
-import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.JwtUtils;
 import org.json.JSONException;
@@ -35,26 +34,10 @@ public final class OAuthTokenService {
     private final JwtTokenService jwtTokenService;
 
     public OAuthTokenService(HttpTlsClient client) throws GeneralSecurityException, IOException {
-        // Constructed here — not passed in
-        try {
-            this.client = new HttpTlsClient(
-                    ConfigLoader.getCertificatePath(),
-                    ConfigLoader.getKeyPath(),
-                    ConfigLoader.getTruststorePath(),
-                    ConfigLoader.getTruststorePassword()
-            );
-        } catch (SSLContextCreationException e) {
-            throw new IOException("Failed to create TLS client: " + e.getMessage(), e);
-        }
+        this.client = client;
         this.jwtTokenService = JwtTokenService.getInstance();
     }
 
-    /**
-     * Executes the getToken operation and modify the payload if necessary.
-     *
-     * @param scope           The scope parameter
-     * @throws AuthorizationException When an error occurs during the operation
-     */
     public String getToken(String scope) throws AuthorizationException {
         try {
             String clientAssertion = jwtTokenService.createClientAssertion(JwtUtils.generateJti());
@@ -86,23 +69,12 @@ public final class OAuthTokenService {
         return client.postConsentAuthRequest(requestObject, ConfigLoader.getClientId(), scope);
     }
 
-    /**
-     * Executes the extractConsentId operation and modify the payload if necessary.
-     *
-     * @param consentResponse The consentResponse parameter
-     */
     private String extractConsentId(String consentResponse) {
         return new JSONObject(consentResponse)
                 .getJSONObject("Data")
                 .getString("ConsentId");
     }
 
-    /**
-     * Executes the buildTokenRequestBody operation and modify the payload if necessary.
-     *
-     * @param scope           The scope parameter
-     * @param clientAssertion The clientAssertion parameter
-     */
     private String buildTokenRequestBody(String scope, String clientAssertion) {
         return "grant_type=client_credentials" +
                 "&scope=" + scope +
