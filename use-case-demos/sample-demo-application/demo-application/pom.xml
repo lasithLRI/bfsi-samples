@@ -14,7 +14,7 @@
     </parent>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
+        <sourceDirectory>components/ob_demo_application/src/main/java</sourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -72,7 +72,7 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.15.0</version>
                 <configuration>
-                    <workingDirectory>frontend</workingDirectory>
+                    <workingDirectory>components/ob_demo_application/frontend</workingDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -84,22 +84,22 @@
                             <pnpmVersion>9.15.0</pnpmVersion>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>pnpm-install</id>
-                        <goals><goal>pnpm</goal></goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>pnpm-build</id>
-                        <goals><goal>pnpm</goal></goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <arguments>run build</arguments>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>pnpm-install</id>-->
+<!--                        <goals><goal>pnpm</goal></goals>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <configuration>-->
+<!--                            <arguments>install &#45;&#45;no-workspace</arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>pnpm-build</id>-->
+<!--                        <goals><goal>pnpm</goal></goals>-->
+<!--                        <phase>generate-resources</phase>-->
+<!--                        <configuration>-->
+<!--                            <arguments>run build</arguments>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                 </executions>
             </plugin>
 
@@ -114,12 +114,12 @@
                         <goals><goal>copy-resources</goal></goals>
                         <configuration>
                             <outputDirectory>
-                                ${project.basedir}/src/main/webapp
+                                ${project.basedir}/components/ob_demo_application/src/main/webapp
                             </outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>
-                                        ${project.basedir}/frontend/dist
+                                        ${project.basedir}/components/ob_demo_application/frontend/dist
                                     </directory>
                                     <filtering>false</filtering>
                                 </resource>
@@ -157,26 +157,26 @@
 <!--                        </plugin>-->
 
 
-<!--            <plugin>-->
-<!--                <groupId>com.github.spotbugs</groupId>-->
-<!--                <artifactId>spotbugs-maven-plugin</artifactId>-->
-<!--                <version>${maven.spotbugsplugin.version}</version>-->
-<!--                <configuration>-->
-<!--                    <effort>Max</effort>-->
-<!--                    <threshold>Low</threshold>-->
-<!--                    <xmlOutput>true</xmlOutput>-->
-<!--                    <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs</spotbugsXmlOutputDirectory>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>analyze-compile</id>-->
-<!--                        <phase>compile</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>check</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${maven.spotbugsplugin.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs</spotbugsXmlOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>analyze-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
         </plugins>
     </build>
