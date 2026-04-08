@@ -19,8 +19,8 @@
 package com.wso2.openbanking.demo.service;
 
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
+import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.models.Account;
-import com.wso2.openbanking.demo.models.Bank;
 import com.wso2.openbanking.demo.models.Transaction;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import org.json.JSONArray;
@@ -28,7 +28,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -125,7 +124,6 @@ public final class AccountService {
             double balance = fetchAccountBalance(accountId);
             List<Transaction> transactions = fetchAccountTransactions(accountId);
             Account account = new Account(accountId, accountName, balance, transactions);
-            account.setBank(ConfigLoader.getMockBankName());
             account.setConsentId(currentConsentId);
             accounts.add(account);
         }

@@ -19,6 +19,7 @@
 package com.wso2.openbanking.demo.service;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
+import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import com.wso2.openbanking.demo.utils.JwtUtils;
 import org.json.JSONException;
@@ -26,7 +27,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 
 /** OAuthTokenService implementation. */
 public final class OAuthTokenService {

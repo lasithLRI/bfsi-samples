@@ -79,7 +79,8 @@ public class SSLContextFactory {
      * @param certPath path to the PEM-encoded X.509 certificate file
      * @param keyPath  path to the PEM-encoded private key file
      * @return an array of {@link KeyManager}s initialized with the provided credentials
-     * @throws SSLContextCreationException if any key material file is missing, unparseable, or fails to load into the key store
+     * @throws SSLContextCreationException if any key material file is missing, unparseable,
+     *                                     or fails to load into the key store
      */
     private static KeyManager[] createKeyManagers(String certPath, String keyPath)
             throws SSLContextCreationException {
@@ -127,9 +128,12 @@ public class SSLContextFactory {
 
     @SuppressFBWarnings(
             value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS",
-            justification = "Returning null is intentional: SSLContext.init() treats a null TrustManager" +
-                    " array as a directive to use the JVM default trust store (cacerts)." +
-                    " A zero-length array would disable server certificate validation entirely."
+            justification = "Returning null is intentional: " +
+                    "SSLContext.init() treats a null TrustManager" +
+                    " array as a directive to use the JVM " +
+                    "default trust store (cacerts)." +
+                    " A zero-length array would disable " +
+                    "server certificate validation entirely."
     )
     private static TrustManager[] createTrustManagers() {
         return null;

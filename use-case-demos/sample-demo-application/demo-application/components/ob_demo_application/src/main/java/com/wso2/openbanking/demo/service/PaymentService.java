@@ -20,19 +20,14 @@ package com.wso2.openbanking.demo.service;
 
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.PaymentException;
-import com.wso2.openbanking.demo.models.Account;
+import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
 import com.wso2.openbanking.demo.models.Payment;
-import com.wso2.openbanking.demo.models.Transaction;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -45,13 +40,12 @@ public final class PaymentService {
     private Payment currentPayment;
     private String currentConsentId;
 
-    private PaymentService( HttpTlsClient client, OAuthTokenService oauthService) {
+    private PaymentService(HttpTlsClient client, OAuthTokenService oauthService) {
         this.client = client;
         this.oauthService = oauthService;
     }
 
-    public static PaymentService create(
-                                        HttpTlsClient client)
+    public static PaymentService create(HttpTlsClient client)
             throws GeneralSecurityException, IOException, SSLContextCreationException {
         OAuthTokenService oauthService = new OAuthTokenService(client);
         return new PaymentService(client, oauthService);
@@ -86,7 +80,8 @@ public final class PaymentService {
      * Submits the authorized payment to the bank endpoint using the provided access token.
      *
      * @param accessToken the OAuth access token obtained after user authorization
-     * @return {@code true} if the payment was submitted successfully, {@code false} if no pending payment or consent exists
+     * @return {@code true} if the payment was submitted successfully,
+     *         {@code false} if no pending payment or consent exists
      * @throws PaymentException if the payment submission to the bank endpoint fails
      */
     public boolean processPaymentAuthorization(String accessToken) throws PaymentException {
@@ -206,7 +201,6 @@ public final class PaymentService {
     }
 
     private String generateEndToEndId() {
-
         return "E2E-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
     }
 

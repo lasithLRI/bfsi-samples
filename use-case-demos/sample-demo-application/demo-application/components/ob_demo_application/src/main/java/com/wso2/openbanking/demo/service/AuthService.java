@@ -50,7 +50,7 @@ public final class AuthService {
     }
 
     public static AuthService create(AccountService accountService,
-                                     PaymentService paymentService,HttpTlsClient client)
+                                     PaymentService paymentService, HttpTlsClient client)
             throws SSLContextCreationException {
         return new AuthService(accountService, paymentService, client);
     }
