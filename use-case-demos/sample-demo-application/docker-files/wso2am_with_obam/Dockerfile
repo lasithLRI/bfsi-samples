@@ -28,7 +28,11 @@ RUN test -d /home/wso2carbon/wso2-fsam-accelerator-4.0.0
 # STAGE 2: FINAL WSO2 AM IMAGE (Merge Accelerator)
 # Sets up the base product and integrates the accelerator artifacts.
 # ----------------------------------------------
-FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2am:${BASE_PRODUCT_VERSION}.0-alpine
+FROM registry.wso2.com/wso2-apim/am@sha256:95b38d7d25a660eaee74ed992dc6e8918e446003d2bd7ebe7ff4ac142831b2e8
+
+# docker pull registry.wso2.com/wso2-apim/am@sha256:95b38d7d25a660eaee74ed992dc6e8918e446003d2bd7ebe7ff4ac142831b2e8
+
+# FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2am:${BASE_PRODUCT_VERSION}.0-alpine
 
 LABEL maintainer="WSO2 Docker Maintainers <dev@wso2.org>" \
       com.wso2.docker.source="https://github.com/wso2/docker-open-banking/releases/tag/v4.0.0.3"

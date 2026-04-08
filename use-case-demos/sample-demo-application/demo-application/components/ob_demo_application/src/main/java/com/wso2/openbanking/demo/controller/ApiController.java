@@ -21,13 +21,17 @@ package com.wso2.openbanking.demo.controller;
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
-import com.wso2.openbanking.demo.models.*;
+import com.wso2.openbanking.demo.models.Account;
+import com.wso2.openbanking.demo.models.Payment;
+import com.wso2.openbanking.demo.models.Transaction;
 import com.wso2.openbanking.demo.service.AccountService;
 import com.wso2.openbanking.demo.service.AuthService;
 import com.wso2.openbanking.demo.service.HttpTlsClient;
 import com.wso2.openbanking.demo.service.PaymentService;
 import com.wso2.openbanking.demo.utils.ConfigLoader;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -52,26 +56,51 @@ import javax.ws.rs.core.Response;
 @Path("")
 public final class ApiController {
 
+    private static final Logger log = LoggerFactory.getLogger(ApiController.class);
+
     private final AccountService accountService;
     private final AuthService authService;
     private final PaymentService paymentService;
+    private final boolean initialized;
 
-    public ApiController() throws BankInfoLoadException {
+    public ApiController() {
+
+        AccountService tempAccountService = null;
+        AuthService tempAuthService = null;
+        PaymentService tempPaymentService = null;
+        boolean tempInitialized = false;
 
         try {
             HttpTlsClient httpClient = new HttpTlsClient(
                     ConfigLoader.getCertificatePath(),
                     ConfigLoader.getKeyPath()
-
             );
 
-            this.accountService = AccountService.create(httpClient);
-            this.paymentService = PaymentService.create(httpClient);
-            this.authService = AuthService.create(accountService, paymentService, httpClient);
+            tempAccountService = AccountService.create(httpClient);
+            tempPaymentService = PaymentService.create(httpClient);
+            tempAuthService = AuthService.create(tempAccountService, tempPaymentService, httpClient);
+            tempInitialized = true;
 
-        } catch (SSLContextCreationException | GeneralSecurityException | IOException e) {
-            throw new BankInfoLoadException("Failed to initialize API controller: " + e.getMessage(), e);
+        } catch (SSLContextCreationException | GeneralSecurityException | IOException | BankInfoLoadException e) {
+            log.error("Failed to initialize ApiController: {}", e.getMessage(), e);
         }
+
+        this.accountService = tempAccountService;
+        this.paymentService = tempPaymentService;
+        this.authService = tempAuthService;
+        this.initialized = tempInitialized;
+    }
+
+    /**
+     * Returns a 503 Service Unavailable response when the controller failed to initialize.
+     *
+     * @return a 503 response indicating the service is unavailable
+     */
+    private Response serviceUnavailable() {
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity("{\"error\":\"Service not initialized\"}")
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     /**
@@ -85,15 +114,12 @@ public final class ApiController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response selectAccountToAdd(Map<String, String> requestBody) throws Exception {
+        if (!initialized) {
+            return serviceUnavailable();
+        }
         String redirectUrl = accountService.processAddAccount();
         authService.setRequestStatus("accounts");
         return Response.ok(createRedirectResponse(redirectUrl)).build();
-    }
-
-    private Map<String, String> createRedirectResponse(String url) {
-        Map<String, String> response = new HashMap<>();
-        response.put("redirect", url);
-        return response;
     }
 
     /**
@@ -106,6 +132,9 @@ public final class ApiController {
     @Path("/payment")
     @Produces(MediaType.APPLICATION_JSON)
     public Response makePayment(Payment payment) throws Exception {
+        if (!initialized) {
+            return serviceUnavailable();
+        }
         String redirectUrl = paymentService.processPaymentRequest(payment);
         authService.setRequestStatus("payments");
         return Response.ok(createRedirectResponse(redirectUrl)).build();
@@ -121,6 +150,9 @@ public final class ApiController {
     @Path("/processAuth")
     @Produces(MediaType.APPLICATION_JSON)
     public Response processAuth(@QueryParam("code") String code) throws IOException {
+        if (!initialized) {
+            return serviceUnavailable();
+        }
         try {
             authService.processAuthorizationCallback(code);
 
@@ -128,7 +160,6 @@ public final class ApiController {
 
             if ("accounts".equals(status)) {
                 Map<String, Object> response = getStringObjectMap();
-
                 return Response.ok(new JSONObject(response).toString())
                         .type(MediaType.APPLICATION_JSON)
                         .build();
@@ -158,6 +189,51 @@ public final class ApiController {
         } catch (IOException e) {
             throw new IOException(e);
         }
+    }
+
+    /**
+     * Revokes the consent for a linked bank account.
+     *
+     * @param accountId the unique identifier of the account whose consent is to be revoked
+     * @param bankName  the name of the bank associated with the account
+     * @param consentId the unique identifier of the consent to be revoked
+     * @return a 200 OK response if revocation succeeds, 400 if required params are missing,
+     *         404 if account is not found, or 500 on error
+     */
+    @DELETE
+    @Path("/revoke-consent")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response revokeConsent(@QueryParam("accountId") String accountId,
+                                  @QueryParam("bankName") String bankName,
+                                  @QueryParam("consentId") String consentId) {
+        if (!initialized) {
+            return serviceUnavailable();
+        }
+        try {
+            if (accountId == null || accountId.isEmpty() || bankName == null || bankName.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\":\"accountId and bankName are required\"}")
+                        .build();
+            }
+            boolean success = accountService.revokeAccountConsent(accountId, bankName, consentId);
+            if (success) {
+                return Response.ok("{\"status\":\"revoked\"}").build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"error\":\"Account not found or revocation failed\"}")
+                        .build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
+
+    private Map<String, String> createRedirectResponse(String url) {
+        Map<String, String> response = new HashMap<>();
+        response.put("redirect", url);
+        return response;
     }
 
     private Map<String, Object> getStringObjectMap() {
@@ -193,40 +269,5 @@ public final class ApiController {
         response.put("status",   "success");
         response.put("accounts", accountsList);
         return response;
-    }
-
-    /**
-     * Revokes the consent for a linked bank account.
-     *
-     * @param accountId the unique identifier of the account whose consent is to be revoked
-     * @param bankName  the name of the bank associated with the account
-     * @param consentId the unique identifier of the consent to be revoked
-     * @return a 200 OK response if revocation succeeds, 400 if required params are missing, 404 if account is not found, or 500 on error
-     */
-    @DELETE
-    @Path("/revoke-consent")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response revokeConsent(@QueryParam("accountId") String accountId,
-                                  @QueryParam("bankName") String bankName,
-                                  @QueryParam("consentId") String consentId) {
-        try {
-            if (accountId == null || accountId.isEmpty() || bankName == null || bankName.isEmpty()) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"error\":\"accountId and bankName are required\"}")
-                        .build();
-            }
-            boolean success = accountService.revokeAccountConsent(accountId, bankName,consentId);
-            if (success) {
-                return Response.ok("{\"status\":\"revoked\"}").build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("{\"error\":\"Account not found or revocation failed\"}")
-                        .build();
-            }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
-                    .build();
-        }
     }
 }

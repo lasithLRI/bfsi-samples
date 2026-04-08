@@ -15,6 +15,11 @@
 
     <build>
         <sourceDirectory>components/ob_demo_application/src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>components/ob_demo_application/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -54,6 +59,7 @@
                 <version>3.1.0</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <warSourceDirectory>components/ob_demo_application/src/main/webapp</warSourceDirectory>
                 </configuration>
             </plugin>
 
@@ -73,6 +79,7 @@
                 <version>1.15.0</version>
                 <configuration>
                     <workingDirectory>components/ob_demo_application/frontend</workingDirectory>
+                    <installDirectory>components/ob_demo_application/frontend</installDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -84,22 +91,22 @@
                             <pnpmVersion>9.15.0</pnpmVersion>
                         </configuration>
                     </execution>
-<!--                    <execution>-->
-<!--                        <id>pnpm-install</id>-->
-<!--                        <goals><goal>pnpm</goal></goals>-->
-<!--                        <phase>generate-resources</phase>-->
-<!--                        <configuration>-->
-<!--                            <arguments>install &#45;&#45;no-workspace</arguments>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                    <execution>-->
-<!--                        <id>pnpm-build</id>-->
-<!--                        <goals><goal>pnpm</goal></goals>-->
-<!--                        <phase>generate-resources</phase>-->
-<!--                        <configuration>-->
-<!--                            <arguments>run build</arguments>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <execution>
+                        <id>pnpm-install</id>
+                        <goals><goal>pnpm</goal></goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>pnpm-build</id>
+                        <goals><goal>pnpm</goal></goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -129,32 +136,32 @@
                 </executions>
             </plugin>
 
-<!--                        <plugin>-->
-<!--                            <groupId>org.apache.maven.plugins</groupId>-->
-<!--                            <artifactId>maven-checkstyle-plugin</artifactId>-->
-<!--                            <version>${maven.checkstyleplugin.version}</version>-->
-<!--                            <executions>-->
-<!--                                <execution>-->
-<!--                                    <id>validate</id>-->
-<!--                                    <phase>validate</phase>-->
-<!--                                    <configuration>-->
-<!--                                        <configLocation>-->
-<!--                                            https://raw.githubusercontent.com/wso2/code-quality-tools/v1.3/checkstyle/checkstyle.xml-->
-<!--                                        </configLocation>-->
-<!--                                        <suppressionsLocation>-->
-<!--                                            https://raw.githubusercontent.com/wso2/code-quality-tools/v1.3/checkstyle/suppressions.xml-->
-<!--                                        </suppressionsLocation>-->
-<!--                                        <encoding>UTF-8</encoding>-->
-<!--                                        <consoleOutput>true</consoleOutput>-->
-<!--                                        <failsOnError>true</failsOnError>-->
-<!--                                        <includeTestSourceDirectory>true</includeTestSourceDirectory>-->
-<!--                                    </configuration>-->
-<!--                                    <goals>-->
-<!--                                        <goal>check</goal>-->
-<!--                                    </goals>-->
-<!--                                </execution>-->
-<!--                            </executions>-->
-<!--                        </plugin>-->
+            <!--                        <plugin>-->
+            <!--                            <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                            <artifactId>maven-checkstyle-plugin</artifactId>-->
+            <!--                            <version>${maven.checkstyleplugin.version}</version>-->
+            <!--                            <executions>-->
+            <!--                                <execution>-->
+            <!--                                    <id>validate</id>-->
+            <!--                                    <phase>validate</phase>-->
+            <!--                                    <configuration>-->
+            <!--                                        <configLocation>-->
+            <!--                                            https://raw.githubusercontent.com/wso2/code-quality-tools/v1.3/checkstyle/checkstyle.xml-->
+            <!--                                        </configLocation>-->
+            <!--                                        <suppressionsLocation>-->
+            <!--                                            https://raw.githubusercontent.com/wso2/code-quality-tools/v1.3/checkstyle/suppressions.xml-->
+            <!--                                        </suppressionsLocation>-->
+            <!--                                        <encoding>UTF-8</encoding>-->
+            <!--                                        <consoleOutput>true</consoleOutput>-->
+            <!--                                        <failsOnError>true</failsOnError>-->
+            <!--                                        <includeTestSourceDirectory>true</includeTestSourceDirectory>-->
+            <!--                                    </configuration>-->
+            <!--                                    <goals>-->
+            <!--                                        <goal>check</goal>-->
+            <!--                                    </goals>-->
+            <!--                                </execution>-->
+            <!--                            </executions>-->
+            <!--                        </plugin>-->
 
 
             <plugin>
