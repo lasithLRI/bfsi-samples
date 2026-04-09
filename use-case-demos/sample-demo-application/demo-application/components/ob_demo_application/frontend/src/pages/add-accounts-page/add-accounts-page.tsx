@@ -69,6 +69,9 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
                 return;
             }
 
+            setApiError("Unable to start the account linking flow. Missing redirect URL.");
+            setIsRedirecting(false);
+
         } catch (error) {
             console.error("Failed to call add account API:", error);
             setApiError("Unable to start the account linking flow. Please try again.");

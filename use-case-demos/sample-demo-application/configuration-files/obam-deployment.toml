@@ -253,10 +253,10 @@ white_listed_scopes = ["^device_.*", "openid", "^FS_.*", "^TIME_.*"]
 #enable_portal_configuration_only_mode = false
 
 [apim.devportal]
-url = "https://:9443/devportal"
+url = "https://obam:9443/devportal"
 
 [apim.publisher]
-url = "https://:9443/publisher"
+url = "https://obam:9443/publisher"
 
 [apim.cors]
 allow_origins = "*"
