@@ -70,6 +70,6 @@ volumes:
   mysql_data:
 
 networks:
-  ob-network:       # ← THIS was the missing declaration
-    external: true  # ← tells compose to use the pre-created network
+  ob-network:
+    external: true
     name: ob-network

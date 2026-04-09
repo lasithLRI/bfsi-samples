@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------------------------------
 
 # Define dynamic registry and version arguments globally
-ARG BASE_DOCKER_IMAGE_REGISTRY="docker.wso2.com"
+ARG BASE_DOCKER_IMAGE_REGISTRY="registry.wso2.com"
 ARG BASE_PRODUCT_VERSION
 
 # ----------------------------------------------
@@ -18,7 +18,7 @@ ARG BASE_PRODUCT_VERSION
 # Uses a pre-built WSO2 Open Banking image that contains the extracted
 # accelerator files. This is faster and more reliable than downloading.
 # ----------------------------------------------
-FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2-obiam-accelerator:4.0.0.0-alpine AS obiam
+FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2-ob/obiam-accelerator:4.0.0.0-alpine AS obiam
 
 # Note: The test command verifies the expected accelerator directory exists
 # This assumes the pre-built image structure is standardized.
@@ -28,7 +28,7 @@ RUN test -d /home/wso2carbon/wso2-fsiam-accelerator-4.0.0
 # STAGE 2: FINAL WSO2 IS IMAGE (Merge Accelerator)
 # Sets up the base product and integrates the accelerator artifacts.
 # ----------------------------------------------
-FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2is:${BASE_PRODUCT_VERSION}.0-alpine
+FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2-is/is:${BASE_PRODUCT_VERSION}.0-alpine
 LABEL maintainer="WSO2 Docker Maintainers <dev@wso2.org>" \
       com.wso2.docker.source="https://github.com/wso2/docker-open-banking/releases/tag/v4.0.0.3"
 
@@ -49,24 +49,6 @@ ARG WSO2_OB_ACCELERATOR_DIR=${WSO2_SERVER_HOME}/${WSO2_OB_ACCELERATOR}
 ARG OB_TRUSTED_CERTS_URL
 ARG WSO2_OB_KEYSTORES_URL
 ARG RESOURCE_URL
-
-# configuration properties for deployment.toml file (kept for context)
-# server hostnames
-ARG IS_HOSTNAME=obiam
-ARG APIM_HOSTNAME=obam
-# Admin Credentials
-ARG IS_ADMIN_USERNAME=is_admin@wso2.com
-ARG IS_ADMIN_PASSWORD=wso2123
-# databases related properties
-ARG DB_TYPE=mysql
-ARG DB_USER=wso2
-ARG DB_PASS=123456
-ARG DB_HOST=mysql
-ARG DB_DRIVER=com.mysql.jdbc.Driver
-ARG DB_IDENTITY=fs_identitydb
-ARG DB_USER_STORE=fs_userdb
-ARG DB_IS_CONFIG=fs_iskm_configdb
-ARG DB_OB_STORE=fs_consentdb
 
 # Ensure we are root to install tools and manage permissions if needed
 USER root
@@ -94,37 +76,6 @@ RUN if [ -n "$RESOURCE_URL" ]; then wget -O mysql-connector-java-5.1.44.jar "${R
     && cp mysql-connector-java-5.1.44.jar ${WSO2_SERVER_HOME}/repository/components/lib \
     && rm -f mysql-connector-java-5.1.44.jar ; fi
 
-# set configurations
-# read deployment.toml file
-ARG DEPLOYMENT_TOML_FILE=${WSO2_OB_ACCELERATOR_DIR}/repository/resources/deployment.toml
-
-RUN \
-    cd ${WSO2_OB_ACCELERATOR_DIR} \
-    && cp ${WSO2_OB_ACCELERATOR_DIR}/repository/resources/${WSO2_SERVER}-deployment.toml ${DEPLOYMENT_TOML_FILE} \
- \
-    # configure hostnames
-    && sed -i -e 's|IS_HOSTNAME|'${IS_HOSTNAME}'|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|APIM_HOSTNAME|'${APIM_HOSTNAME}'|g' ${DEPLOYMENT_TOML_FILE} \
-# configure Admin Credentials
-    && sed -i -e 's|IS_ADMIN_USERNAME|'${IS_ADMIN_USERNAME}'|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|IS_ADMIN_PASSWORD|'${IS_ADMIN_PASSWORD}'|g' ${DEPLOYMENT_TOML_FILE} \
-# configure datasources
-    && sed -i -e 's|DB_IDENTITY_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_IDENTITY}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|DB_IS_CONFIG_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_IS_CONFIG}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|DB_GOV_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_IS_CONFIG}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|DB_USER_STORE_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_USER_STORE}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|DB_FS_STORE_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_OB_STORE}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|DB_USER|'${DB_USER}'|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|DB_PASS|'${DB_PASS}'|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|DB_DRIVER|'${DB_DRIVER}'|g' ${DEPLOYMENT_TOML_FILE} \
-    && sed -i -e 's|signature.alias="wso2carbon"|signature.alias="wso2obam"|g' ${DEPLOYMENT_TOML_FILE} \
-    && printf '\n[[resource.access_control]]\ncontext = "(.*)/ob-demo-backend-1.0.0/(.*)"\nsecure = "false"\nhttp_method = "all"\n' >> ${DEPLOYMENT_TOML_FILE} \
-# copy deployment.toml file to original product pack location
-    && cp ${DEPLOYMENT_TOML_FILE} ${WSO2_SERVER_HOME}/repository/conf/ \
-    && rm ${DEPLOYMENT_TOML_FILE}
-
-# copy the WSO2 FSIAM accelerator artifacts on top of WSO2 IS base product
-# remove old open banking artifacts from base product
 RUN \
     find ${WSO2_SERVER_HOME}/repository/components/dropins -name "org.wso2.financial.services.accelerator.*" -exec rm -rf {} \; \
     && find ${WSO2_SERVER_HOME}/repository/components/lib -name "org.wso2.financial.services.accelerator.*" -exec rm -rf {} \;
@@ -132,6 +83,10 @@ RUN \
 RUN \
     cp -r ${WSO2_OB_ACCELERATOR_DIR}/carbon-home/* ${WSO2_SERVER_HOME}/
 
+RUN if [ -n "$RESOURCE_URL" ]; then \
+    rm -f ${WSO2_SERVER_HOME}/repository/conf/deployment.toml \
+    && wget -O ${WSO2_SERVER_HOME}/repository/conf/deployment.toml \
+        "${RESOURCE_URL}/configuration-files/obiam-deployment.toml" ; fi
 
 # add root and issuer certificates to client-truststore.jks
 RUN \
@@ -144,7 +99,7 @@ RUN \
     && yes | keytool -import -alias fs-issuer -file issuer.cer -keystore ${WSO2_SERVER_HOME}/repository/resources/security/client-truststore.p12  -storepass wso2carbon \
     && rm -f root.cer issuer.cer
 
-
+# Copy demo backend WAR from build stage
 COPY demo-application/target/ob-demo-backend-1.0.0.war \
      ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/
 

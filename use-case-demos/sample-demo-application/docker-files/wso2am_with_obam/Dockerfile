@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------------------------------
 
 # Define dynamic registry and version arguments globally
-ARG BASE_DOCKER_IMAGE_REGISTRY="docker.wso2.com"
+ARG BASE_DOCKER_IMAGE_REGISTRY="registry.wso2.com"
 ARG BASE_PRODUCT_VERSION
 
 # ----------------------------------------------
@@ -19,7 +19,7 @@ ARG BASE_PRODUCT_VERSION
 # accelerator files.
 # ----------------------------------------------
 # NOTE: The base WSO2 images usually include the full product version (e.g., 4.0.0.0 or 4.0.0)
-FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2-obam-accelerator:4.0.0.0-alpine AS obam
+FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2-ob/obam-accelerator:4.0.0.0-alpine AS obam
 
 # Note: The test command verifies the expected accelerator directory exists
 RUN test -d /home/wso2carbon/wso2-fsam-accelerator-4.0.0
@@ -28,11 +28,7 @@ RUN test -d /home/wso2carbon/wso2-fsam-accelerator-4.0.0
 # STAGE 2: FINAL WSO2 AM IMAGE (Merge Accelerator)
 # Sets up the base product and integrates the accelerator artifacts.
 # ----------------------------------------------
-FROM registry.wso2.com/wso2-apim/am@sha256:95b38d7d25a660eaee74ed992dc6e8918e446003d2bd7ebe7ff4ac142831b2e8
-
-# docker pull registry.wso2.com/wso2-apim/am@sha256:95b38d7d25a660eaee74ed992dc6e8918e446003d2bd7ebe7ff4ac142831b2e8
-
-# FROM ${BASE_DOCKER_IMAGE_REGISTRY}/wso2am:${BASE_PRODUCT_VERSION}.0-alpine
+FROM registry.wso2.com/wso2-apim/am:${BASE_PRODUCT_VERSION}.0-alpine
 
 LABEL maintainer="WSO2 Docker Maintainers <dev@wso2.org>" \
       com.wso2.docker.source="https://github.com/wso2/docker-open-banking/releases/tag/v4.0.0.3"
@@ -60,24 +56,6 @@ ARG RESOURCE_URL
 
 # --- Build Arguments (Configuration Overrides) ---
 # server hostnames
-ARG IS_HOSTNAME=obam
-ARG APIM_HOSTNAME=obam
-# ARG APIM_EXTERNAL_HOSTNAME=localhost
-# Admin Credentials
-ARG AM_ADMIN_USERNAME=am_admin@wso2.com
-ARG AM_ADMIN_PASSWORD=wso2123
-ARG AM_ADMIN_NAME=am_admin
-ARG IS_ADMIN_USERNAME=is_admin@wso2.com
-ARG IS_ADMIN_PASSWORD=wso2123
-# databases related properties
-ARG DB_TYPE=mysql
-ARG DB_USER=wso2
-ARG DB_PASS=123456
-ARG DB_HOST=mysql
-ARG DB_DRIVER=com.mysql.jdbc.Driver
-ARG DB_APIMGT=fs_apimgtdb
-ARG DB_USER_STORE=fs_am_userdb
-ARG DB_AM_CONFIG=fs_am_configdb
 
 # --- Setup and Dependencies ---
 
@@ -111,7 +89,6 @@ RUN if [ -n "$RESOURCE_URL" ]; then \
         "${RESOURCE_URL}/configuration-files/customErrorFormatter.xml" ; fi
 
 
-
 # Adding database connector
 RUN if [ -n "$RESOURCE_URL" ]; then \
     wget -O ${USER_HOME}/mysql-connector-java-5.1.44.jar "${RESOURCE_URL}/configuration-files/mysql-connector-java-5.1.44.jar" && \
@@ -121,44 +98,6 @@ RUN if [ -n "$RESOURCE_URL" ]; then \
 # Remove existing api#fs#backend WAR and deploy new one via wget
 RUN rm -rf ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend \
     && rm -f ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war
-
-RUN if [ -n "$RESOURCE_URL" ]; then \
-    wget -O ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/api#fs#backend.war \
-        "${RESOURCE_URL}/configuration-files/api%23fs%23backend.war" ; fi
-
-# --- Configuration using deployment.toml ---
-
-# set configurations
-ARG DEPLOYMENT_TOML_FILE=${WSO2_OB_ACCELERATOR_DIR}/repository/resources/deployment.toml
-RUN \
-    # Create the final TOML file inside the accelerator directory
-    cp ${WSO2_OB_ACCELERATOR_DIR}/repository/resources/${WSO2_SERVER}-deployment.toml ${DEPLOYMENT_TOML_FILE} && \
-    # configure hostnames
-    sed -i -e 's|IS_HOSTNAME|'${IS_HOSTNAME}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|APIM_HOSTNAME|'${APIM_HOSTNAME}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    # configure Admin Credentials
-    sed -i -e 's|AM_ADMIN_USERNAME|'${AM_ADMIN_USERNAME}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|AM_ADMIN_PASSWORD|'${AM_ADMIN_PASSWORD}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|IS_ADMIN_USERNAME|'${IS_ADMIN_USERNAME}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|IS_ADMIN_PASSWORD|'${IS_ADMIN_PASSWORD}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|AM_ADMIN_NAME|'${AM_ADMIN_NAME}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    # configure datasources
-    sed -i -e 's|DB_APIMGT_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_APIMGT}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|DB_AM_CONFIG_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_AM_CONFIG}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|DB_USER_STORE_URL|jdbc:mysql://'${DB_HOST}':3306/'${DB_USER_STORE}'?autoReconnect=true\&amp;useSSL=false|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|DB_USER|'${DB_USER}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|DB_PASS|'${DB_PASS}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    sed -i -e 's|DB_DRIVER|'${DB_DRIVER}'|g' ${DEPLOYMENT_TOML_FILE} && \
-    # configure external hostname for browser-facing URLs (publisher/devportal OAuth redirects)
-    sed -i '/^\[apim\.cors\]/i [apim.devportal]\nurl = "https://'${APIM_EXTERNAL_HOSTNAME}':9443/devportal"\n\n[apim.publisher]\nurl = "https://'${APIM_EXTERNAL_HOSTNAME}':9443/publisher"\n' ${DEPLOYMENT_TOML_FILE}
-
-RUN grep -q 'skip_list.sequences' ${DEPLOYMENT_TOML_FILE} || \
-    sed -i '/^gateway_labels =\["Default"\]/a skip_list.sequences = ["customErrorFormatter.xml"]' ${DEPLOYMENT_TOML_FILE}
-
-RUN \
-    # copy deployment.toml file to repository/conf
-    cp ${DEPLOYMENT_TOML_FILE} ${WSO2_SERVER_HOME}/repository/conf/ && \
-    rm ${DEPLOYMENT_TOML_FILE}
 
 # --- Merge and Cleanup ---
 
@@ -170,6 +109,11 @@ RUN set -ex; \
 
 # copy open banking artifacts using cp -r (this is effectively the 'merge' operation)
 RUN cp -r ${WSO2_OB_ACCELERATOR_DIR}/carbon-home/* ${WSO2_SERVER_HOME}/
+
+RUN if [ -n "$RESOURCE_URL" ]; then \
+    rm -f ${WSO2_SERVER_HOME}/repository/conf/deployment.toml \
+    && wget -O ${WSO2_SERVER_HOME}/repository/conf/deployment.toml \
+        "${RESOURCE_URL}/configuration-files/obam-deployment.toml" ; fi
 
 ARG SEQUENCE_FILE=${WSO2_SERVER_HOME}/repository/deployment/server/synapse-configs/default/sequences/_cors_request_handler_.xml
 RUN \
@@ -191,8 +135,6 @@ RUN \
     chown wso2carbon:wso2 -R ${WSO2_SERVER_HOME}/ \
     && chown wso2carbon:wso2 /etc/motd
 
-# Fix CRLF line endings in entrypoint script (caused by Windows-style line endings)
-RUN sed -i 's/\r//' /home/wso2carbon/docker-entrypoint.sh
 
 # set the non-root user
 USER ${USER}

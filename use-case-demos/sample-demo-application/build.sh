@@ -9,6 +9,8 @@ WSO2_AM_SERVER=$BASE_URL/docker-files/wso2am_with_obam
 MY_SQL=$BASE_URL/docker-files/my_sql
 DEMO_BACKEND=$BASE_URL/demo-application
 
+export DOCKER_BUILDKIT=1
+
 # Fix CRLF line endings on all shell scripts (Windows Git Bash compatibility)
 find "$BASE_URL" -name "*.sh" | while read f; do
     tr -d '\r' < "$f" > "$f.tmp" && mv "$f.tmp" "$f"
@@ -63,7 +65,6 @@ docker build \
     --build-arg OB_TRUSTED_CERTS_URL=http://host.docker.internal:8000/configuration-files/trust_certs.zip \
     --build-arg WSO2_OB_KEYSTORES_URL=http://host.docker.internal:8000/configuration-files/keystores \
     --build-arg RESOURCE_URL=http://host.docker.internal:8000 \
-    --no-cache \
     -f "$WSO2_IS_SERVER/Dockerfile" \
     -t wso2is-ob:4.0.0 .
 echo "IS server build complete"

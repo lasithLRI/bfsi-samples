@@ -9,7 +9,7 @@ src/main/webapp/resources
 src/main/webapp/index.html
 src/main/webapp/robots.txt
 src/main/webapp/vite.svg
-.idea
+/.idea/
 
 
 
