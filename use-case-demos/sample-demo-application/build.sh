@@ -22,7 +22,7 @@ lsof -ti:8000 | xargs kill -9 2>/dev/null || true
 
 # Start HTTP server from BASE_URL so Docker can fetch all configuration files
 cd "$BASE_URL"
-python3 -m http.server 8000 &
+python -m http.server 8000 &
 SERVER_PID=$!
 sleep 2
 echo "HTTP server started (PID: $SERVER_PID) serving: $BASE_URL"
