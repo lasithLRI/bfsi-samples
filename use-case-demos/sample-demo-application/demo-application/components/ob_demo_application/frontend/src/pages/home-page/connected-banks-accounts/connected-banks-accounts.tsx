@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
+ *
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import {useState} from "react";
 import {
     Accordion, AccordionDetails, AccordionSummary, Card, Grid, Table, TableBody, TableCell, TableRow,
@@ -16,7 +34,7 @@ import {queryClient} from "../../../utility/query-client.ts";
 import type {Config} from "../../../hooks/config-interfaces.ts";
 
 const ACCOUNTS_SESSION_KEY = "openbanking_added_accounts";
-const BACKEND_BASE = "https://obiam:9446/ob-demo-backend-1.0.0/init";
+const backendBase = `${window.location.origin}/${window.location.pathname.split('/')[1]}`;
 
 interface ConsentGroup {
     consentId: string;
@@ -33,15 +51,12 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
 
     const isLargeScreen = useMediaQuery(useTheme().breakpoints.down('md'));
     const responsiveDirections = isLargeScreen ? 'column' : 'row';
-
     const [showDeleteOverlay, setShowDeleteOverlay] = useState(false);
     const [consentGroups, setConsentGroups] = useState<ConsentGroup[]>([]);
     const [selectedConsentIds, setSelectedConsentIds] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isRevoking, setIsRevoking] = useState(false);
-
     const thirdBank = bankAndAccountsInfo[2];
-
     const handleDeleteClick = async (e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedConsentIds([]);
@@ -51,13 +66,10 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
         try {
             const savedRaw = sessionStorage.getItem(ACCOUNTS_SESSION_KEY);
             const savedAccounts: any[] = savedRaw ? JSON.parse(savedRaw) : [];
-
             if (savedAccounts.length === 0) {
                 setConsentGroups([]);
                 return;
             }
-
-            // Group accounts by consentId
             const groupMap = new Map<string, { id: string; name: string }[]>();
             for (const acc of savedAccounts) {
                 if (!acc.consentId) continue;
@@ -66,13 +78,11 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
                 }
                 groupMap.get(acc.consentId)!.push({ id: acc.id, name: acc.name });
             }
-
             const groups: ConsentGroup[] = Array.from(groupMap.entries()).map(([consentId, accounts]) => ({
                 consentId,
                 bankName: thirdBank.bank.name,
                 accounts
             }));
-
             setConsentGroups(groups);
         } catch (err) {
             console.error("Failed to load consent groups:", err);
@@ -81,7 +91,6 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
             setIsLoading(false);
         }
     };
-
     const toggleConsentGroup = (consentId: string) => {
         setSelectedConsentIds(prev =>
             prev.includes(consentId)
@@ -89,39 +98,31 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
                 : [...prev, consentId]
         );
     };
-
     const handleRevokeConfirm = async () => {
         if (selectedConsentIds.length === 0) return;
         setIsRevoking(true);
-
         const bankName = thirdBank.bank.name;
-
         try {
             const accountIdsToRemove = consentGroups
                 .filter(g => selectedConsentIds.includes(g.consentId))
                 .flatMap(g => g.accounts.map(a => a.id));
-
             await Promise.all(
                 consentGroups
                     .filter(g => selectedConsentIds.includes(g.consentId))
                     .map(g =>
                         fetch(
-                            `${BACKEND_BASE}/revoke-consent?accountId=${encodeURIComponent(g.accounts[0].id)}&bankName=${encodeURIComponent(bankName)}&consentId=${encodeURIComponent(g.consentId)}`,
+                            `${backendBase}/init/revoke-consent?accountId=${encodeURIComponent(g.accounts[0].id)}&bankName=${encodeURIComponent(bankName)}&consentId=${encodeURIComponent(g.consentId)}`,
                             {method: "DELETE"}
                         )
                     )
             );
-
             const oldConfig = queryClient.getQueryData<Config>(["appConfig"]);
             if (!oldConfig) return;
-
             const savedRaw = sessionStorage.getItem(ACCOUNTS_SESSION_KEY);
             const savedAccounts: any[] = savedRaw ? JSON.parse(savedRaw) : [];
-
             const remainingAccounts = savedAccounts.filter(
                 acc => !accountIdsToRemove.includes(acc.id)
             );
-
             if (remainingAccounts.length === 0) {
                 sessionStorage.removeItem(ACCOUNTS_SESSION_KEY);
                 sessionStorage.removeItem("openbanking_consent_id");
@@ -141,7 +142,6 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
                     )
                 });
             }
-
         } catch (err) {
             console.error("Revoke consent failed:", err);
         } finally {
@@ -151,13 +151,11 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
             setConsentGroups([]);
         }
     };
-
     const handleRevokeCancel = () => {
         setShowDeleteOverlay(false);
         setSelectedConsentIds([]);
         setConsentGroups([]);
     };
-
     return (
         <>
             <div className="main-connected-banks-outer" style={{display: "flex", flexDirection: "column"}}>
@@ -195,9 +193,7 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
                         </Card>
                     ))}
                 </Grid>
-
                 <CustomTitle title={"Connected Accounts"}/>
-
                 <div>
                     {bankAndAccountsInfo.map((bank, index) => (
                         <Accordion key={index}>
@@ -238,7 +234,6 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
                     ))}
                 </div>
             </div>
-
             {/* Delete accounts overlay */}
             {showDeleteOverlay && thirdBank && (
                 <div style={{
@@ -324,7 +319,6 @@ const ConnectedBanksAccounts = ({bankAndAccountsInfo, onBankRemoved}: ConnectedB
                                 </div>
                             </>
                         )}
-
                         <div style={{display: "flex", gap: "1rem", justifyContent: "flex-end"}}>
                             <button
                                 onClick={handleRevokeCancel}

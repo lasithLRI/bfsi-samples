@@ -34,7 +34,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
 
     const isSmallScreen = useMediaQuery(useTheme().breakpoints.down('md'));
     const responsiveDirection = isSmallScreen ? 'column' : 'row';
-
     const {control, handleSubmit, formState: {errors}, reset} = useForm<PaymentFormData>({
         defaultValues: {
             userAccount: '',
@@ -48,24 +47,19 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
     const [isConfirming, setIsConfirming] = useState(false);
     const [formDataToSubmit, setFormDataToSubmit] = useState<PaymentFormData | null>(null);
     const [isRedirecting, setIsRedirecting] = useState(false);
-
-    // 1st and 2nd banks (index 0, 1) are already added — their accounts are shown but disabled
     const disabledBankNames = new Set(banksList.slice(0, 2).map((b) => b.name));
-
     const onSubmit = (data: PaymentFormData) => {
         setFormDataToSubmit(data);
         setIsConfirming(true);
     };
-
     const handleConfirmedAndRedirect = async () => {
         if (!formDataToSubmit) return;
         setIsConfirming(false);
         setIsRedirecting(true);
-
         try {
-            // const backendBase = window.location.pathname.replace(/\/[^/]+$/, "");
+            const backendBase = `${window.location.origin}/${window.location.pathname.split('/')[1]}`;
             const response = await fetch(
-                `https://obiam:9446/ob-demo-backend-1.0.0/init/payment`,
+                `${backendBase}/init/payment`,
                 {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
@@ -78,15 +72,11 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
                     })
                 }
             );
-
             if (!response.ok) {
                 const body = await response.text().catch(() => "");
                 throw new Error(`Payment API returned ${response.status}: ${body}`);
             }
-
             const data = await response.json();
-            console.log("Payment response:", data);
-
             if (data.redirect) {
                 sessionStorage.setItem("pendingPayment", JSON.stringify({
                     userAccount: formDataToSubmit.userAccount,
@@ -104,18 +94,14 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
             setIsRedirecting(false);
         }
     };
-
     const handleCancelConfirmation = () => {
         setIsConfirming(false);
         setFormDataToSubmit(null);
     };
-
     const paymentConfirmationMsg = `Do you wish to proceed with the payment of ${formDataToSubmit?.currency} ${formDataToSubmit?.amount} to payee ${formDataToSubmit?.payeeAccount}?`;
-
     if (isRedirecting) {
         return <RedirectionComponent/>;
     }
-
     return (
         <>
             <h2 className={"payment-form-heading"}>Payment Information</h2>
@@ -147,7 +133,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
                     )}/>
                     <ErrorMessage error={errors.userAccount}/>
                 </FormControl>
-
                 <FormControl fullWidth={true} margin={'dense'}>
                     <label>Biller <span style={{color: "var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
                     <Controller name={'payeeAccount'} control={control} rules={{required: true}} render={({field}) => (
@@ -170,7 +155,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
                     )}/>
                     <ErrorMessage error={errors.payeeAccount}/>
                 </FormControl>
-
                 <div style={{display: 'flex', gap: '1rem'}}>
                     <FormControl fullWidth={true} margin={'dense'}>
                         <label>Currency</label>
@@ -201,7 +185,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
                         <ErrorMessage error={errors.amount}/>
                     </FormControl>
                 </div>
-
                 <FormControl fullWidth={true} margin={'dense'} sx={{height: '2vh'}}>
                     <label>Reference <span style={{color: "var(--oxygen-palette-primary-requiredStar)"}}>*</span></label>
                     <Controller name={'reference'} control={control} rules={{required: true}}
@@ -215,7 +198,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
                                 )}/>
                     <ErrorMessage error={errors.reference}/>
                 </FormControl>
-
                 <Box className={"payment-button-container"} flexDirection={responsiveDirection}>
                     <FormControl fullWidth={true} margin={'dense'}>
                         <Button variant={"contained"} type={"submit"}>Pay Now</Button>
@@ -224,7 +206,6 @@ const PaymentForm = ({banksWithAllAccounts, payeeData, banksList}: PaymentFormPr
                         <Button variant={"outlined"} type={"button"} onClick={() => reset()}>Reset</Button>
                     </FormControl>
                 </Box>
-
                 {isConfirming && (
                     <OverlayConfirmation
                         title={"Payment Confirmation"}

@@ -145,11 +145,7 @@ const handlePaymentsResponse = (data: any) => {
             transactions: [newTxn, ...(acc.transactions || [])]
         };
     });
-
-    // Write updated accounts back to sessionStorage
     sessionStorage.setItem(ACCOUNTS_SESSION_KEY, JSON.stringify(updatedAccounts));
-
-    // Update query cache — keep banks 0 and 1 untouched, replace bank 2 accounts
     queryClient.setQueryData(["appConfig"], {
         ...oldConfig,
         banks: oldConfig.banks.map((bank, index) => {
@@ -160,7 +156,6 @@ const handlePaymentsResponse = (data: any) => {
             };
         })
     });
-
     sessionStorage.removeItem("pendingPayment");
 };
 
@@ -177,19 +172,16 @@ const OAuthCallbackPage = () => {
         const accessToken = params.get("access_token");
         const idToken = params.get("id_token");
         const errorParam = params.get("error") || params.get("error_description");
-
         if (errorParam) {
             setError(`OAuth callback returned an error: ${errorParam}`);
             setStatus("Failed to complete OAuth callback.");
             return;
         }
-
         if (!code && !accessToken && !idToken) {
             setError("No OAuth code or token was found in the callback URL.");
             setStatus("Unable to complete OAuth callback.");
             return;
         }
-
         const completeAuth = async () => {
             try {
                 setStatus("Completing OAuth login with the authorization code...");
@@ -199,23 +191,18 @@ const OAuthCallbackPage = () => {
                     `${window.location.origin}${backendBase}/init/processAuth?code=${encodeURIComponent(code!)}`,
                     {method: "GET"}
                 );
-
                 if (!response.ok) {
                     const body = await response.text().catch(() => "");
                     throw new Error(`API returned ${response.status}: ${body}`);
                 }
-
                 const data = await response.json();
-
                 if (data.type === "accounts") {
                     handleAccountsResponse(data);
                 } else if (data.type === "payments") {
                     handlePaymentsResponse(data);
                 }
-
                 const routeName = getCurrentAppRoute() || appInfo?.route;
                 const targetPath = routeName ? `/${routeName}` : `/${appInfo?.route}`;
-
                 setStatus("OAuth login completed. Redirecting...");
                 navigate(targetPath, {
                     replace: true,
@@ -226,13 +213,11 @@ const OAuthCallbackPage = () => {
                         }
                     }
                 });
-
             } catch (err) {
                 setError(err instanceof Error ? err.message : String(err));
                 setStatus("Failed to complete OAuth callback.");
             }
         };
-
         completeAuth();
     }, [location, navigate, appInfo]);
 

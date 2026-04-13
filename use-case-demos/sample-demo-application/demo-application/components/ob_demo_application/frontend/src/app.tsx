@@ -80,13 +80,9 @@ const App: React.FC = () => {
                     path="/"
                     element={<Navigate to={`/${appInfo.route}`} replace />}
                 />
-
-
-
                 <Route path="/callback"
                     element={<OAuthCallbackPage />}
                 />
-
                 <Route
                     path={`/${appInfo.route}`}
                     element={
@@ -114,12 +110,10 @@ const App: React.FC = () => {
                         />
                     }
                 />
-
                 <Route
                     path={`/${appInfo.route}/accounts`}
                     element={<AddAccountsPage bankInformations={allBanksInfomation} />}
                 />
-
                 <Route
                     path={`/${appInfo.route}/paybills`}
                     element={
@@ -131,7 +125,6 @@ const App: React.FC = () => {
                         />
                     }
                 />
-
                 <Route
                     path={`/${appInfo.route}/transactions`}
                     element={
@@ -142,7 +135,6 @@ const App: React.FC = () => {
                         />
                     }
                 />
-
                 <Route
                     path={`/${appInfo.route}/standing-orders`}
                     element={
@@ -153,7 +145,6 @@ const App: React.FC = () => {
                         />
                     }
                 />
-
                 <Route
                     path="*"
                     element={<Navigate to={`/${appInfo.route}`} replace />}

@@ -83,7 +83,6 @@ const Home = ({
         }
     };
 
-
     return (
         <>
             <ApplicationLayout name={name}>

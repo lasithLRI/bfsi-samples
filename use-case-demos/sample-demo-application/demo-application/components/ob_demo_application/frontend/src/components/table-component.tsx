@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ * Copyright (c) 2026, WSO2 LLC. (https://www.wso2.com).
  *
  * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -36,22 +36,19 @@ interface TableComponentProps {
  * @returns Formatted ID with exactly 8 digits (e.g., "T00123460")
  */
 const formatTransactionId = (id: string): string => {
-    // Extract the numeric part from the ID
     const match = id.match(/^([A-Z]+)(\d+)$/);
     if (match) {
         const prefix = match[1]; // e.g., "T"
         const number = match[2]; // e.g., "001" or "123460"
-        // Pad to 8 digits
         const paddedNumber = number.padStart(8, '0');
         return `${prefix}${paddedNumber}`;
     }
-    return id; // Return original if format doesn't match
+    return id;
 };
 
 const TableComponent =
     ({tableData,dataConfigs,tableType, dataLimit=4}:TableComponentProps)=>{
 
-        // Sort data: latest transactions/standing orders on top
         const sortedData = useMemo(() => {
             if (tableType === "transaction") {
                 // Sort transactions by date (most recent first)
@@ -86,7 +83,6 @@ const TableComponent =
                 return renderAmount(dataRow);
             }
 
-            // Format transaction ID if it's the id field in a transaction
             if (valuesData === "id" && tableType === "transaction") {
                 const value = (dataRow as any)[valuesData];
                 return formatTransactionId(value);

@@ -100,7 +100,7 @@ RUN \
     && rm -f root.cer issuer.cer
 
 # Copy demo backend WAR from build stage
-COPY demo-application/target/ob-demo-backend-1.0.0.war \
+COPY demo-application/target/api-ob-demo-1.0.0.war \
      ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/
 
 # change directory rights

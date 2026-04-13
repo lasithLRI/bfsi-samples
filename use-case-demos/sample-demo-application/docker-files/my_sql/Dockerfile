@@ -1,4 +1,4 @@
 FROM mysql:8.0
 
-COPY ob_dump16.sql /docker-entrypoint-initdb.d/01_dump.sql
+COPY ob_dump18.sql /docker-entrypoint-initdb.d/01_dump.sql
 COPY grants.sql /docker-entrypoint-initdb.d/02_grants.sql

@@ -44,7 +44,7 @@ GetAllRolesOfUserEnabled = false
 [database.identity_db]
 url = "jdbc:mysql://mysql:3306/fs_identitydb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.identity_db.pool_options]
@@ -63,7 +63,7 @@ commitOnReturn=true
 [database.shared_db]
 url = "jdbc:mysql://mysql:3306/fs_iskm_configdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.shared_db.pool_options]
@@ -82,7 +82,7 @@ commitOnReturn=true
 [database.config]
 url = "jdbc:mysql://mysql:3306/fs_iskm_configdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.config.pool_options]
@@ -101,7 +101,7 @@ commitOnReturn=true
 [database.user]
 url = "jdbc:mysql://mysql:3306/fs_userdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.user.pool_options]
@@ -121,7 +121,7 @@ commitOnReturn=true
 id="WSO2FS_DB"
 url = "jdbc:mysql://mysql:3306/fs_consentdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 jmx_enable=false
 pool_options.maxActive = "150"
@@ -645,6 +645,6 @@ pool_size=20
 event_notification_request_generator="org.wso2.financial.services.accelerator.event.notifications.service.realtime.service.DefaultRealtimeEventNotificationRequestGenerator"
 
 [[resource.access_control]]
-context = "(.*)/ob-demo-backend-1.0.0/(.*)"
+context = "(.*)/api-ob-demo-1.0.0/(.*)"
 secure = "false"
 http_method = "all"

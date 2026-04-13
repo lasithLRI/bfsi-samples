@@ -41,7 +41,7 @@ GetAllRolesOfUserEnabled = false
 [database.apim_db]
 url = "jdbc:mysql://mysql:3306/fs_apimgtdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.apim_db.pool_options]
@@ -59,7 +59,7 @@ defaultAutoCommit=true
 [database.shared_db]
 url = "jdbc:mysql://mysql:3306/fs_am_configdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.shared_db.pool_options]
@@ -77,7 +77,7 @@ defaultAutoCommit=true
 [database.config]
 url = "jdbc:mysql://mysql:3306/fs_am_configdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.config.pool_options]
@@ -95,7 +95,7 @@ defaultAutoCommit=true
 [database.user]
 url = "jdbc:mysql://mysql:3306/fs_am_userdb?autoReconnect=true&amp;useSSL=false"
 username = "wso2"
-password = "123456"
+password = "wso2"
 driver = "com.mysql.jdbc.Driver"
 
 [database.user.pool_options]

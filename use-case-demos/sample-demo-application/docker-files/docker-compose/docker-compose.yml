@@ -2,15 +2,17 @@ services:
 
   mysql:
     image: ob_database
-    command: --default-authentication-plugin=mysql_native_password --lower-case-table-names=1
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --lower-case-table-names=1
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: wso2
-      MYSQL_PASSWORD: 123456
+      MYSQL_PASSWORD: wso2
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "wso2", "-p123456" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "wso2", "-pwso2" ]
       interval: 10s
       timeout: 10s
       start_period: 120s
@@ -21,50 +23,50 @@ services:
       - ob-network
 
   obiam:
-    container_name: obiam
-    image: docker.io/library/wso2is-ob:4.0.0
-    depends_on:
-      mysql:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-k", "-f", "https://obiam:9446/carbon/admin/login.jsp"]
-      interval: 30s
-      timeout: 30s
-      start_period: 300s
-      retries: 10
-    volumes:
-      - "./wait-for-it.sh:/home/wso2carbon/wait-for-it.sh"
-    ports:
-      - "9446:9446"
-    entrypoint:
-      - "./docker-entrypoint.sh"
-    networks:
-      - ob-network
+     container_name: obiam
+     image: docker.io/library/wso2is-ob:4.0.0
+     depends_on:
+       mysql:
+         condition: service_healthy
+     healthcheck:
+       test: ["CMD", "curl", "-k", "-f", "https://obiam:9446/carbon/admin/login.jsp"]
+       interval: 30s
+       timeout: 30s
+       start_period: 300s
+       retries: 10
+     volumes:
+       - "./wait-for-it.sh:/home/wso2carbon/wait-for-it.sh"
+     ports:
+       - "9446:9446"
+     entrypoint:
+       - "./docker-entrypoint.sh"
+     networks:
+       - ob-network
 
   obam:
-    container_name: obam
-    image: docker.io/library/wso2am-ob:4.0.0
-    depends_on:
-      mysql:
-        condition: service_healthy
-      obiam:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-k", "-f", "https://obam:9443/carbon/admin/login.jsp"]
-      interval: 30s
-      timeout: 30s
-      start_period: 300s
-      retries: 10
-    volumes:
-      - "./wait-for-it.sh:/home/wso2carbon/wait-for-it.sh"
-    ports:
-      - "9443:9443"
-      - "8243:8243"
-      - "8280:8280"
-    entrypoint:
-      - "./docker-entrypoint.sh"
-    networks:
-      - ob-network
+     container_name: obam
+     image: docker.io/library/wso2am-ob:4.0.0
+     depends_on:
+       mysql:
+         condition: service_healthy
+       obiam:
+         condition: service_healthy
+     healthcheck:
+       test: ["CMD", "curl", "-k", "-f", "https://obam:9443/carbon/admin/login.jsp"]
+       interval: 30s
+       timeout: 30s
+       start_period: 300s
+       retries: 10
+     volumes:
+       - "./wait-for-it.sh:/home/wso2carbon/wait-for-it.sh"
+     ports:
+       - "9443:9443"
+       - "8243:8243"
+       - "8280:8280"
+     entrypoint:
+       - "./docker-entrypoint.sh"
+     networks:
+       - ob-network
 
 volumes:
   mysql_data:
