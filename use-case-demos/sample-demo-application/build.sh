@@ -108,7 +108,7 @@ echo "obam is ready!"
 echo "──────────────────────────────────────────"
 echo "All done!"
 echo "IS Console : https://obiam:9446/console"
-echo "App URL    : https://obiam:9446/ob-demo-backend-1.0.0"
+echo "App URL    : https://obiam:9446/api-ob-demo-1.0.0"
 echo "──────────────────────────────────────────"
 
 docker compose logs -f
