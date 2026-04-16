@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Account, AppInfo, Bank, User } from "./config-interfaces.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useConfig } from "./use-config.ts";
@@ -110,7 +110,7 @@ const useConfigContext = () => {
         setConnectedBankCount(2);
     };
 
-    const handleOverlayClose = () => {
+    const handleOverlayClose = useCallback(() => {
         setOverlayInformation({
             flag: false,
             overlayData: {
@@ -121,7 +121,7 @@ const useConfigContext = () => {
                 onMainButtonClick: () => {}
             }
         });
-    };
+    }, []);
 
     const [connectedBankCount, setConnectedBankCount] = useState(2);
 
@@ -258,7 +258,7 @@ const useConfigContext = () => {
             navigate(location.pathname, { replace: true, state: {} });
         }
 
-    }, [redirectState]);
+    }, [redirectState, configData, navigate, location.pathname, handleOverlayClose]);
 
     return {
         appInfo: configData?.name as AppInfo,

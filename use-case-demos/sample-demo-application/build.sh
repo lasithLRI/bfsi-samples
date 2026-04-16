@@ -15,7 +15,7 @@ DOCKER_HOST_URL="http://host.docker.internal:${HOST_PORT}"
 export DOCKER_BUILDKIT=1
 
 # Fix CRLF line endings on all shell scripts (Windows Git Bash compatibility)
-find "$BASE_URL" -name "*.sh" | while read f; do
+find "$BASE_URL" -name "*.sh" | while read -r f; do
     tr -d '\r' < "$f" > "$f.tmp" && mv "$f.tmp" "$f"
 done
 echo "CRLF fix applied to all shell scripts"
