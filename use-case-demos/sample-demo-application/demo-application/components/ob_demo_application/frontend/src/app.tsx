@@ -31,7 +31,6 @@ import OAuthCallbackPage from "./pages/oauth-callback-page.tsx";
 const App: React.FC = () => {
     const { state, signIn, getBasicUserInfo } = useAuthContext();
     const [user, setUser] = useState<BasicUserInfo | null>(null);
-
     const {
         isLoading,
         appInfo,
@@ -57,21 +56,21 @@ const App: React.FC = () => {
         }
     }, [state.isAuthenticated, state.isLoading, signIn]);
 
+    const [userError, setUserError] = useState(null);
     useEffect(() => {
         if (state.isAuthenticated) {
             getBasicUserInfo()
                 .then((info) => setUser(info))
-                .catch((err) => console.error("getBasicUserInfo error:", err));
+                .catch((err) => {
+                    console.error("getBasicUserInfo error:", err);
+                    setUserError(err);
+                });
         }
     }, [state.isAuthenticated, getBasicUserInfo]);
 
-    if (state.isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (isLoading || !state.isAuthenticated || !user) {
-        return <div>Loading...</div>;
-    }
+    if (state.isLoading || isLoading) return <div>Loading...</div>;
+    if (userError) return <div>Failed to load profile. <button onClick={() => signOut()}>Sign out</button></div>;
+    if (!state.isAuthenticated || !user) return <div>Loading...</div>;
 
     return (
         <AppThemeProvider color={colors}>

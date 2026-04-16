@@ -43,8 +43,8 @@ echo "Demo backend WAR build complete"
 
 # Verify WAR is reachable
 curl -sf "${HOST_URL}/configuration-files/api-ob-demo.war" -o /dev/null \
-    && echo "  api-fs-backend.war reachable" \
-    || echo "  WARNING: api-fs-backend.war not found - check configuration-files/"
+    && echo "  api-ob-demo.war reachable" \
+    || echo "  WARNING: api-ob-demo.war not found - check configuration-files/"
 
 
 # Build IS server image (context must be BASE_URL so all files are accessible)
@@ -90,11 +90,19 @@ docker compose up -d
 echo "Docker compose started"
 
 # Wait for obam container to be ready before deploying WAR
-echo "Waiting for obam to be ready..."
+timeout=600
+elapsed=0
+
 until docker logs obam 2>&1 | grep -q "Pass-through HTTPS Listener started on 0.0.0.0:8243"; do
-    echo "  still waiting..."
+    if [ "$elapsed" -ge "$timeout" ]; then
+        echo "  Timed out after ${timeout}s waiting for HTTPS Listener"
+        exit 1
+    fi
+    echo "  still waiting... (${elapsed}s elapsed)"
     sleep 5
+    elapsed=$((elapsed + 5))
 done
+
 echo "obam is ready!"
 
 echo "──────────────────────────────────────────"

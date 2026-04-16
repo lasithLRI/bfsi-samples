@@ -155,8 +155,6 @@ const useConfigContext = () => {
 
     const [accountsToTransactions, setAccountsToTransactions] = useState<any[]>([]);
 
-    console.log(accountsToTransactions)
-
     useEffect(() => {
         setAccountsToTransactions(allTransactions);
     }, [allTransactions]);
