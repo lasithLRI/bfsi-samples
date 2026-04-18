@@ -18,6 +18,8 @@
 
 package com.wso2.openbanking.demo.controller;
 
+import com.wso2.openbanking.demo.constants.ApiConstants;
+import com.wso2.openbanking.demo.constants.OpenBankingConstants;
 import com.wso2.openbanking.demo.exceptions.AuthorizationException;
 import com.wso2.openbanking.demo.exceptions.BankInfoLoadException;
 import com.wso2.openbanking.demo.exceptions.SSLContextCreationException;
@@ -57,17 +59,12 @@ public final class ApiController {
 
     private static final Logger log = LoggerFactory.getLogger(ApiController.class);
 
-    private final AccountService accountService;
-    private final AuthService authService;
-    private final PaymentService paymentService;
-    private final boolean initialized;
+    private AccountService accountService;
+    private AuthService authService;
+    private PaymentService paymentService;
+    private boolean initialized;
 
     public ApiController() {
-
-        AccountService tempAccountService = null;
-        AuthService tempAuthService = null;
-        PaymentService tempPaymentService = null;
-        boolean tempInitialized = false;
 
         try {
             HttpTlsClient httpClient = new HttpTlsClient(
@@ -75,19 +72,14 @@ public final class ApiController {
                     ConfigLoader.getKeyPath()
             );
 
-            tempAccountService = AccountService.create(httpClient);
-            tempPaymentService = PaymentService.create(httpClient);
-            tempAuthService = AuthService.create(tempAccountService, tempPaymentService, httpClient);
-            tempInitialized = true;
+            this.accountService = AccountService.create(httpClient);
+            this.paymentService = PaymentService.create(httpClient);
+            this.authService = AuthService.create(accountService, paymentService, httpClient);
+            initialized = true;
 
         } catch (SSLContextCreationException | GeneralSecurityException | IOException | BankInfoLoadException e) {
             log.error("Failed to initialize ApiController: {}", e.getMessage(), e);
         }
-
-        this.accountService = tempAccountService;
-        this.paymentService = tempPaymentService;
-        this.authService = tempAuthService;
-        this.initialized = tempInitialized;
     }
 
     /**
@@ -97,7 +89,7 @@ public final class ApiController {
      */
     private Response serviceUnavailable() {
         return Response.status(Response.Status.SERVICE_UNAVAILABLE)
-                .entity("{\"error\":\"Service not initialized\"}")
+                .entity("{\"" + ApiConstants.FIELD_ERROR + "\":\"Service not initialized\"}")
                 .type(MediaType.APPLICATION_JSON)
                 .build();
     }
@@ -117,7 +109,7 @@ public final class ApiController {
             return serviceUnavailable();
         }
         String redirectUrl = accountService.processAddAccount();
-        authService.setRequestStatus("accounts");
+        authService.setRequestStatus(ApiConstants.STATUS_ACCOUNTS);
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
@@ -135,7 +127,7 @@ public final class ApiController {
             return serviceUnavailable();
         }
         String redirectUrl = paymentService.processPaymentRequest(payment);
-        authService.setRequestStatus("payments");
+        authService.setRequestStatus(ApiConstants.STATUS_PAYMENTS);
         return Response.ok(createRedirectResponse(redirectUrl)).build();
     }
 
@@ -157,33 +149,30 @@ public final class ApiController {
 
             String status = authService.getRequestStatus();
 
-            if ("accounts".equals(status)) {
+            if (ApiConstants.STATUS_ACCOUNTS.equals(status)) {
                 Map<String, Object> response = getStringObjectMap();
-                return Response.ok(new JSONObject(response).toString())
-                        .type(MediaType.APPLICATION_JSON)
-                        .build();
+                return Response.ok(new JSONObject(response).toString()).build();
 
-            } else if ("payments".equals(status)) {
+            } else if (ApiConstants.STATUS_PAYMENTS.equals(status)) {
                 boolean success = authService.isLastPaymentSuccess();
 
                 Map<String, Object> response = new LinkedHashMap<>();
-                response.put("type",    "payments");
-                response.put("status",  "success");
-                response.put("success", success);
+                response.put(ApiConstants.FIELD_TYPE,    ApiConstants.STATUS_PAYMENTS);
+                response.put(ApiConstants.FIELD_STATUS,  ApiConstants.VALUE_SUCCESS);
+                response.put(ApiConstants.FIELD_SUCCESS, success);
 
-                return Response.ok(new JSONObject(response).toString())
-                        .type(MediaType.APPLICATION_JSON)
-                        .build();
+                return Response.ok(new JSONObject(response).toString()).build();
             }
 
-            return Response.ok("{\"status\":\"success\",\"type\":\"" + status + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            JSONObject response = new JSONObject()
+                    .put(ApiConstants.FIELD_STATUS, ApiConstants.VALUE_SUCCESS)
+                    .put(ApiConstants.FIELD_TYPE, status);
+            return Response.ok(response).build();
 
         } catch (AuthorizationException e) {
             return Response.serverError()
-                    .entity("{\"status\":\"error\",\"message\":\"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
+                    .entity("{\"" + ApiConstants.FIELD_STATUS + "\":\"" + ApiConstants.FIELD_ERROR
+                            + "\",\"message\":\"" + e.getMessage() + "\"}")
                     .build();
         } catch (IOException e) {
             throw new IOException(e);
@@ -211,20 +200,21 @@ public final class ApiController {
         try {
             if (accountId == null || accountId.isEmpty() || bankName == null || bankName.isEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("{\"error\":\"accountId and bankName are required\"}")
+                        .entity("{\"" + ApiConstants.FIELD_ERROR + "\":\"accountId and bankName are required\"}")
                         .build();
             }
             boolean success = accountService.revokeAccountConsent(accountId, bankName, consentId);
             if (success) {
-                return Response.ok("{\"status\":\"revoked\"}").build();
+                return Response.ok("{\"" + ApiConstants.FIELD_STATUS + "\":\"" + ApiConstants.VALUE_REVOKED + "\"}")
+                        .build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .entity("{\"error\":\"Account not found or revocation failed\"}")
+                        .entity("{\"" + ApiConstants.FIELD_ERROR + "\":\"Account not found or revocation failed\"}")
                         .build();
             }
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("{\"error\":\"" + e.getMessage() + "\"}")
+                    .entity("{\"" + ApiConstants.FIELD_ERROR + "\":\"" + e.getMessage() + "\"}")
                     .build();
         }
     }
@@ -244,29 +234,31 @@ public final class ApiController {
             if (acc.getTransactions() != null) {
                 for (Transaction txn : acc.getTransactions()) {
                     Map<String, Object> t = new LinkedHashMap<>();
-                    t.put("id",                txn.getId());
-                    t.put("date",              txn.getDate());
-                    t.put("reference",         txn.getReference());
-                    t.put("account",           txn.getAccount());
-                    t.put("amount",            txn.getAmount());
-                    t.put("currency",          txn.getCurrency());
-                    t.put("creditDebitStatus", txn.getCreditDebitStatus());
+                    t.put(OpenBankingConstants.FIELD_TRANSACTION_ID,         txn.getId());
+                    t.put("date",                                             txn.getDate());
+                    t.put(OpenBankingConstants.FIELD_REFERENCE,              txn.getReference());
+                    t.put(OpenBankingConstants.FIELD_ACCOUNT,                txn.getAccount());
+                    t.put(OpenBankingConstants.FIELD_AMOUNT,                 txn.getAmount());
+                    t.put(OpenBankingConstants.FIELD_CURRENCY,               txn.getCurrency());
+                    t.put(OpenBankingConstants.FIELD_CREDIT_DEBIT_INDICATOR, txn.getCreditDebitStatus());
+
                     txnList.add(t);
                 }
             }
             Map<String, Object> a = new LinkedHashMap<>();
-            a.put("id",           acc.getId());
-            a.put("name",         acc.getName());
-            a.put("balance",      acc.getBalance());
-            a.put("consentId",    acc.getConsentId());
-            a.put("transactions", txnList);
+            a.put("id",                                      acc.getId());
+            a.put(OpenBankingConstants.FIELD_NAME,           acc.getName());
+            a.put("balance",                                 acc.getBalance());
+            a.put(OpenBankingConstants.FIELD_CONSENT_ID,     acc.getConsentId());
+            a.put("transactions",                            txnList);
+            a.put("consentId", acc.getConsentId());
             accountsList.add(a);
         }
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("type",     "accounts");
-        response.put("status",   "success");
-        response.put("accounts", accountsList);
+        response.put(ApiConstants.FIELD_TYPE,     ApiConstants.STATUS_ACCOUNTS);
+        response.put(ApiConstants.FIELD_STATUS,   ApiConstants.VALUE_SUCCESS);
+        response.put("accounts",                  accountsList);
         return response;
     }
 }
