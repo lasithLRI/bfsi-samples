@@ -51,12 +51,13 @@ interface AccountsCentralLayoutProps {
     transactionTableHeaderData?: TableConfigs[];
     standingOrdersTableHeaderData?: TableConfigs[];
     onBankRemoved: () => void;
+    onSignOut?: () => void;
 }
 
 const Home = ({
                   standingOrdersTableHeaderData, name, userInfo, total, chartData,
                   banksWithAccounts, transactions, standingOrderList, appInfo, banksList,
-                  overlayInformation, transactionTableHeaderData,onBankRemoved
+                  overlayInformation, transactionTableHeaderData,onBankRemoved, onSignOut
               }: AccountsCentralLayoutProps) => {
 
     const navigate = useNavigate();
@@ -85,7 +86,7 @@ const Home = ({
 
     return (
         <>
-            <ApplicationLayout name={name}>
+            <ApplicationLayout name={name} onSignOut={onSignOut}>
                 <HomePageLayout userInfo={userInfo} appInfo={appInfo}>
                     <Grid className={'info-graphic'}>
                         <InfographicsContent total={total} chartInfo={chartData} />

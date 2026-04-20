@@ -27,6 +27,7 @@ export interface ApplicationLayoutProps {
     children: ReactNode;
     onStartTour?: () => void;
     isTourRunning?: boolean;
+    onSignOut?: () => void;
 }
 
 /**
@@ -35,11 +36,11 @@ export interface ApplicationLayoutProps {
  * overall structure for the application. It renders the global `Header`
  * and contains the main content (`children`) of the current page below it.
  */
-export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children, onStartTour, isTourRunning }) => {
+export const ApplicationLayout: FC<ApplicationLayoutProps> = ({ name, children, onStartTour, isTourRunning, onSignOut }) => {
     return (
         <>
             <div className="application-layout">
-                <Header name={name} />
+                <Header name={name}  onSignOut={onSignOut}/>
                 <div className="product-content-outer">
                     {children}
                 </div>

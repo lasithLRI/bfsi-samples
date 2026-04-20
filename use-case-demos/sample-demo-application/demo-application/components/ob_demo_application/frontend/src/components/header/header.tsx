@@ -24,6 +24,7 @@ import '../components.scss'
 
 export interface HeaderProps {
     name: string;
+    onSignOut?: () => void;
 }
 
 /**
@@ -31,12 +32,12 @@ export interface HeaderProps {
  * It also renders a right-aligned **Logout icon** (`ArrowRightFromBracketIcon`)
  * wrapped in an `IconButton` for user session termination or sign-out functionality.
  */
-const Header: FC<HeaderProps> = ({ name }) => {
+const Header: FC<HeaderProps> = ({ name, onSignOut }) => {
     return(
         
         <div className="header-outer">
             <p>{name}</p>
-            <IconButton style={{ color: 'white' }}>
+            <IconButton style={{ color: 'white' }} onClick={onSignOut}>
                 <ArrowRightFromBracketIcon size={24} />
             </IconButton>
         </div>

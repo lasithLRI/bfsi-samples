@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthContext, type BasicUserInfo } from "@asgardeo/auth-react";
 import Home from "./pages/home-page/home.tsx";
@@ -29,8 +29,14 @@ import AllStandingOrders from "./pages/all-standing-orders/all-standing-orders.t
 import OAuthCallbackPage from "./pages/oauth-callback-page.tsx";
 
 const App: React.FC = () => {
-    const { state, signIn, getBasicUserInfo } = useAuthContext();
+    const { state, signIn, signOut, getBasicUserInfo } = useAuthContext();
     const [user, setUser] = useState<BasicUserInfo | null>(null);
+    const [userError, setUserError] = useState<Error | null>(null);
+
+    // Guards to prevent double-invoke in React 19 Strict Mode
+    const hasSignedIn = useRef(false);
+    const hasFetchedUser = useRef(false);
+
     const {
         isLoading,
         appInfo,
@@ -47,18 +53,19 @@ const App: React.FC = () => {
         standingOrdersTableHeaderData,
         colors,
         payeesData,
-        disconnectBank
+        disconnectBank,
     } = useConfigContext();
 
     useEffect(() => {
-        if (!state.isAuthenticated && !state.isLoading) {
+        if (!state.isAuthenticated && !state.isLoading && !hasSignedIn.current) {
+            hasSignedIn.current = true;
             signIn();
         }
     }, [state.isAuthenticated, state.isLoading, signIn]);
 
-    const [userError, setUserError] = useState(null);
     useEffect(() => {
-        if (state.isAuthenticated) {
+        if (state.isAuthenticated && !hasFetchedUser.current) {
+            hasFetchedUser.current = true;
             getBasicUserInfo()
                 .then((info) => setUser(info))
                 .catch((err) => {
@@ -69,7 +76,12 @@ const App: React.FC = () => {
     }, [state.isAuthenticated, getBasicUserInfo]);
 
     if (state.isLoading || isLoading) return <div>Loading...</div>;
-    if (userError) return <div>Failed to load profile. <button onClick={() => signOut()}>Sign out</button></div>;
+    if (userError) return (
+        <div>
+            Failed to load profile.{" "}
+            <button onClick={() => signOut()}>Sign out</button>
+        </div>
+    );
     if (!state.isAuthenticated || !user) return <div>Loading...</div>;
 
     return (
@@ -79,7 +91,8 @@ const App: React.FC = () => {
                     path="/"
                     element={<Navigate to={`/${appInfo.route}`} replace />}
                 />
-                <Route path="/callback"
+                <Route
+                    path="/callback"
                     element={<OAuthCallbackPage />}
                 />
                 <Route
@@ -106,6 +119,7 @@ const App: React.FC = () => {
                             transactionTableHeaderData={transactionTableHeaderData}
                             standingOrdersTableHeaderData={standingOrdersTableHeaderData}
                             onBankRemoved={disconnectBank}
+                            onSignOut={signOut}
                         />
                     }
                 />
@@ -154,4 +168,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
