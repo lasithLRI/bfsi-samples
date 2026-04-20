@@ -133,7 +133,7 @@ const handlePaymentsResponse = (data: any) => {
         account: accountId,
         amount: pending.amount,
         currency: pending.currency,
-        creditDebitStatus: "DEBIT"
+        creditDebitStatus: "c"
     };
 
     // Update the accounts from sessionStorage directly

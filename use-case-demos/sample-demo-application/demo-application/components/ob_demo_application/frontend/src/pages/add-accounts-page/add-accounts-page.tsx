@@ -19,7 +19,7 @@
 import ApplicationLayout from "../../layouts/application-layout/application-layout.tsx";
 import {useLocation} from 'react-router-dom';
 import PaymentAccountPageLayout from "../../layouts/payment-account-page-layout/payment-account-page-layout.tsx";
-import type Bank from "../../hooks/config-interfaces.ts";
+import type {Bank} from "../../hooks/config-interfaces.ts";
 import {Box, Button, Card} from "@oxygen-ui/react";
 import './add-account.scss'
 import {useState} from "react";
@@ -83,7 +83,6 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
             const responseData = await response.json().catch(() => null);
             if (responseData?.redirect) {
                 window.location.href = responseData.redirect;
-                setApiError("Unable to start the account linking flow. Missing redirect URL.");
                 setIsRedirecting(false);
                 return;
             }
@@ -95,7 +94,9 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
         }
     };
 
-    if (isRedirecting) {
+    const isOAuthReturn = !!(location.state as any)?.operationState;
+
+    if (isRedirecting || isOAuthReturn) {
         return <RedirectionComponent/>;
     }
 
