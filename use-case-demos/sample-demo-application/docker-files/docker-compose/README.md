@@ -1,67 +1,68 @@
-# WSO2 Open Banking API Manager with Open Banking Identity & Access Management Accelerator Module
+# Docker Compose for WSO2 Open Banking Sandbox
 
+This directory holds the Compose orchestration for the sample demo application that connects to the WSO2 Open Banking Sandbox Bank.
 
-## Prerequisites
+## Purpose
 
-* Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [Docker](https://www.docker.com/get-docker) and [Docker Compose](https://docs.docker.com/compose/install/#install-compose)
-  in order to run the steps provided in following **Quick Start Guide**. <br><br>
-* In order to use WSO2 Docker images, you need an active WSO2 Open Banking subscription. If you do not possess an active WSO2
-  Open Banking subscription, you can contact us from [here](https://wso2.com/solutions/financial/open-banking/) <br><br>
-* Containerized docker images for WSO2 IS with WSO2 OBIAM Accelerator and WSO2 AM with WSO2 OBAM Accelerator.
- - The docker images for WSO2 Financial Services Accelerator Modules are not designed to run indivitually. Users have to use the Docker Image and build the container images for WSO2 Base Products with Financial Services Accelerator Modules.
-    Please refer to the sample Dockerfiles file written in the `samples/wso2am_with_obam` and `samples/wso2is_with_obiam` directory for sample docker files.
+The Compose stack brings up the following services:
 
-## Quick Start Guide
+- `mysql` – local MySQL persistence for WSO2 and demo runtime data
+- `obiam` – WSO2 Identity Server with the Open Banking IAM accelerator
+- `obam` – WSO2 API Manager with the Open Banking API Management accelerator
 
-1. Clone WSO2 Open Banking Docker Git repository.
+## Assumptions
 
-    ```
-    git clone https://github.com/wso2/docker-open-banking.git
-    ```
+- `configuration-files/` contains all deployment overrides.
+- `configuration-files/api-ob-demo.war` contains the demo accelerator WAR.
+- The external network `ob-network` exists.
+- No special manual runtime configuration is required beyond the override files in `configuration-files/`.
 
-2. Switch to the `docker-open-banking/samples/docker-compose/wso2am-with-wso2is` folder.
+## Start the Stack
 
-    ```
-    cd docker-open-banking/samples/docker-compose/wso2am-with-wso2is
-    ```
-   
-3. Execute following Docker Compose command to start the deployment of WSO2 Open Banking Accelerator setup.
-   ```
-   docker-compose up
-   ```
-4. Access the WSO2 Open Banking API Manager web UIs using the below URLs via a web browser.
+From the repository root or from `docker-files/docker-compose`:
 
-   ```
-   https://obam:9443/publisher
-   https://obam:9443/devportal
-   https://obam:9443/admin
-   https://obam:9443/carbon
-   ```
+```bash
+cd docker-files/docker-compose
+docker compose up -d
+```
 
-   Access the servers using following credentials.
-   ````  
-   * Username: am_admin@wso2.com 
-   * Password: wso2123
-   ````
-   Please note that API Gateway will be available on following ports.
-   ```
-   https://obam:8243
-   http://obam:8280
-   ```
+If `ob-network` does not exist:
 
-5. WSO2 Open Banking API Manager will use WSO2 Open Banking Identity & Access Management Module to generate OAuth2 tokens and validate those tokens during API invocations. You can access the WSO2 Open Banking Identity & Access Management Module-Management portal using the below URL via a web browser.
+```bash
+docker network create ob-network
+```
 
-   ```
-   https://obiam:9446/console
-   ```
+## Recommended Build Flow
 
-   Access the servers using following credentials.
-   ````  
-   * Username: is_admin@wso2.com 
-   * Password: wso2123
-   ````
-6. Follow the documentation to use WSO2 Open Banking:
+The recommended workflow is to use the root `build.sh` script. It ensures the following:
 
-   To try out the solution: [Try Out WSO2 Open Banking](https://ob.docs.wso2.com/en/latest/get-started/quick-start-guide/)
+- MySQL image is built from `docker-files/my_sql`
+- The demo backend WAR is built and copied to `configuration-files/api-ob-demo.war`
+- WSO2 IS and AM Docker images are built correctly
+- The Compose deployment starts with the expected artifacts
 
-For more information, see [WSO2 Open Banking documentation](https://ob.docs.wso2.com/en/latest/develop/developer-guide/).
+## Runtime Access
+
+Once the stack is running, access the services using these URLs:
+
+- WSO2 API Manager: `https://obam:9443`
+- Open Banking gateway: `https://obam:8243`
+- WSO2 Identity Server / OBIAM Console: `https://obiam:9446/console`
+
+## Using a New Accelerator WAR
+
+If you build or obtain a new accelerator WAR, place it at:
+
+- `configuration-files/api-ob-demo.war`
+
+Then restart the Compose deployment to apply the new WAR.
+
+## Persistence Note
+
+The MySQL service stores state in a Docker volume named `mysql_data`.
+
+> Important: if you apply permanent changes to the database or demo state, export a database dump before destroying the containers or volume. Otherwise, your state may be lost.
+
+## Troubleshooting
+
+If Compose fails to start because the network is missing, create `ob-network` manually. If the WAR is not deployed, verify that `configuration-files/api-ob-demo.war` exists and is up to date.

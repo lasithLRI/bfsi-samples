@@ -1,60 +1,77 @@
-# TPP Demo Application
+# TPP Frontend Demo Application
 
-This is a static demo web application that demonstrates the basics of the WSO2 Open Banking platform. This app allows users to experience how a real Third-Party Provider (TPP), which is connected to the WSO2 Open Banking platform, would function.
+This frontend is the TPP demo client for the WSO2 Open Banking Sandbox. It renders the user-facing banking experience and is packaged into the backend WAR during the Maven build.
 
----
+## Purpose
 
-## Components
+- Demonstrates the TPP workflow for Open Banking.
+- Provides a React/Vite demo application that can be updated independently.
+- Serves as the frontend layer for the backend WAR deployed through WSO2.
 
-This application contains two major parts:
+## Key Files
 
--   **TPP Application**: This is the front-end application that simulates a third-party finance aggregator. It's the part the user interacts with to initiate a banking process.
+- `src/` — React application source code
+- `public/` — static assets and the demo configuration file
+- `public/configurations/config.json` — sample application configuration data
+- `vite.config.ts` — Vite development server configuration
+- `package.json` / `pnpm-lock.yaml` — frontend dependency manifests
 
--   **Banking Pages**: These are mock banking pages that represent the bank's interface. This is where the user would be redirected to authenticate and authorize transactions or data sharing with the TPP.
-
----
-
-## Configuration
-
-All configurations for this demo application are stored in the `config.json` file. You can modify this file to adjust settings related to the WSO2 Open Banking platform, such as endpoints and client credentials, to match your specific setup.
-
----
-
-## Getting Started
+## Local Setup
 
 ### Prerequisites
 
-* **Node.js**: The recommended build tool is `npm`, which is bundled with Node.js. It's best to use the latest LTS (Long-Term Support) version of Node.js for stability. Tested node version is `v24.13.1`.
+- Node.js 18 or newer
+- `pnpm` package manager
+- A compatible shell environment on Windows (Git Bash or WSL is recommended)
 
-* **pnpm**: This project uses [pnpm](https://pnpm.io/) as its package manager. If you don't have it installed, you can install it globally via npm:
+### Install Dependencies
+
+From the frontend directory:
+
 ```bash
-  npm install -g pnpm
+cd demo-application/components/ob_demo_application/frontend
+pnpm install
 ```
 
-Alternatively, you can use the standalone installation script:
+### Run Locally
+
+Start the local development server:
+
 ```bash
-  curl -fsSL https://get.pnpm.io/install.sh | sh -
+pnpm run dev
 ```
 
-* **Vite**: This project is built using [Vite](https://vite.dev/), a fast front-end build tool. Vite is installed automatically as part of the project dependencies via `pnpm install`.
+Open the URL shown in the terminal, typically `http://localhost:5173`.
 
-### Build and Run the App Locally
+### Build for Production
 
-**Install Dependencies**: Navigate to the project's root directory in your terminal and install all required dependencies.
+Generate production assets:
+
 ```bash
-  pnpm install
+pnpm run build
 ```
 
-**Start the Development Server**: Once the dependencies are installed, you can start the development server.
-```bash
-  pnpm run dev
-```
+The compiled output is written to `dist/`.
 
-The Vite development server will start, and the application will be accessible at a local address, usually `http://localhost:5173`. The terminal will provide the exact URL.
+## Deployment Notes
 
-**Build for Production**: To generate a production-ready build, run the following command. The output will be placed in the `dist/` directory.
-```bash
-  pnpm run build
-```
+- The frontend is packaged automatically when the backend Maven build runs.
+- The root build script `build.sh` handles the complete integration path and copies the generated WAR to `configuration-files/api-ob-demo.war`.
+- Do not rely on local development settings for sandbox deployment. The sandbox runtime configuration is managed in `configuration-files/` at the repository root.
 
-**Open in Browser**: Open your web browser and navigate to the URL provided in the terminal to view and interact with the TPP demo application.
+## Configuration
+
+Sample UI and demo data values are stored in `public/configurations/config.json`.
+
+- Change UI behavior and sample content here for local demo validation.
+- Keep sandbox endpoint overrides in the root `configuration-files/` folder.
+
+## When to Rebuild
+
+Rebuild the frontend if you change:
+
+- React source files under `src/`
+- UI layout or static assets
+- `public/configurations/config.json`
+
+Then either run `pnpm run build` locally or rebuild the backend WAR with Maven, which also builds the frontend automatically.
