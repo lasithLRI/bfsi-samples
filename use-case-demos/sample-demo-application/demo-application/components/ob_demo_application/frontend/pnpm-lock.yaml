@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@asgardeo/auth-react':
-        specifier: ^5.6.0
+        specifier: 5.6.0
         version: 5.6.0(@babel/runtime-corejs3@7.29.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@emotion/react':
         specifier: 11.14.0
@@ -28,7 +28,7 @@ importers:
         version: 5.18.0(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.2.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.2.0))(@types/react@19.1.13)(react@19.2.0))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@oxygen-ui/react':
         specifier: 2.4.6
-        version: 2.4.6(4f9d419e1fa39c245d5b06b4edce7e4a)
+        version: 2.4.6(l2vhscp2ubfvinjm7q2kxix24e)
       '@tanstack/query-sync-storage-persister':
         specifier: 5.90.9
         version: 5.90.9
@@ -2975,7 +2975,7 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@oxygen-ui/react@2.4.6(4f9d419e1fa39c245d5b06b4edce7e4a)':
+  '@oxygen-ui/react@2.4.6(l2vhscp2ubfvinjm7q2kxix24e)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.13)(react@19.2.0)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.1.13)(react@19.2.0))(@types/react@19.1.13)(react@19.2.0)
