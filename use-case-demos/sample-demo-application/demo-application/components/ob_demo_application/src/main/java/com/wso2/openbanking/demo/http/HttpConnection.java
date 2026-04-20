@@ -31,7 +31,7 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
-/** HttpConnection implementation. */
+/** Builds and executes HTTPS requests with configurable method, headers, and body. */
 public class HttpConnection {
 
     private final String url;
@@ -41,6 +41,13 @@ public class HttpConnection {
     private String body;
     private boolean followRedirects = true;
 
+    /**
+     * Creates an HttpConnection with the given URL, SSL context, and HTTP method.
+     *
+     * @param url        target URL for the request
+     * @param sslContext SSL context used for the secure connection
+     * @param method     HTTP method (e.g. GET, POST, DELETE)
+     */
     private HttpConnection(String url, SSLContext sslContext, String method) {
         this.url = url;
         this.sslContext = sslContext;
@@ -49,29 +56,68 @@ public class HttpConnection {
         this.body = null;
     }
 
+    /**
+     * Creates a POST request to the given URL.
+     *
+     * @param url        target URL
+     * @param sslContext SSL context for the connection
+     * @return new HttpConnection configured for POST
+     */
     public static HttpConnection post(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "POST");
     }
 
+    /**
+     * Creates a GET request to the given URL.
+     *
+     * @param url        target URL
+     * @param sslContext SSL context for the connection
+     * @return new HttpConnection configured for GET
+     */
     public static HttpConnection get(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "GET");
     }
 
+    /**
+     * Creates a DELETE request to the given URL.
+     *
+     * @param url        target URL
+     * @param sslContext SSL context for the connection
+     * @return new HttpConnection configured for DELETE
+     */
     public static HttpConnection delete(String url, SSLContext sslContext) {
         return new HttpConnection(url, sslContext, "DELETE");
     }
 
-
+    /**
+     * Adds a request header to the connection.
+     *
+     * @param key   header name
+     * @param value header value
+     * @return this HttpConnection instance for chaining
+     */
     public HttpConnection addHeader(String key, String value) {
         this.headers.put(key, value);
         return this;
     }
 
+    /**
+     * Sets the request body.
+     *
+     * @param body request body as a string
+     * @return this HttpConnection instance for chaining
+     */
     public HttpConnection withBody(String body) {
         this.body = body;
         return this;
     }
 
+    /**
+     * Executes the request and returns the response body.
+     *
+     * @return response body as a string
+     * @throws IOException if the request fails
+     */
     public String execute() throws IOException {
         HttpsURLConnection connection = createConnection();
         if (body != null) {
@@ -80,15 +126,26 @@ public class HttpConnection {
         return readResponse(connection);
     }
 
+    /**
+     * Executes the request and returns the HTTP status code.
+     *
+     * @return HTTP response status code
+     * @throws IOException if the request fails
+     */
     public int executeAndGetStatus() throws IOException {
         HttpsURLConnection connection = createConnection();
         if (body != null) {
             writeBody(connection);
         }
-
         return connection.getResponseCode();
     }
 
+    /**
+     * Creates and configures the underlying HTTPS connection.
+     *
+     * @return configured HttpsURLConnection ready for use
+     * @throws IOException if the connection cannot be opened
+     */
     private HttpsURLConnection createConnection() throws IOException {
         URL urlObj = new URL(url);
         HttpsURLConnection connection = (HttpsURLConnection) urlObj.openConnection();
@@ -105,6 +162,12 @@ public class HttpConnection {
         return connection;
     }
 
+    /**
+     * Writes the request body to the connection output stream.
+     *
+     * @param connection the open HTTPS connection to write to
+     * @throws IOException if writing the body fails
+     */
     private void writeBody(HttpsURLConnection connection) throws IOException {
         if (body == null) {
             return;
@@ -115,6 +178,13 @@ public class HttpConnection {
         }
     }
 
+    /**
+     * Reads the response body from the connection.
+     *
+     * @param connection the open HTTPS connection to read from
+     * @return response body as a string
+     * @throws IOException if reading the response fails
+     */
     private String readResponse(HttpsURLConnection connection) throws IOException {
         int responseCode = connection.getResponseCode();
         InputStream is = (responseCode >= 200 && responseCode < 300)

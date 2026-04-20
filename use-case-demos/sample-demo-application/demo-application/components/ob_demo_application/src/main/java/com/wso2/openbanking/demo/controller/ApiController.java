@@ -53,7 +53,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/** ApiController implementation. */
+/** REST controller that handles account, payment, and authorization API requests. */
 @Path("")
 public final class ApiController {
 
@@ -64,6 +64,7 @@ public final class ApiController {
     private PaymentService paymentService;
     private boolean initialized;
 
+    /** Initializes services needed for accounts, payments, and authorization. */
     public ApiController() {
 
         try {
@@ -85,7 +86,7 @@ public final class ApiController {
     /**
      * Returns a 503 Service Unavailable response when the controller failed to initialize.
      *
-     * @return a 503 response indicating the service is unavailable
+     * @return 503 response indicating the service is unavailable
      */
     private Response serviceUnavailable() {
         return Response.status(Response.Status.SERVICE_UNAVAILABLE)
@@ -97,8 +98,8 @@ public final class ApiController {
     /**
      * Initiates the account addition flow and returns a redirect URL.
      *
-     * @param requestBody a map containing the request parameters for adding an account
-     * @return a 200 OK response containing the redirect URL for the account addition flow
+     * @param requestBody map containing request parameters for adding an account
+     * @return 200 response with the redirect URL for the account addition flow
      */
     @POST
     @Path("/add-accounts")
@@ -116,8 +117,8 @@ public final class ApiController {
     /**
      * Processes a payment request and returns a redirect URL.
      *
-     * @param payment the payment object containing the payment details
-     * @return a 200 OK response containing the redirect URL for the payment flow
+     * @param payment payment object containing the payment details
+     * @return 200 response with the redirect URL for the payment flow
      */
     @POST
     @Path("/payment")
@@ -132,10 +133,10 @@ public final class ApiController {
     }
 
     /**
-     * Handles the OAuth authorization callback and returns a status response based on the request type.
+     * Handles the OAuth callback and returns account or payment status.
      *
-     * @param code the authorization code received from the OAuth callback
-     * @return a 200 OK response with account or payment status, or a 500 error response if authorization fails
+     * @param code authorization code received from the OAuth callback
+     * @return 200 response with account or payment status, or 500 on authorization failure
      */
     @GET
     @Path("/processAuth")
@@ -182,11 +183,10 @@ public final class ApiController {
     /**
      * Revokes the consent for a linked bank account.
      *
-     * @param accountId the unique identifier of the account whose consent is to be revoked
-     * @param bankName  the name of the bank associated with the account
-     * @param consentId the unique identifier of the consent to be revoked
-     * @return a 200 OK response if revocation succeeds, 400 if required params are missing,
-     *         404 if account is not found, or 500 on error
+     * @param accountId unique identifier of the account to revoke consent for
+     * @param bankName  name of the bank associated with the account
+     * @param consentId unique identifier of the consent to revoke
+     * @return 200 if revoked, 400 if params missing, 404 if not found, 500 on error
      */
     @DELETE
     @Path("/revoke-consent")
@@ -219,12 +219,23 @@ public final class ApiController {
         }
     }
 
+    /**
+     * Wraps a redirect URL into a response map.
+     *
+     * @param url the redirect URL to wrap
+     * @return map with the redirect URL keyed as "redirect"
+     */
     private Map<String, String> createRedirectResponse(String url) {
         Map<String, String> response = new HashMap<>();
         response.put("redirect", url);
         return response;
     }
 
+    /**
+     * Builds a response map of accounts with their transactions.
+     *
+     * @return map containing account list with nested transaction details
+     */
     private Map<String, Object> getStringObjectMap() {
         List<Account> accounts = authService.getLastFetchedAccounts();
 

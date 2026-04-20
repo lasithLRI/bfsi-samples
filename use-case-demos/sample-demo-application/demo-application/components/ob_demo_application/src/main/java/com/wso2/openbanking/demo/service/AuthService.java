@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/** AuthService implementation. */
+/** Handles OAuth authorization callbacks for account and payment flows. */
 public final class AuthService {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthService.class);
@@ -45,6 +45,14 @@ public final class AuthService {
     private List<Account> lastFetchedAccounts = new ArrayList<>();
     private boolean lastPaymentSuccess = false;
 
+    /**
+     * Creates an AuthService with the given account, payment, and HTTP client dependencies.
+     *
+     * @param accountService service for fetching account data
+     * @param paymentService service for processing payments
+     * @param client         TLS HTTP client for making API calls
+     * @throws SSLContextCreationException if the TLS client copy fails
+     */
     private AuthService(AccountService accountService,
                         PaymentService paymentService,
                         HttpTlsClient client) throws SSLContextCreationException {
@@ -54,6 +62,15 @@ public final class AuthService {
         LOG.debug("AuthService instance created successfully.");
     }
 
+    /**
+     * Creates a new AuthService instance with the given dependencies.
+     *
+     * @param accountService service for fetching account data
+     * @param paymentService service for processing payments
+     * @param client         TLS HTTP client for making API calls
+     * @return new AuthService instance
+     * @throws SSLContextCreationException if TLS client setup fails
+     */
     public static AuthService create(AccountService accountService,
                                      PaymentService paymentService, HttpTlsClient client)
             throws SSLContextCreationException {
@@ -61,11 +78,23 @@ public final class AuthService {
         return new AuthService(accountService, paymentService, client);
     }
 
+    /**
+     * Sets the current request status to track the active flow type.
+     *
+     * @param status flow type identifier (e.g. "accounts" or "payments")
+     */
     public void setRequestStatus(String status) {
         LOG.debug("Request status updated: {}", status);
         this.requestStatus = status;
     }
 
+    /**
+     * Processes the OAuth callback code and triggers account or payment handling.
+     *
+     * @param code authorization code received from the OAuth callback
+     * @throws AuthorizationException if token exchange or handling fails
+     * @throws IOException            if an API call fails during handling
+     */
     public void processAuthorizationCallback(String code) throws AuthorizationException, IOException {
         LOG.debug("Processing authorization callback. Request status: {}", requestStatus);
         String accessToken = exchangeCodeForToken(code);
@@ -73,6 +102,13 @@ public final class AuthService {
         handleAuthorizationSuccess(accessToken);
     }
 
+    /**
+     * Exchanges an authorization code for an OAuth access token.
+     *
+     * @param code authorization code from the OAuth callback
+     * @return access token string
+     * @throws AuthorizationException if the token request or parsing fails
+     */
     private String exchangeCodeForToken(String code) throws AuthorizationException {
         LOG.debug("Exchanging authorization code for access token.");
         try {
@@ -94,6 +130,13 @@ public final class AuthService {
         }
     }
 
+    /**
+     * Builds the URL-encoded token request body for the authorization code grant.
+     *
+     * @param code            authorization code from the OAuth callback
+     * @param clientAssertion signed JWT used as the client credential
+     * @return URL-encoded token request body string
+     */
     private String buildTokenRequestBody(String code, String clientAssertion) {
         LOG.debug("Building token request body for client ID: {}", ConfigLoader.getClientId());
         return "grant_type=authorization_code" +
@@ -105,11 +148,24 @@ public final class AuthService {
                 "&redirect_uri=" + ConfigLoader.getRedirectUri();
     }
 
+    /**
+     * Parses the access token from the token endpoint JSON response.
+     *
+     * @param response raw JSON response string from the token endpoint
+     * @return access token string
+     */
     private String parseAccessToken(String response) {
         LOG.debug("Parsing access token from token endpoint response.");
         return new JSONObject(response).getString("access_token");
     }
 
+    /**
+     * Handles post-authorization logic by fetching accounts or processing a payment.
+     *
+     * @param accessToken valid OAuth access token from the token exchange
+     * @throws AuthorizationException if payment processing fails
+     * @throws IOException            if an API call fails
+     */
     private void handleAuthorizationSuccess(String accessToken) throws AuthorizationException, IOException {
         LOG.debug("Handling authorization success. Request status: {}", requestStatus);
         accountService.setAccessToken(accessToken);
@@ -134,14 +190,29 @@ public final class AuthService {
         }
     }
 
+    /**
+     * Returns the current request status.
+     *
+     * @return current flow type identifier
+     */
     public String getRequestStatus() {
         return this.requestStatus;
     }
 
+    /**
+     * Returns a copy of the last fetched accounts list.
+     *
+     * @return list of accounts fetched in the last authorization flow
+     */
     public List<Account> getLastFetchedAccounts() {
         return new ArrayList<>(lastFetchedAccounts);
     }
 
+    /**
+     * Returns whether the last payment was processed successfully.
+     *
+     * @return true if the last payment succeeded, false otherwise
+     */
     public boolean isLastPaymentSuccess() {
         return lastPaymentSuccess;
     }

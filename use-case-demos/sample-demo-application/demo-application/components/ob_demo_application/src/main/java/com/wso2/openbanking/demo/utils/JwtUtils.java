@@ -21,11 +21,13 @@ package com.wso2.openbanking.demo.utils;
 import java.math.BigInteger;
 import java.util.UUID;
 
-/** JwtUtils implementation. */
+/** Utility class for generating JWT helper values. */
 public class JwtUtils {
 
     /**
-     * Executes the generateJti operation and modify the payload if necessary.
+     * Generates a unique JWT ID from a random UUID.
+     *
+     * @return unique numeric JWT ID string
      */
     public static String generateJti() {
         return new BigInteger(UUID.randomUUID().toString().replace("-", ""), 16).toString();

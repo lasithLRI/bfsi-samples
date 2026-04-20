@@ -33,7 +33,7 @@ import java.security.spec.PSSParameterSpec;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
-/** JwtTokenService implementation. */
+/** Singleton service for creating and signing JWTs for OAuth client assertions and request objects. */
 public final class JwtTokenService {
 
     private static final String SIGNING_KEY_PATH      = "/obsigning.key";
@@ -47,10 +47,23 @@ public final class JwtTokenService {
     private static JwtTokenService instance;
     private final PrivateKey privateKey;
 
+    /**
+     * Initializes the service by loading the private signing key from the classpath.
+     *
+     * @throws GeneralSecurityException if the key format is invalid
+     * @throws IOException              if the key file cannot be read
+     */
     private JwtTokenService() throws GeneralSecurityException, IOException {
         this.privateKey = loadPrivateKey();
     }
 
+    /**
+     * Returns the singleton instance, creating it if it does not exist.
+     *
+     * @return shared JwtTokenService instance
+     * @throws GeneralSecurityException if key loading fails
+     * @throws IOException              if the key file cannot be read
+     */
     public static synchronized JwtTokenService getInstance()
             throws GeneralSecurityException, IOException {
         if (instance == null) {
@@ -59,6 +72,14 @@ public final class JwtTokenService {
         return instance;
     }
 
+    /**
+     * Creates a signed client assertion JWT for the given JTI value.
+     *
+     * @param jti unique JWT ID for the assertion
+     * @return signed client assertion JWT string
+     * @throws GeneralSecurityException if JWT signing fails
+     * @throws IOException              if key loading fails
+     */
     public String createClientAssertion(String jti)
             throws GeneralSecurityException, IOException {
         long issuedAt = getCurrentTimeSeconds();
@@ -85,8 +106,8 @@ public final class JwtTokenService {
     /**
      * Creates a signed JWT request object containing the authorization claims for the given consent ID.
      *
-     * @param consentId the consent ID to include in the request object payload
-     * @return a signed JWT string representing the request object
+     * @param consentId consent ID to include in the request object payload
+     * @return signed JWT string representing the request object
      * @throws GeneralSecurityException if JWT signing fails
      */
     public String createRequestObject(String consentId)
@@ -119,9 +140,9 @@ public final class JwtTokenService {
     /**
      * Builds a signed JWT string from the given header and payload JSON.
      *
-     * @param headerJson  the JSON string representing the JWT header
-     * @param payloadJson the JSON string representing the JWT payload
-     * @return a signed JWT string in the format {@code header.payload.signature}
+     * @param headerJson  JSON string representing the JWT header
+     * @param payloadJson JSON string representing the JWT payload
+     * @return signed JWT in the format {@code header.payload.signature}
      * @throws GeneralSecurityException if signing the JWT fails
      */
     private String buildJwt(String headerJson, String payloadJson)
@@ -135,9 +156,9 @@ public final class JwtTokenService {
     /**
      * Signs the given data using RSA-PSS and returns the Base64URL-encoded signature.
      *
-     * @param data the string to be signed
-     * @return the Base64URL-encoded RSA-PSS signature
-     * @throws GeneralSecurityException if the signing algorithm is unavailable or signing fails
+     * @param data string to be signed
+     * @return Base64URL-encoded RSA-PSS signature
+     * @throws GeneralSecurityException if signing fails or the algorithm is unavailable
      */
     private String signData(String data) throws GeneralSecurityException {
         Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
@@ -153,6 +174,14 @@ public final class JwtTokenService {
         return base64UrlEncode(signature.sign());
     }
 
+    /**
+     * Loads the RSA private key from the classpath signing key file.
+     *
+     * @return loaded PrivateKey instance
+     * @throws NoSuchAlgorithmException if the key algorithm is unsupported
+     * @throws InvalidKeySpecException  if the key format is invalid
+     * @throws IOException              if the key file is missing or unreadable
+     */
     private PrivateKey loadPrivateKey()
             throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         InputStream keyStream = JwtTokenService.class.getResourceAsStream(SIGNING_KEY_PATH);
@@ -162,10 +191,21 @@ public final class JwtTokenService {
         return KeyReader.loadPrivateKeyFromStream(keyStream);
     }
 
+    /**
+     * Encodes the given bytes to a Base64URL string without padding.
+     *
+     * @param bytes byte array to encode
+     * @return Base64URL-encoded string without padding
+     */
     private String base64UrlEncode(byte[] bytes) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
+    /**
+     * Returns the current time in seconds since the Unix epoch.
+     *
+     * @return current Unix timestamp in seconds
+     */
     private long getCurrentTimeSeconds() {
         return System.currentTimeMillis() / 1000;
     }

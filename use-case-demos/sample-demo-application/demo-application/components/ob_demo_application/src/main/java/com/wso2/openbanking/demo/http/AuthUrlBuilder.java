@@ -22,17 +22,16 @@ import com.wso2.openbanking.demo.utils.ConfigLoader;
 
 import static org.apache.cxf.common.util.UrlUtils.urlEncode;
 
-/** AuthUrlBuilder implementation. */
+/** Builds the OAuth authorization URL with required query parameters. */
 public class AuthUrlBuilder {
 
-
     /**
-     * Builds an OAuth authorization URL with the required query parameters.
+     * Builds a complete OAuth authorization URL using the given parameters.
      *
-     * @param requestObjectJwt the signed JWT request object to be included as the {@code request} parameter
-     * @param clientId         the OAuth client ID
-     * @param scope            the requested OAuth scopes
-     * @return the fully constructed authorization URL as a string
+     * @param requestObjectJwt signed JWT included as the {@code request} query parameter
+     * @param clientId         OAuth client ID
+     * @param scope            requested OAuth scopes
+     * @return fully constructed authorization URL
      */
     public static String build(String requestObjectJwt, String clientId, String scope) {
         StringBuilder url = new StringBuilder(ConfigLoader.getAuthorizeUrl());

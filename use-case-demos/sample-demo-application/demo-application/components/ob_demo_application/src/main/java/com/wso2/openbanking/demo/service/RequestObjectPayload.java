@@ -21,7 +21,7 @@ package com.wso2.openbanking.demo.service;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** RequestObjectPayload implementation. */
+/** Represents the JWT request object payload for OAuth authorization requests. */
 public class RequestObjectPayload {
 
     private static final String FIELD_ESSENTIAL = "essential";
@@ -38,6 +38,11 @@ public class RequestObjectPayload {
     private final String scope;
     private final String consentId;
 
+    /**
+     * Creates a RequestObjectPayload from the given builder.
+     *
+     * @param builder builder instance with all payload fields set
+     */
     private RequestObjectPayload(Builder builder) {
         this.iss = builder.iss;
         this.responseType = builder.responseType;
@@ -52,7 +57,7 @@ public class RequestObjectPayload {
         this.consentId = builder.consentId;
     }
 
-    /** Builder implementation. */
+    /** Builder for constructing a RequestObjectPayload with individual field setters. */
     public static class Builder {
 
         String iss;
@@ -66,61 +71,131 @@ public class RequestObjectPayload {
         private String scope;
         private String consentId;
 
+        /**
+         * Sets the issuer claim.
+         *
+         * @param iss OAuth client ID used as the issuer
+         * @return this builder
+         */
         public Builder iss(String iss) {
             this.iss = iss;
             return this;
         }
 
+        /**
+         * Sets the response type claim.
+         *
+         * @param responseType expected OAuth response type
+         * @return this builder
+         */
         public Builder responseType(String responseType) {
             this.responseType = responseType;
             return this;
         }
 
+        /**
+         * Sets the redirect URI claim.
+         *
+         * @param redirectUri OAuth callback redirect URI
+         * @return this builder
+         */
         public Builder redirectUri(String redirectUri) {
             this.redirectUri = redirectUri;
             return this;
         }
 
+        /**
+         * Sets the state claim.
+         *
+         * @param state OAuth state parameter for CSRF protection
+         * @return this builder
+         */
         public Builder state(String state) {
             this.state = state;
             return this;
         }
 
+        /**
+         * Sets the nonce claim.
+         *
+         * @param nonce unique value to prevent replay attacks
+         * @return this builder
+         */
         public Builder nonce(String nonce) {
             this.nonce = nonce;
             return this;
         }
 
+        /**
+         * Sets the audience claim.
+         *
+         * @param aud intended audience, typically the token endpoint URL
+         * @return this builder
+         */
         public Builder aud(String aud) {
             this.aud = aud;
             return this;
         }
 
+        /**
+         * Sets the not-before time claim.
+         *
+         * @param nbf Unix timestamp before which the token is not valid
+         * @return this builder
+         */
         public Builder nbf(long nbf) {
             this.nbf = nbf;
             return this;
         }
 
+        /**
+         * Sets the expiration time claim.
+         *
+         * @param exp Unix timestamp at which the token expires
+         * @return this builder
+         */
         public Builder exp(long exp) {
             this.exp = exp;
             return this;
         }
 
+        /**
+         * Sets the scope claim.
+         *
+         * @param scope space-separated OAuth scopes to request
+         * @return this builder
+         */
         public Builder scope(String scope) {
             this.scope = scope;
             return this;
         }
 
+        /**
+         * Sets the consent ID claim.
+         *
+         * @param consentId Open Banking consent ID to include in the request
+         * @return this builder
+         */
         public Builder consentId(String consentId) {
             this.consentId = consentId;
             return this;
         }
 
+        /**
+         * Builds and returns the RequestObjectPayload.
+         *
+         * @return new RequestObjectPayload with the configured fields
+         */
         public RequestObjectPayload build() {
             return new RequestObjectPayload(this);
         }
     }
 
+    /**
+     * Serializes the payload to a JSON string including all OAuth and claims fields.
+     *
+     * @return JSON string representation of the request object payload
+     */
     public String toJson() {
         JSONObject intentId = new JSONObject()
                 .put("value", consentId)

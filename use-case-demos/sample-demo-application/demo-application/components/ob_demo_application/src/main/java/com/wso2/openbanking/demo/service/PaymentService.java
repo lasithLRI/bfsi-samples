@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
 
-/** PaymentService implementation. */
+/** Handles payment consent creation, authorization, and payment submission. */
 public final class PaymentService {
 
     private static final Random RANDOM = new Random();
@@ -41,17 +41,39 @@ public final class PaymentService {
     private Payment currentPayment;
     private String currentConsentId;
 
+    /**
+     * Creates a PaymentService with the given HTTP client and OAuth service.
+     *
+     * @param client       TLS HTTP client for making API calls
+     * @param oauthService service for obtaining OAuth tokens
+     */
     private PaymentService(HttpTlsClient client, OAuthTokenService oauthService) {
         this.client = client;
         this.oauthService = oauthService;
     }
 
+    /**
+     * Creates a PaymentService instance using the given TLS client.
+     *
+     * @param client TLS HTTP client for API calls
+     * @return new PaymentService instance
+     * @throws GeneralSecurityException    if JWT service setup fails
+     * @throws IOException                 if the signing key cannot be read
+     * @throws SSLContextCreationException if TLS setup fails
+     */
     public static PaymentService create(HttpTlsClient client)
             throws GeneralSecurityException, IOException, SSLContextCreationException {
         OAuthTokenService oauthService = new OAuthTokenService(client);
         return new PaymentService(client, oauthService);
     }
 
+    /**
+     * Creates a payment consent and returns the OAuth authorization redirect URL.
+     *
+     * @param payment payment details to create a consent for
+     * @return authorization redirect URL for the payment consent
+     * @throws AuthorizationException if consent creation or signing fails
+     */
     public String processPaymentRequest(Payment payment) throws AuthorizationException {
         this.currentPayment = new Payment(payment);
         try {
@@ -70,6 +92,13 @@ public final class PaymentService {
         }
     }
 
+    /**
+     * Submits the current payment using the given access token.
+     *
+     * @param accessToken valid OAuth access token from the authorization callback
+     * @return true if payment was submitted successfully, false if no pending payment exists
+     * @throws PaymentException if the payment submission request fails
+     */
     public boolean processPaymentAuthorization(String accessToken) throws PaymentException {
         try {
             if (currentPayment == null || currentConsentId == null) {
@@ -87,6 +116,12 @@ public final class PaymentService {
         }
     }
 
+    /**
+     * Builds the JSON request body for a payment consent.
+     *
+     * @param payment payment details to include in the consent body
+     * @return payment consent request body as a JSON string
+     */
     private String createPaymentConsentBody(Payment payment) {
         String[] userAccount = parseAccountIdentifier(payment.getUserAccount());
         String[] payeeAccount = parseAccountIdentifier(payment.getPayeeAccount());
@@ -100,6 +135,13 @@ public final class PaymentService {
                 .toString(4);
     }
 
+    /**
+     * Builds the JSON request body for submitting a payment.
+     *
+     * @param payment   payment details to submit
+     * @param consentId consent ID approved during the authorization step
+     * @return payment submission request body as a JSON string
+     */
     private String createPaymentSubmissionBody(Payment payment, String consentId) {
         String[] userAccount = parseAccountIdentifier(payment.getUserAccount());
         String[] payeeAccount = parseAccountIdentifier(payment.getPayeeAccount());
@@ -114,6 +156,16 @@ public final class PaymentService {
                 .toString(4);
     }
 
+    /**
+     * Builds the payment initiation JSON object from account and payment details.
+     *
+     * @param userAccount  parsed debtor account parts (name and ID)
+     * @param payeeAccount parsed creditor account parts (name and ID)
+     * @param amount       payment amount as a string
+     * @param currency     payment currency code
+     * @param reference    optional remittance reference text
+     * @return payment initiation JSON object
+     */
     private JSONObject buildInitiation(String[] userAccount, String[] payeeAccount,
                                        String amount, String currency, String reference) {
         JSONObject initiation = new JSONObject();
@@ -132,12 +184,25 @@ public final class PaymentService {
         return initiation;
     }
 
+    /**
+     * Builds a JSON object representing the instructed payment amount.
+     *
+     * @param amount   payment amount as a string
+     * @param currency payment currency code
+     * @return JSON object with amount and currency fields
+     */
     private JSONObject buildAmount(String amount, String currency) {
         return new JSONObject()
                 .put(OpenBankingConstants.FIELD_AMOUNT, formatAmount(amount))
                 .put(OpenBankingConstants.FIELD_CURRENCY, currency);
     }
 
+    /**
+     * Builds the creditor (payee) account JSON object.
+     *
+     * @param payeeAccount parsed payee account parts (name and ID)
+     * @return JSON object representing the creditor account
+     */
     private JSONObject buildCreditorAccount(String[] payeeAccount) {
         return new JSONObject()
                 .put(OpenBankingConstants.FIELD_SCHEME_NAME, OpenBankingConstants.SCHEME_SORT_CODE_ACCOUNT_NUMBER)
@@ -146,6 +211,12 @@ public final class PaymentService {
                 .put(OpenBankingConstants.FIELD_SECONDARY_IDENTIFICATION, OpenBankingConstants.PAYMENT_SECONDARY_ID_FIXED);
     }
 
+    /**
+     * Builds the debtor (user) account JSON object.
+     *
+     * @param userAccount parsed user account parts (name and ID)
+     * @return JSON object representing the debtor account
+     */
     private JSONObject buildDebtorAccount(String[] userAccount) {
         return new JSONObject()
                 .put(OpenBankingConstants.FIELD_SCHEME_NAME, OpenBankingConstants.SCHEME_SORT_CODE_ACCOUNT_NUMBER)
@@ -155,11 +226,23 @@ public final class PaymentService {
                         userAccount[1] + OpenBankingConstants.PAYMENT_SECONDARY_ID_SUFFIX);
     }
 
+    /**
+     * Splits an account identifier string into name and ID parts.
+     *
+     * @param accountIdentifier account string in "name-id" format
+     * @return two-element array of name and ID
+     */
     private String[] parseAccountIdentifier(String accountIdentifier) {
         String[] parts = accountIdentifier.split("-", 2);
         return new String[]{parts[0], parts.length > 1 ? parts[1] : ""};
     }
 
+    /**
+     * Formats an amount string to two decimal places.
+     *
+     * @param amount raw amount string to format
+     * @return amount formatted to two decimal places, or original value if parsing fails
+     */
     private String formatAmount(String amount) {
         try {
             return String.format("%.2f", Double.parseDouble(amount));
@@ -168,16 +251,32 @@ public final class PaymentService {
         }
     }
 
+    /**
+     * Generates a unique instruction identification string.
+     *
+     * @return instruction ID with a constant prefix and random suffix
+     */
     private String generateInstructionId() {
         return OpenBankingConstants.PAYMENT_INSTRUCTION_PREFIX
                 + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * Generates a unique end-to-end identification string.
+     *
+     * @return end-to-end ID with a constant prefix and random suffix
+     */
     private String generateEndToEndId() {
         return OpenBankingConstants.PAYMENT_END_TO_END_PREFIX
                 + UUID.randomUUID().toString().substring(0, 8).toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * Converts a hex character to a single numeric digit (0–9).
+     *
+     * @param c hex character to convert
+     * @return numeric digit derived from the hex character
+     */
     private int hexCharToDigit(char c) {
         if (c >= '0' && c <= '9') {
             return c - '0';
@@ -186,6 +285,12 @@ public final class PaymentService {
         return letterValue % 10;
     }
 
+    /**
+     * Generates a numeric-only ID string of the given length using a UUID.
+     *
+     * @param length desired length of the numeric ID
+     * @return numeric ID string of exactly the specified length
+     */
     private String generateNumericId(int length) {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         StringBuilder numericId = new StringBuilder();
