@@ -569,8 +569,8 @@ expired_consent_status_value="Expired"
 eligible_statuses="authorised"
 
 [financial_services.consent.portal.client_credentials]
-client_id="consent_management_portal_client_id"
-client_secret="consent_management_portal_client_secret"
+client_id="QO_pKbWko8Qxfu_PHPxRggdTxkwa"
+client_secret="NofiIThnMQ_azXjjm_8ghdf97JAcK7oQPSc4f0QJWQ0a"
 
 [financial_services.consent.portal.params]
 identity_server_base_url="https://obiam:9446"

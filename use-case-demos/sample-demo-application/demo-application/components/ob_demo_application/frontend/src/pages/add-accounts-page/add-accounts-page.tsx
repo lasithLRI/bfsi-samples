@@ -83,7 +83,6 @@ const AddAccountsPage = ({bankInformations}: AddAccountsPageProps) => {
             const responseData = await response.json().catch(() => null);
             if (responseData?.redirect) {
                 window.location.href = responseData.redirect;
-                setIsRedirecting(false);
                 return;
             }
 

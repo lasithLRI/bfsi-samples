@@ -108,6 +108,9 @@ RUN \
     chown wso2carbon:wso2 -R ${WSO2_SERVER_HOME}/ \
     && chown wso2carbon:wso2 /etc/motd
 
+RUN sed -i 's|https://localhost:9446|https://obiam:9446|g' \
+    ${WSO2_SERVER_HOME}/repository/deployment/server/webapps/consentmgr/runtime-config.js
+
 # set the non-root user
 USER ${USER_ID}
 
