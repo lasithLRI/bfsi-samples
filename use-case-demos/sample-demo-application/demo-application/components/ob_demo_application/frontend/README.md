@@ -20,8 +20,8 @@ This frontend is the TPP demo client for the WSO2 Open Banking Sandbox. It rende
 
 ### Prerequisites
 
-- Node.js 18 or newer
-- `pnpm` package manager
+- Node.js 22.12.0 (or compatible; auto-installed by Maven during WAR build)
+- pnpm 9.15.0 (auto-installed by Maven during WAR build)
 - A compatible shell environment on Windows (Git Bash or WSL is recommended)
 
 ### Install Dependencies
